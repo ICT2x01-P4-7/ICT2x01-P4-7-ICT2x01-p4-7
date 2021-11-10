@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const UserSchema = new Schema({
   PIN: {
-    type: Number,
+    type: String,
     required: true,
   },
 });

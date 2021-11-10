@@ -1,11 +1,12 @@
-import Home from "../views/Home.vue";
+//import Home from "../views/Home.vue";
+import Signup from "../components/Signup.vue";
 import ProgramPage from "../views/ProgramPage.vue";
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "Signup",
+    component: Signup,
   },
   {
     path: "/program",

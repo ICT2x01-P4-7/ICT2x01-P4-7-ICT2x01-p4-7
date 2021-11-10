@@ -4,4 +4,9 @@
   </div>
 </template>
 
-<script></script>
+<script>
+export default {
+  name: "App",
+  component: {},
+};
+</script>
