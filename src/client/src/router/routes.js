@@ -12,7 +12,7 @@ const routes = [
     path: "/program",
     name: "program",
     component: ProgramPage,
-  },
+  }
 ];
 
 export default routes;
