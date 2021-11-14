@@ -1,5 +1,7 @@
 <template>
+
   <div id="app">
+           <v-btn to="/dashboard">Dashboard</v-btn>
     <BlocklyComponent id="blockly2" :options="options" ref="program"></BlocklyComponent>
     <p id="code">
       <button v-on:click="showCode()">Show JavaScript</button>
