@@ -86,11 +86,11 @@ git push --set-upstream origin feature/new-button
 
 
 /* Continue working on the branch */
-git commit ..
+git commit -m 'add new button'
 git push
-git commit ...
+git commit -m 'styling the button'
 git push
-git commit ....
+git commit -m 'add logic to the button'
 git push
 
 /* Ready for review */
