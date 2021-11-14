@@ -6,14 +6,57 @@ TileUp is a gamified web portal for controlling MSP432 robotic car.
 
 - npm version ?.?.?
 
+# How it works
+1. The project contains a Nodejs backend 
+
 # How to run
 
-- Keep it straight to the point of how to access entry point of the web app
-  Any necessary dependencies to run it
+1. 
+2. 
+3. 
 
 # Development Workflow
 
-- Provide a brief yet sufficiently comprehensive description of team's workflow using git and github features
+Branches 
+
+1. Main
+2. Develop
+3. Feature branch
+4. Hotfix branch
+
+
+
+Only the leader can merge the **development** branch to main
+
+No pushes can be made to main.
+
+All developers will work on their own dedicated branches that is based on **development branch**.
+
+```bash
+git checkout development
+
+git checkout -b feature/new-button development
+
+git commit -am 'Add a new play button at login page'
+
+/* Continue working on the branch */
+
+git push --set-upstream origin feature/new-button
+
+Go to github to create push request
+
+Reviewer(Leader) will approve.
+
+Then PR will be allowed to merge.
+
+
+```
+
+
+
+
+
+
 
 # User Acceptance Testing
 
