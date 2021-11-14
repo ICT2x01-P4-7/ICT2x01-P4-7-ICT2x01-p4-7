@@ -26,10 +26,10 @@ npm install
 
 ```
 
-### Running Backend server
+### Run Backend server
 
 ```bash
-/* Assuming from root directory */
+/* Assuming root directory */
 /* Change dir into backend src/ */
 cd src/
 
@@ -38,10 +38,10 @@ npm run server
 
 ```
 
-### Running Frontend server
+### Run Frontend server
 
 ```bash
-/* Assuming from root directory */
+/* Assuming root directory */
 /* Change dir into client directory(frontend) */
 cd src/client
 
@@ -54,15 +54,16 @@ npm run serve
 >
 > `npm run client`
 
-### Alternative to run both at the same time.
+### Alternatively, to run both at the same time.
 
 ```bash
 /* Change dir to backend */
 cd src/
 
 /* Run script to run both backend and frontend together */
-npm run dev 
+npm run dev
 ```
+
 # Development Workflow
 
 Branches
