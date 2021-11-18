@@ -23,24 +23,24 @@
         <table style="width: 100%; border-collapse: collapse; border: none">
           <tr>
             <td style="width: 20%; text-align: right; border: none">
-              Executing Code:
+              Executing Code: &nbsp;
             </td>
-            <td style="width: 80%; border: none">
-              &nbsp; &nbsp; Forward 3 times
-            </td>
+            <td style="width: 80%; border: none" id="ExCode">&nbsp; &nbsp;</td>
           </tr>
           <tr>
-            <td style="text-align: right; border: none">Next Code:</td>
-            <td style="border: none">&nbsp; &nbsp; Right 1 tiles</td>
+            <td style="text-align: right; border: none" id="NextCode">
+              Next Code: &nbsp;
+            </td>
+            <td style="border: none">&nbsp; &nbsp;</td>
           </tr>
-          <tr>
+          <!-- <tr>
             <td style="border: none"></td>
             <td style="border: none">&nbsp; &nbsp; Left 2 tiles</td>
           </tr>
           <tr>
             <td style="border: none"></td>
             <td style="border: none">&nbsp; &nbsp; Reverse 2 tiles</td>
-          </tr>
+          </tr> -->
         </table>
 
         <p></p>
@@ -180,6 +180,36 @@
     </div>
   </div>
 </template>
+
+<script>
+import VueSession from "vue-session";
+import Vue from "vue";
+
+Vue.use(VueSession);
+
+export default {
+  mounted: function () {
+    this.getExCode();
+    this.getNextCode();
+  },
+  methods: {
+    getExCode: function () {
+      this.$session.start();
+      console.log(this.$session.get("BlocklyCommands"));
+      document.getElementById("ExCode").innerHTML =
+        this.$session.get("BlocklyCommands");
+    },
+  },
+  // getNextCode: function () {
+  //   this.$session.start();
+  //   let creationDate = this.$session.get("BlocklyCommands")
+  //   creationDate = creationDate.split(" ");
+  //   console.log(this.$session.get("BlocklyCommands"));
+  //   document.getElementById("NextCode").innerHTML =
+  //     this.$session.get("BlocklyCommands");
+  // },
+};
+</script> 
 
 <!-- top left -->
 <style scoped>

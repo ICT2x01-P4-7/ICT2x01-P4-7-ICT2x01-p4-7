@@ -4,38 +4,39 @@
            <v-btn to="/dashboard">Dashboard</v-btn>
     <BlocklyComponent id="blockly2" :options="options" ref="program"></BlocklyComponent>
     <p id="code">
-      <button v-on:click="showCode()">Show JavaScript</button>
-      <pre v-html="code"></pre>
+      <button v-on:click="showCode()" @click="check" >Show JavaScript</button>
+      <pre id="JScode" v-html="code" ref="showcode"></pre>
     </p>
   </div>
 </template>
 
 <script>
+import BlocklyComponent from "../components/BlocklyComponent.vue";
+import "../blocks/movement";
+import VueSession from 'vue-session'
+import Vue from "vue";
 
-import BlocklyComponent from '../components/BlocklyComponent.vue'
-import '../blocks/movement';
+Vue.use(VueSession)
 
-import BlocklyJS from 'blockly/javascript';
+import BlocklyJS from "blockly/javascript";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
-    BlocklyComponent
+    BlocklyComponent,
   },
-  data(){
+  data() {
     return {
-      code: '',
+      code: "",
       options: {
-        media: 'media/',
-        grid:
-          {
-            spacing: 25,
-            length: 3,
-            colour: '#ccc',
-            snap: true
-          },
-        toolbox:
-        `<xml>
+        media: "media/",
+        grid: {
+          spacing: 25,
+          length: 3,
+          colour: "#ccc",
+          snap: true,
+        },
+        toolbox: `<xml>
             <category name="Movement" colour="%{BKY_VARIABLES_HUE}">
               <block type="forward"></block>
               <block type="backward"></block>
@@ -43,27 +44,36 @@ export default {
               <block type="right"></block>
               <block type="repeat_direction"></block>
             </category>
-        </xml>`
-      }
-    }
+        </xml>`,
+      },
+    };
   },
   methods: {
     showCode() {
       this.code = BlocklyJS.workspaceToCode(this.$refs["program"].workspace);
-    }
-  }
-}
+    },
+    check() {
+      this.$nextTick(() => {
+        console.log(document.getElementById("JScode").innerHTML);
+        this.$session.start()
+        this.$session.set('BlocklyCommands', document.getElementById("JScode").innerHTML)
+      });
+    },
+  },
+};
 </script>
+
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
 
-html, body {
+html,
+body {
   margin: 0;
 }
 
