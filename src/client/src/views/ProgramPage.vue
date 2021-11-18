@@ -3,7 +3,7 @@
     <BlocklyComponent id="blockly2" :options="options" ref="program"></BlocklyComponent>
     <p id="code">
       <button v-on:click="showCode()">Show JavaScript</button>
-      <pre v-html="code"></pre>
+      <pre id="JScode" v-html="code"></pre>
     </p>
     <HistoryComponent />
   </div>
@@ -16,6 +16,7 @@ import HistoryComponent from '../components/HistoryComponent.vue'
 import '../blocks/movement';
 
 import BlocklyJS from 'blockly/javascript';
+
 
 export default {
   name: 'app',
