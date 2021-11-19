@@ -9,8 +9,8 @@ const customEventEmitter = require("./event-emitter/eventemitter");
 module.exports = class Server {
   constructor() {
     this.initDB();
-    this.initRoutes();
     this.initExpressMiddleWare();
+    this.initRoutes();
     this.initEventListener();
     this.start();
   }
@@ -31,7 +31,7 @@ module.exports = class Server {
   }
   initRoutes() {
     app.get("/", (req, res) => res.send("hello world"));
-    app.use("/api/User", userRoutes);
+    app.use("/user", userRoutes);
   }
   start() {
     app.listen(PORT, () => {

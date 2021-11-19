@@ -1,22 +1,33 @@
-const UserService = require("../services/user");
-
-const UserServiceInstance = new UserService();
-
-module.exports = { createUser };
+const {
+  getUser: getUserService,
+  createUser: createUserService,
+} = require("../services/user.js");
 
 /**
- * @description Create a User with the provided body
- * @param req {object} Express req object
- * @param res {object} Express res object
- * @returns {Promise<*>}
+ * Get a user by PIN
+ * @param username a string value that represents user's username.
+ * @returns A Promise, an exception or a value.
+ */
+function getUser(username) {
+  if (username === "") {
+    throw new Error("Username can't be blank");
+  }
+  return getUserService(username);
+}
+
+/**
+ * Create a user
+ * @param confirmPIN Integer to represent PIN.
+ *
+ * @returns A Promise, an exception or a value.
  */
 
-async function createUser(req, res) {
-  try {
-    // We only pass the body object, never the req object
-    const createdUser = await UserServiceInstance.create(req.body);
-    return res.send(createdUser);
-  } catch (err) {
-    res.status(500).send(err);
+function createUser(confirmPIN, choosePIN) {
+  if (confirmPIN != choosePIN) {
+    console.log("PINs do not match. Please try again");
+    throw new Error("PINs do not match. Please try again");
   }
+  return createUserService(confirmPIN);
 }
+
+module.exports = { createUser, getUser };

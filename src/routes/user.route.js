@@ -1,9 +1,9 @@
 const { Router } = require("express");
-const User = require("../models/User");
+const { getUser, createUser } = require("../controllers/user");
 
 const router = Router();
-const bcrypt = require("bcrypt");
-router.get("/", async (req, res) => {
+
+router.get("/login", async (req, res) => {
   try {
     const User = await User.find();
     if (!User) throw new Error("No User");
@@ -15,23 +15,10 @@ router.get("/", async (req, res) => {
 
 router.post("/create", async (req, res, next) => {
   try {
-    if (req.body.confirmPIN != req.body.choosePIN) {
-      console.log("PINs do not match. Please try again");
-      throw new Error("PINs do not match. Please try again");
-    }
-    const newUser = new User({
-      PIN: bcrypt.hashSync(req.body.confirmPIN, 12),
-    });
-    const saveUser = await newUser.save((err) => {
-      if (err) {
-        return err;
-      }
-    });
-    if (!User) throw new Error("Something went wrong with saving the user");
-    res.status(200).json(User);
+    const result = await createUser(req.body.confirmPIN, req.body.choosePIN);
+    return res.status(200).json(result);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 });
 
