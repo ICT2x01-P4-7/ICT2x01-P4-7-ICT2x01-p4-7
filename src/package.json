@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "server": "nodemon server.js --ignore 'client/'",
+    "server": "nodemon index.js --ignore 'client/'",
     "client": "npm run serve --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "lint": "eslint --fix main.js",

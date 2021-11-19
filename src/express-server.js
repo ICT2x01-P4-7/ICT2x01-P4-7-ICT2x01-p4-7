@@ -1,16 +1,17 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const { PORT, mongoUri, HOSTNAME, TCP_PORT } = require("./config/config.js");
+const { PORT, mongoUri } = require("./config/config.js");
 const cors = require("cors");
 const userRoutes = require("./routes/user.route");
-const TCPServer = require("./controllers/tcp");
+const customEventEmitter = require("./event-emitter/eventemitter");
 
-class Server {
+module.exports = class Server {
   constructor() {
     this.initDB();
     this.initRoutes();
     this.initExpressMiddleWare();
+    this.initEventListener();
     this.start();
   }
 
@@ -37,7 +38,9 @@ class Server {
       console.log(`App listening at http://localhost:${PORT}`);
     });
   }
-}
-
-const serve = new Server();
-const tcpserve = new TCPServer(HOSTNAME, TCP_PORT);
+  initEventListener() {
+    customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
+      console.log(sensorData);
+    });
+  }
+};

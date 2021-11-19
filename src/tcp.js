@@ -1,11 +1,19 @@
+const customEventEmitter = require("./event-emitter/eventemitter");
+
 let net = require("net");
 
 module.exports = class TCPServer {
   constructor(hostname, port) {
-    this.receivedData = "";
     this.server = net.createServer();
     this.initServer(hostname, port);
     this.sendData();
+  }
+  get receivedData() {
+    return this._receivedData;
+  }
+
+  set dataRead(n) {
+    return (this.dataRead = n);
   }
 
   initServer(hostname, port) {
@@ -70,19 +78,21 @@ module.exports = class TCPServer {
         console.log("Data sent to server : " + data);
         let dataLines = data.split("\n");
         for (let i in dataLines) {
-          console.log("Which line: ", i, "\n");
           //console.log(dataLines[i], "Length: ", dataLines[i].length, "\n");
           if (dataLines[i] != "") {
             try {
               sensorData = JSON.parse(dataLines[i]);
-              console.log(sensorData);
             } catch (e) {
               console.log("Error in >", dataLines[i]);
             }
           }
         }
+        customEventEmitter
+          .getEventEmitter()
+          .emit("DATA", { sensorData: sensorData });
+
         count++;
-        if (count % 100 == 0) {
+        if (count % 10 == 0) {
           let is_kernel_buffer_full = socket.write(
             "This is the " + count + " transmission.!\r\n"
           );
@@ -136,7 +146,7 @@ module.exports = class TCPServer {
         let isdestroyed = socket.destroyed;
         console.log("Socket destroyed:" + isdestroyed);
         socket.destroy();
-      }, 10000);
+      }, 200000);
     });
 
     // emits when any error occurs -> calls closed event immediately after
