@@ -3,11 +3,10 @@ const { getUser, createUser } = require("../controllers/user");
 
 const router = Router();
 
+/** TO DO: NOT YET CREATED! */
 router.get("/login", async (req, res) => {
   try {
-    const User = await User.find();
-    if (!User) throw new Error("No User");
-    res.status(200).json(User);
+    res.status(200).json({});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

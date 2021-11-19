@@ -5,20 +5,20 @@ const {
 
 /**
  * Get a user by PIN
- * @param username a string value that represents user's username.
+ * @param PIN Integer to represent PIN.
  * @returns A Promise, an exception or a value.
  */
-function getUser(username) {
-  if (username === "") {
-    throw new Error("Username can't be blank");
+function getUser(PIN) {
+  if (PIN === "") {
+    throw new Error("PIN can't be blank");
   }
-  return getUserService(username);
+  return getUserService(PIN);
 }
 
 /**
  * Create a user
  * @param confirmPIN Integer to represent PIN.
- *
+ * @param choosePIN Integer to represent PIN.
  * @returns A Promise, an exception or a value.
  */
 
