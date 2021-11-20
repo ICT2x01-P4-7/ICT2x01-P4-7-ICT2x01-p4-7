@@ -3,10 +3,10 @@ const { getUser, createUser } = require("../controllers/user");
 
 const router = Router();
 
-/** TO DO: NOT YET CREATED! */
-router.get("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
-    res.status(200).json({});
+    const result = await getUser(req.body.PIN);
+    res.status(200).json({ accessToken: result });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

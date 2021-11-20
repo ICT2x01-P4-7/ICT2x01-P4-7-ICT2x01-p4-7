@@ -1,10 +1,25 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-/** TO DO !!! */
+const { accessTokenSecret } = require("../config/config.js");
+
+const saltRounds = 10;
+
 async function getUser(PIN) {
-  return User.find({ PIN }).exec(); // Just as a mongoose reminder, .exec() on find
-  // returns a Promise instead of the standard callback.
+  const foundUser = await User.find({}).exec();
+  if (foundUser.length != 0) {
+    const hashedPIN = foundUser[0].PIN;
+    const cmp = await bcrypt.compare(PIN, hashedPIN);
+    if (cmp) {
+      const token = jwt.sign({}, accessTokenSecret);
+      return token;
+    } else {
+      throw new Error("User does not exist or incorrect PIN.");
+    }
+  } else {
+    throw new Error("There was a problem authenticating..");
+  }
 }
 
 async function checkAUserExist() {
@@ -27,8 +42,9 @@ async function createUser(confirmPIN) {
   if (exists) {
     throw new Error("A user already exists.");
   }
+  const hashedPin = await bcrypt.hash(confirmPIN, saltRounds);
   const newUser = new User({
-    PIN: bcrypt.hashSync(confirmPIN, 12),
+    PIN: hashedPin,
   });
   await newUser.save((err) => {
     if (err) {

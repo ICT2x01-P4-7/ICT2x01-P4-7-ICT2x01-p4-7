@@ -8,8 +8,8 @@ const {
  * @param PIN Integer to represent PIN.
  * @returns A Promise, an exception or a value.
  */
-function getUser(PIN) {
-  if (PIN === "") {
+async function getUser(PIN) {
+  if (!PIN) {
     throw new Error("PIN can't be blank");
   }
   return getUserService(PIN);
@@ -22,7 +22,7 @@ function getUser(PIN) {
  * @returns A Promise, an exception or a value.
  */
 
-function createUser(confirmPIN, choosePIN) {
+async function createUser(confirmPIN, choosePIN) {
   if (confirmPIN != choosePIN) {
     console.log("PINs do not match. Please try again");
     throw new Error("PINs do not match. Please try again");
