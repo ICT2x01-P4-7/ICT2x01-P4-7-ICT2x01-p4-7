@@ -38,6 +38,8 @@ npm run server
 
 ```
 
+![Express Backend](/img/express-backend.png)
+
 ### Run Frontend server
 
 ```bash
@@ -49,6 +51,8 @@ cd src/client
 npm run serve
 
 ```
+
+![Express Backend](/img/vue-frontend.png)
 
 > It is also possible to serve the client server from the backend directory for convenience.
 >
