@@ -5,8 +5,9 @@ let net = require("net");
 module.exports = class TCPServer {
   constructor(hostname, port) {
     this.server = net.createServer();
+    this.eventListener;
+    this.initListener();
     this.initServer(hostname, port);
-    this.sendData();
   }
   get receivedData() {
     return this._receivedData;
@@ -16,9 +17,12 @@ module.exports = class TCPServer {
     return (this.dataRead = n);
   }
 
+  initListener() {}
+
   initServer(hostname, port) {
     let server = this.server;
     let count = 0;
+
     //emitted when server closes ...not emitted until all connections closes.
     this.server.on("close", function () {
       console.log("Server closed !");
@@ -69,6 +73,18 @@ module.exports = class TCPServer {
         sock.destroy();
       });
 
+      customEventEmitter
+        .getEventEmitter()
+        .on("SEQUENCE", ({ sequenceData }) => {
+          let is_kernel_buffer_full = socket.write(`${sequenceData}\r\n`);
+          if (is_kernel_buffer_full) {
+            console.log(`Wrote ${sequenceData} to car`);
+          } else {
+            socket.pause();
+            // }
+          }
+        });
+
       socket.on("data", function (data) {
         let bread = socket.bytesRead;
         let bwrite = socket.bytesWritten;
@@ -92,14 +108,12 @@ module.exports = class TCPServer {
           .emit("DATA", { sensorData: sensorData });
 
         count++;
-        if (count % 10 == 0) {
+        if (count % 1 == 0) {
           let is_kernel_buffer_full = socket.write(
             "This is the " + count + " transmission.!\r\n"
           );
           if (is_kernel_buffer_full) {
-            console.log(
-              "Data was flushed successfully from kernel buffer i.e written successfully!"
-            );
+            console.log("Written successfully to car!");
           } else {
             socket.pause();
             // }
@@ -170,5 +184,4 @@ module.exports = class TCPServer {
       server.close();
     }, 5000000);
   }
-  sendData(data) {}
 };

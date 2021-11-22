@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const { PORT, mongoUri } = require("./config/config.js");
 const cors = require("cors");
 const userRoutes = require("./routes/user.route");
+const programRoutes = require("./routes/program.route");
+
 const customEventEmitter = require("./event-emitter/eventemitter");
 
 module.exports = class Server {
@@ -32,6 +34,7 @@ module.exports = class Server {
   initRoutes() {
     app.get("/", (req, res) => res.send("hello world"));
     app.use("/user", userRoutes);
+    app.use("/program", programRoutes);
   }
   start() {
     app.listen(PORT, () => {

@@ -1,4 +1,3 @@
-const { EventEmitter } = require("events");
 const { HOSTNAME, TCP_PORT } = require("./config/config.js");
 
 const TCPServer = require("./tcp");
