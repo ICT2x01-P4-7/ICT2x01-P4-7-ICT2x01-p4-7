@@ -38,6 +38,8 @@ npm run server
 
 ```
 
+![Express Backend](/img/express-backend.png)
+
 ### Run Frontend server
 
 ```bash
@@ -50,11 +52,15 @@ npm run serve
 
 ```
 
+![Express Backend](/img/vue-frontend.png)
+
 > It is also possible to serve the client server from the backend directory for convenience.
 >
 > `npm run client`
 
 ### Alternatively, to run both at the same time.
+
+> Note that this method makes it hard to see when errors appear in either backend or frontend
 
 ```bash
 /* Change dir to backend */

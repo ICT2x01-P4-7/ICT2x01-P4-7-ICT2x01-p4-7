@@ -1,6 +1,7 @@
 const {
   getUser: getUserService,
   createUser: createUserService,
+  resetPIN: resetPINService,
 } = require("../services/user.js");
 
 /**
@@ -30,4 +31,19 @@ async function createUser(confirmPIN, choosePIN) {
   return createUserService(confirmPIN);
 }
 
-module.exports = { createUser, getUser };
+/**
+ * Reset User PIN
+ * @param confirmPIN Integer to represent PIN.
+ * @param choosePIN Integer to represent PIN.
+ * @returns A Promise, an exception or a value.
+ */
+
+async function resetPIN(oldPIN, confirmPIN, choosePIN) {
+  if (confirmPIN != choosePIN) {
+    console.log("PINs do not match. Please try again");
+    throw new Error("PINs do not match. Please try again");
+  }
+  return resetPINService(oldPIN, confirmPIN);
+}
+
+module.exports = { createUser, getUser, resetPIN };

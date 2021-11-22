@@ -6,13 +6,18 @@ const { accessTokenSecret } = require("../config/config.js");
 
 const saltRounds = 10;
 
+/**
+ * Get a user by PIN. Throws error if incorrect PIN.
+ * @param PIN Integer to represent PIN.
+ * @returns A token
+ */
 async function getUser(PIN) {
   const foundUser = await User.find({}).exec();
   if (foundUser.length != 0) {
     const hashedPIN = foundUser[0].PIN;
     const cmp = await bcrypt.compare(PIN, hashedPIN);
     if (cmp) {
-      const token = jwt.sign({}, accessTokenSecret);
+      const token = jwt.sign({}, accessTokenSecret, { expiresIn: "1h" });
       return token;
     } else {
       throw new Error("User does not exist or incorrect PIN.");
@@ -22,6 +27,11 @@ async function getUser(PIN) {
   }
 }
 
+/**
+ * Helper function to check if there is any user in database.
+ * @param {Integer} PIN Integer to represent PIN.
+ * @returns {Boolean}
+ */
 async function checkAUserExist() {
   collections = [];
   exist = false;
@@ -36,6 +46,11 @@ async function checkAUserExist() {
   }
   return false;
 }
+
+/**
+ * Create user.
+ * @param {Integer} confirmPIN Integer to represent PIN.
+ */
 
 async function createUser(confirmPIN) {
   const exists = await checkAUserExist();
@@ -54,4 +69,24 @@ async function createUser(confirmPIN) {
   });
 }
 
-module.exports = { createUser, getUser };
+async function resetPIN(oldPIN, confirmPIN) {
+  const exists = checkAUserExist();
+  if (exists) {
+    const foundUser = await User.find({}).exec();
+    if (foundUser.length != 0) {
+      const user = foundUser[0];
+      const hashedPIN = user.PIN;
+      const cmp = await bcrypt.compare(oldPIN, hashedPIN);
+      if (cmp) {
+        const newHashedPin = await bcrypt.hash(confirmPIN, saltRounds);
+        await User.findByIdAndUpdate(user._id, { PIN: newHashedPin });
+      } else {
+        throw new Error("User does not exist or incorrect PIN.");
+      }
+    } else {
+      throw new Error("There was a problem authenticating..");
+    }
+  }
+}
+
+module.exports = { createUser, getUser, resetPIN };
