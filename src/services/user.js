@@ -69,4 +69,24 @@ async function createUser(confirmPIN) {
   });
 }
 
-module.exports = { createUser, getUser };
+async function resetPIN(oldPIN, confirmPIN) {
+  const exists = checkAUserExist();
+  if (exists) {
+    const foundUser = await User.find({}).exec();
+    if (foundUser.length != 0) {
+      const user = foundUser[0];
+      const hashedPIN = user.PIN;
+      const cmp = await bcrypt.compare(oldPIN, hashedPIN);
+      if (cmp) {
+        const newHashedPin = await bcrypt.hash(confirmPIN, saltRounds);
+        await User.findByIdAndUpdate(user._id, { PIN: newHashedPin });
+      } else {
+        throw new Error("User does not exist or incorrect PIN.");
+      }
+    } else {
+      throw new Error("There was a problem authenticating..");
+    }
+  }
+}
+
+module.exports = { createUser, getUser, resetPIN };
