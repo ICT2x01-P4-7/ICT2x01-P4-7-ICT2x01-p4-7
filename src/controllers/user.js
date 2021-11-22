@@ -1,6 +1,7 @@
 const {
   getUser: getUserService,
   createUser: createUserService,
+  authenticateUser: authenticateUserService,
 } = require("../services/user.js");
 
 /**
@@ -30,4 +31,7 @@ async function createUser(confirmPIN, choosePIN) {
   return createUserService(confirmPIN);
 }
 
-module.exports = { createUser, getUser };
+
+
+
+module.exports = { createUser, getUser};

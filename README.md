@@ -60,6 +60,8 @@ npm run serve
 
 ### Alternatively, to run both at the same time.
 
+> Note that this method makes it hard to see when errors appear in either backend or frontend
+
 ```bash
 /* Change dir to backend */
 cd src/

@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { getUser, createUser } = require("../controllers/user");
+const auth = require("../middlewares/auth");
 
 const router = Router();
 
@@ -19,6 +20,10 @@ router.post("/create", async (req, res, next) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+});
+
+router.get("/auth", auth, async (req, res, next) => {
+  res.json("Successfull authenticated :D");
 });
 
 module.exports = router;
