@@ -33,7 +33,6 @@ class UserController extends BaseController {
       const { PIN } = req.body;
       const userService = new UserService(PIN);
       const data = await userService.login();
-      console.log(data);
       if (data.success) {
         super.sendSuccess(res, data.token, data.message);
       } else {

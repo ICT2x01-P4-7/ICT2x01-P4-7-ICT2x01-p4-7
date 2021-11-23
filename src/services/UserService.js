@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const { accessTokenSecret } = require("../config/config.js");
 
-const saltRounds = 10;
+const { saltRounds } = require("../config/config.js");
 
 class UserService {
   constructor(PIN, choosePIN, confirmPIN) {
@@ -45,8 +45,8 @@ class UserService {
     try {
       const foundUser = await User.find({}).exec();
       if (foundUser.length != 0) {
-        const hashedPIN = foundUser[0].PIN;
-        const cmp = await bcrypt.compare(this.PIN, hashedPIN);
+        const hashedPIN = foundUser[0].hashed_PIN;
+        const cmp = await User.authenticate(this.PIN, hashedPIN);
         if (cmp) {
           const token = jwt.sign({}, accessTokenSecret, { expiresIn: "1h" });
           return {
@@ -87,16 +87,9 @@ class UserService {
       if (userExists) {
         return { message: "A user already exists", success: false };
       }
-      const hashedPin = await bcrypt.hash(this.confirmPIN, saltRounds);
-      const newUser = new User({
-        PIN: hashedPin,
-      });
-      await newUser.save((err) => {
-        if (err) {
-          console.log("Error from newUser.save", err);
-          throw new Error("There was an error saving the user");
-        }
-      });
+      let result = await new User({
+        PIN: this.confirmPIN,
+      }).save();
       return {
         message: "User successfully created",
         success: true,
@@ -133,11 +126,13 @@ class UserService {
         const foundUser = await User.find({}).exec();
         if (foundUser.length != 0) {
           const user = foundUser[0];
-          const hashedPIN = user.PIN;
-          const cmp = await bcrypt.compare(this.PIN, hashedPIN);
+          const hashedPIN = user.hashed_PIN;
+          const cmp = await User.authenticate(this.PIN, hashedPIN);
           if (cmp) {
             const newHashedPin = await bcrypt.hash(this.confirmPIN, saltRounds);
-            await User.findByIdAndUpdate(user._id, { PIN: newHashedPin });
+            await User.findByIdAndUpdate(user._id, {
+              hashed_PIN: newHashedPin,
+            });
             return {
               message: "PIN successfully reset",
               success: true,
