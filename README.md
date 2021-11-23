@@ -8,8 +8,48 @@ TileUp is a gamified web portal for controlling MSP432 robotic car.
 
 # How it works
 
-The project contains a Nodejs backend and a VueJS frontend.
-The backend is in `src/`. The frontend is nested within the backend directory `src/client`.
+The project is using the MEVN Stack. MongoDB(M), ExpressJS(E) , VueJS(V), NodeJS(N)
+
+The backend is in `src/`. The backend consist of MongoDB, ExpressJS and NodeJS
+The VueJS frontend is nested within the backend directory `src/client`.
+
+## Prerequisite
+
+### Setting up MongoDB Database
+
+[Great Guide on setting up a local MongoDB] (https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database)
+
+### Configure Database URI
+
+[config/config.js]https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js
+
+#### Local MongoDB
+
+```js
+
+module.exports = {
+  /* Change the default mongoUri to localhost */
+  mongoUri: "mongodb://localhost:27017/tileup"
+  ...
+  ...
+}
+```
+
+#### Remote Atlas
+
+> No change is required for atlas, however, have to add the variable into your terminal zsh/bash profile
+
+```bash
+# Example for Windows Bash
+
+code ~/.bash_profile
+
+# Add the following code
+
+export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
+
+# Restart terminal!
+```
 
 # How to run
 
@@ -114,6 +154,16 @@ Wew!
 > Only the leader can merge the **development** branch to main
 >
 > No pushing changes to main. Only merge is allowed. Branch protection is enabled.
+
+## Postman Collection for testing the backend API
+
+- Download the postman collection to try out the APIs available.
+
+> Take note: Some API requires logging in first to be able to call the API.
+>
+> Send the Login request first, then try the others. It will automatically update the authorization variable and allow access to the API
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/54010551dd3d1ae90e8e?action=collection%2Fimport)
 
 # User Acceptance Testing
 
