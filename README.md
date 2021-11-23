@@ -17,19 +17,22 @@ The VueJS frontend is nested within the backend directory `src/client`.
 
 ### Setting up MongoDB Database
 
-[Great Guide on setting up a local MongoDB] (https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database)
+[Great Guide on setting up a local MongoDB](https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database)
 
 ### Configure Database URI
 
-[config/config.js]https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js
+Configure the URI inside y
 
-#### Local MongoDB
+#### Lazy Way
+
+[config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js)
 
 ```js
 
+> Alert, Do not commit config.js if you make this change!
 module.exports = {
-  /* Change the default mongoUri to localhost */
-  mongoUri: "mongodb://localhost:27017/tileup"
+  /* Change the default mongoUri to localhost or Cloud MongoDB URI */
+  mongoUri: "mongodb://localhost:27017/tileup" or "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
   ...
   ...
 }
@@ -37,7 +40,7 @@ module.exports = {
 
 #### Remote Atlas
 
-> No change is required for atlas, however, have to add the variable into your terminal zsh/bash profile
+> No change is required in config.js however, have to add the variable into your terminal zsh/bash profile
 
 ```bash
 # Example for Windows Bash
@@ -45,8 +48,11 @@ module.exports = {
 code ~/.bash_profile
 
 # Add the following code
-
+## Local
+export MONGO_URI="mongodb://localhost:27017/tileup"
+## Remote Atlas
 export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
+
 
 # Restart terminal!
 ```
