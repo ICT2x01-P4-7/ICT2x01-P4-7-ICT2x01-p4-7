@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const { PORT, mongoUri } = require("./config/config.js");
 const cors = require("cors");
 
-const customEventEmitter = require("./event-emitter/eventemitter");
+const customEventEmitter = require("./event-emitter/CustomEventEmitter");
 const { UserController } = require("./controllers/UserController");
 const { ProgramController } = require("./controllers/ProgramController");
 
@@ -47,6 +47,10 @@ module.exports = class Server {
   initEventListener() {
     customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
       console.log(sensorData);
+    });
+    customEventEmitter.getEventEmitter().on("CONNECTED", ({ connected }) => {
+      global.connected = connected;
+      console.log(`Is the car connected? ${global.connected}`);
     });
   }
 };

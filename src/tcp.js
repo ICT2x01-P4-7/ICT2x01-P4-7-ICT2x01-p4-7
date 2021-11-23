@@ -1,4 +1,4 @@
-const customEventEmitter = require("./event-emitter/eventemitter");
+const customEventEmitter = require("./event-emitter/CustomEventEmitter");
 
 let net = require("net");
 
@@ -32,6 +32,9 @@ module.exports = class TCPServer {
     this.server.on("connection", function (socket) {
       //this property shows the number of characters currently buffered to be written. (Number of characters is approximately equal to the number of bytes to be written, but the buffer may contain strings, and the strings are lazily encoded, so the exact number of bytes is not known.)
       //Users who experience large or growing bufferSize should attempt to "throttle" the data flows in their program with pause() and resume().
+      customEventEmitter
+        .getEventEmitter()
+        .emit("CONNECTED", { connected: true });
 
       console.log("---------server details -----------------");
 
@@ -151,6 +154,9 @@ module.exports = class TCPServer {
         console.log("Bytes read : " + bread);
         console.log("Bytes written : " + bwrite);
         console.log("Socket closed!");
+        customEventEmitter
+          .getEventEmitter()
+          .emit("CONNECTED", { connected: false });
         console.log("Removing all listeners for current socket..");
         customEventEmitter.getEventEmitter().removeAllListeners();
         if (error) {

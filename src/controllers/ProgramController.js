@@ -23,6 +23,8 @@ class ProgramController extends BaseController {
       const result = await programService.sendSequence();
       if (result.success) {
         super.sendSuccess(res, result.message);
+      } else {
+        super.sendError(res, result.message);
       }
     } catch (e) {
       super.sendError(res);
