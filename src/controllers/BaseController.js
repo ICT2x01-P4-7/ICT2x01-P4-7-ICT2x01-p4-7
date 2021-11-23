@@ -43,6 +43,12 @@ class BaseController {
       message: message || "internal server error",
     });
   }
+  sendError(res, data, message) {
+    return res.status(403).json({
+      message: message || "internal server error",
+      data: data,
+    });
+  }
 }
 
 module.exports = { BaseController };
