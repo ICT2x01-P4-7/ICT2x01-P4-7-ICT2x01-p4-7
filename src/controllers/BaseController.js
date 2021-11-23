@@ -15,7 +15,6 @@ class BaseController {
       for (const mw of route.localMiddleware) {
         this.router.use(route.path, mw);
       }
-      console.log(route.path, route.handler);
       switch (route.method) {
         case "GET":
           this.router.get(route.path, route.handler);

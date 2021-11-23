@@ -3,12 +3,12 @@ const app = express();
 const mongoose = require("mongoose");
 const { PORT, mongoUri } = require("./config/config.js");
 const cors = require("cors");
-const programRoutes = require("./routes/program.route");
 
 const customEventEmitter = require("./event-emitter/eventemitter");
 const { UserController } = require("./controllers/UserController");
+const { ProgramController } = require("./controllers/ProgramController");
 
-const controllers = [new UserController()];
+const controllers = [new UserController(), new ProgramController()];
 
 module.exports = class Server {
   constructor() {
@@ -38,8 +38,6 @@ module.exports = class Server {
     controllers.forEach((controller) => {
       app.use(controller.path, controller.setRoutes());
     });
-    //app.use("/user", userRoutes);
-    // app.use("/program", programRoutes);
   }
   start() {
     app.listen(PORT, () => {
