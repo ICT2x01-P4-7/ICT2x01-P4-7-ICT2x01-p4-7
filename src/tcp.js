@@ -151,6 +151,8 @@ module.exports = class TCPServer {
         console.log("Bytes read : " + bread);
         console.log("Bytes written : " + bwrite);
         console.log("Socket closed!");
+        console.log("Removing all listeners for current socket..");
+        customEventEmitter.getEventEmitter().removeAllListeners();
         if (error) {
           console.log(error);
         }
