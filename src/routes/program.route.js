@@ -1,8 +1,6 @@
 const { Router } = require("express");
 const { sendSequence } = require("../controllers/program");
 
-const auth = require("../middlewares/auth");
-
 const router = Router();
 
 router.post("/sendSequence", async (req, res, next) => {

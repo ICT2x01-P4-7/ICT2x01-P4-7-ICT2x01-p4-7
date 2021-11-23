@@ -3,16 +3,18 @@ const app = express();
 const mongoose = require("mongoose");
 const { PORT, mongoUri } = require("./config/config.js");
 const cors = require("cors");
-const userRoutes = require("./routes/user.route");
 const programRoutes = require("./routes/program.route");
 
 const customEventEmitter = require("./event-emitter/eventemitter");
+const { UserController } = require("./controllers/UserController");
+
+const controllers = [new UserController()];
 
 module.exports = class Server {
   constructor() {
     this.initDB();
     this.initExpressMiddleWare();
-    this.initRoutes();
+    this.initControllers();
     this.initEventListener();
     this.start();
   }
@@ -31,10 +33,13 @@ module.exports = class Server {
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
   }
-  initRoutes() {
+  initControllers() {
     app.get("/", (req, res) => res.send("hello world"));
-    app.use("/user", userRoutes);
-    app.use("/program", programRoutes);
+    controllers.forEach((controller) => {
+      app.use(controller.path, controller.setRoutes());
+    });
+    //app.use("/user", userRoutes);
+    // app.use("/program", programRoutes);
   }
   start() {
     app.listen(PORT, () => {
