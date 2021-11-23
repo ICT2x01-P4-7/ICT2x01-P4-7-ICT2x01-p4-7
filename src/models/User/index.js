@@ -2,6 +2,8 @@ const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 const { saltRounds } = require("../../config/config.js");
 
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCK_TIME = 1 * 60 * 5 * 1000;
 /*
 References
 https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-1
@@ -38,7 +40,7 @@ UserSchema.virtual("PIN")
     return this._PIN;
   });
 
-UserSchema.virtual("isLocked").get(() => {
+UserSchema.virtual("isLocked").get(function () {
   return !!(this.lockUntil && this.lockUntil > Date.now());
 });
 
@@ -61,11 +63,21 @@ UserSchema.statics.authenticate = function (given_PIN, hashed_PIN) {
   return bcrypt.compare(given_PIN, hashed_PIN);
 };
 
-// expose enum on the model
-UserSchema.statics.failedLogin = {
-  NOT_FOUND: 0,
-  PASSWORD_INCORRECT: 1,
-  MAX_ATTEMPTS: 2,
+UserSchema.methods.incLoginAttempts = function () {
+  if (this.lockUntil && this.lockUntil < Date.now()) {
+    return {
+      lockUntil: this.lockUntil,
+      updates: {
+        $set: { loginAttempts: 1 },
+        $unset: { lockUntil: 1 },
+      },
+    };
+  }
+  let updates = { $inc: { loginAttempts: 1 }, $set: {} };
+  if (this.loginAttempts + 1 >= MAX_LOGIN_ATTEMPTS && !this.isLocked) {
+    updates.$set = { lockUntil: Date.now() + LOCK_TIME };
+  }
+  return { lockUntil: this.lockUntil, updates };
 };
 
 const User = model("User", UserSchema);

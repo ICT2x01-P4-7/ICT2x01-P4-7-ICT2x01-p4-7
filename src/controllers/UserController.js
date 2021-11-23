@@ -36,8 +36,11 @@ class UserController extends BaseController {
       if (data.success) {
         super.sendSuccess(res, data.token, data.message);
       } else {
-        console.log(data.message);
-        super.sendError(res, data.message);
+        if (data.lockUntil) {
+          super.sendError(res, { lockUntil: data.lockUntil }, data.message);
+        } else {
+          super.sendError(res, data.message);
+        }
       }
     } catch (e) {
       console.log(e);

@@ -42,10 +42,23 @@ class UserService {
   }
 
   async login() {
+    let updates;
     try {
-      const foundUser = await User.find({}).exec();
-      if (foundUser.length != 0) {
-        const hashedPIN = foundUser[0].hashed_PIN;
+      const Users = await User.find({}).exec();
+      if (Users.length != 0) {
+        const foundUser = Users[0];
+        const hashedPIN = foundUser.hashed_PIN;
+
+        if (foundUser.isLocked) {
+          // just increment login attempts if account is already locked
+          const { lockUntil, updates } = foundUser.incLoginAttempts();
+          User.updateOne({ _id: foundUser._id }, updates).exec();
+          return {
+            message: `You have exceed the max login attempts(5). Barred from logging in for the next 5 minutes.`,
+            success: false,
+            lockUntil: lockUntil,
+          };
+        }
         const cmp = await User.authenticate(this.PIN, hashedPIN);
         if (cmp) {
           const token = jwt.sign({}, accessTokenSecret, { expiresIn: "1h" });
@@ -55,6 +68,8 @@ class UserService {
             token: token,
           };
         } else {
+          const { lockUntil, updates } = foundUser.incLoginAttempts();
+          User.updateOne({ _id: foundUser._id }, updates).exec();
           return {
             message: "User does not exist or PIN is incorrect",
             success: false,
