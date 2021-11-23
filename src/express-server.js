@@ -3,14 +3,18 @@ const app = express();
 const mongoose = require("mongoose");
 const { PORT, mongoUri } = require("./config/config.js");
 const cors = require("cors");
-const userRoutes = require("./routes/user.route");
-const customEventEmitter = require("./event-emitter/eventemitter");
+
+const customEventEmitter = require("./event-emitter/CustomEventEmitter");
+const { UserController } = require("./controllers/UserController");
+const { ProgramController } = require("./controllers/ProgramController");
+
+const controllers = [new UserController(), new ProgramController()];
 
 module.exports = class Server {
   constructor() {
     this.initDB();
     this.initExpressMiddleWare();
-    this.initRoutes();
+    this.initControllers();
     this.initEventListener();
     this.start();
   }
@@ -29,9 +33,11 @@ module.exports = class Server {
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
   }
-  initRoutes() {
+  initControllers() {
     app.get("/", (req, res) => res.send("hello world"));
-    app.use("/user", userRoutes);
+    controllers.forEach((controller) => {
+      app.use(controller.path, controller.setRoutes());
+    });
   }
   start() {
     app.listen(PORT, () => {
@@ -39,8 +45,12 @@ module.exports = class Server {
     });
   }
   initEventListener() {
-    customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
-      console.log(sensorData);
+    // customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
+    //   console.log(sensorData);
+    // });
+    customEventEmitter.getEventEmitter().on("CONNECTED", ({ connected }) => {
+      global.connected = connected;
+      console.log(`Is the car connected? ${global.connected}`);
     });
   }
 };
