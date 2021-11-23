@@ -21,7 +21,7 @@ The VueJS frontend is nested within the backend directory `src/client`.
 
 ### Configure Database URI
 
-Configure the URI inside y
+Configure the URI inside config.js.
 
 #### Lazy Way
 
@@ -38,9 +38,9 @@ module.exports = {
 }
 ```
 
-#### Remote Atlas
+#### More effort, but more convenient!
 
-> No change is required in config.js however, have to add the variable into your terminal zsh/bash profile
+> No change is required in config.js, HOWEVER, have to add the variable into your terminal zsh/bash profile.
 
 ```bash
 # Example for Windows Bash
@@ -52,7 +52,6 @@ code ~/.bash_profile
 export MONGO_URI="mongodb://localhost:27017/tileup"
 ## Remote Atlas
 export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
-
 
 # Restart terminal!
 ```
