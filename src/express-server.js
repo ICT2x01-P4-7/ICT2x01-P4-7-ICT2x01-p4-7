@@ -45,9 +45,9 @@ module.exports = class Server {
     });
   }
   initEventListener() {
-    customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
-      console.log(sensorData);
-    });
+    // customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
+    //   console.log(sensorData);
+    // });
     customEventEmitter.getEventEmitter().on("CONNECTED", ({ connected }) => {
       global.connected = connected;
       console.log(`Is the car connected? ${global.connected}`);

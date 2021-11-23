@@ -110,18 +110,18 @@ module.exports = class TCPServer {
           .getEventEmitter()
           .emit("DATA", { sensorData: sensorData });
 
-        count++;
-        if (count % 1 == 0) {
-          let is_kernel_buffer_full = socket.write(
-            "This is the " + count + " transmission.!\r\n"
-          );
-          if (is_kernel_buffer_full) {
-            console.log("Written successfully to car!");
-          } else {
-            socket.pause();
-            // }
-          }
-        }
+        // count++;
+        // if (count % 1 == 0) {
+        //   let is_kernel_buffer_full = socket.write(
+        //     "This is the " + count + " transmission.!\r\n"
+        //   );
+        //   if (is_kernel_buffer_full) {
+        //     console.log("Written successfully to car!");
+        //   } else {
+        //     socket.pause();
+        //     // }
+        //   }
+        // }
 
         //echo data
       });
