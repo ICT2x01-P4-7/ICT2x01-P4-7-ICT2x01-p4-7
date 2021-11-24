@@ -38,16 +38,18 @@ class BaseController {
     });
   }
 
-  sendError(res, message) {
-    return res.status(500).json({
-      message: message || "internal server error",
-    });
-  }
   sendError(res, data, message) {
-    return res.status(403).json({
-      message: message || "internal server error",
-      data: data,
-    });
+    switch (arguments.length) {
+      case 3:
+        return res.status(403).json({
+          message: message || "internal server error",
+          data: data,
+        });
+      default:
+        return res.status(500).json({
+          message: data || message || "internal server error",
+        });
+    }
   }
 }
 

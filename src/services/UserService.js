@@ -68,7 +68,7 @@ class UserService {
             token: token,
           };
         } else {
-          const { lockUntil, updates } = foundUser.incLoginAttempts();
+          const { updates } = foundUser.incLoginAttempts();
           User.updateOne({ _id: foundUser._id }, updates).exec();
           return {
             message: "User does not exist or PIN is incorrect",
