@@ -172,6 +172,32 @@ describe("UserService test", () => {
         success: false,
       });
     });
+
+    it("Exceed login attempt ", async () => {
+      jest
+        .spyOn(UserService.prototype, "checkAUserExist")
+        .mockImplementation(() => true);
+      const _doc = [
+        {
+          _id: { $oid: "619db0bf4b50b6136ab2b770" },
+          hashed_PIN:
+            "$2b$10$IrIK300GhpQe2Iajc3rsvesbwC2AkTVT4qHOiHEXR/In30MEba9Ri",
+          loginAttempts: 5,
+          createdAt: { $date: "2021-11-24T03:25:51.863Z" },
+          updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
+          lockUntil: new Date(new Date().getTime() + 5 * 60000),
+          __v: 0,
+        },
+      ];
+      mockingoose(User).toReturn(_doc);
+      const userService = new UserService("9876");
+      const actual = await userService.login();
+      expect(actual).toMatchObject({
+        message:
+          "You have exceed the max login attempts(5). Barred from logging in for the next 5 minutes.",
+        success: false,
+      });
+    });
   });
 
   describe("resetPIN", () => {

@@ -87,6 +87,7 @@ class UserService {
         };
       }
     } catch (e) {
+      /* istanbul ignore next */
       return {
         message: "An error occured in UserService",
         success: false,
@@ -169,6 +170,7 @@ class UserService {
         };
       }
     } catch (e) {
+      /* istanbul ignore next */
       return { message: "An error occurred", success: false };
     }
   }
