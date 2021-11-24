@@ -21,9 +21,7 @@ The VueJS frontend is nested within the backend directory `src/client`.
 
 ### Configure Database URI
 
-Configure the URI inside config.js.
-
-#### Lazy Way
+#### Lazy Way - Configure the URI inside config.js.
 
 [config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js)
 
@@ -38,9 +36,9 @@ module.exports = {
 }
 ```
 
-#### More effort, but more convenient!
+#### A little harder, requires more effort, but more convenient!
 
-> No change is required in config.js, HOWEVER, have to add the variable into your terminal zsh/bash profile.
+> No change is required in config.js. Add the variable into your terminal zsh/bash profile.
 
 ```bash
 # Example for Windows Bash
@@ -176,6 +174,16 @@ Wew!
 - ~3 mins long to cover all system Tests
 
 # Whitebox Testing
+
+# How to run tests
+
+```bash
+# Run the tests
+npm run test
+
+# Generate the coverage report
+npm run test-coverage
+```
 
 - Choose one meaningful(2 or more interaction with other classes) class to demonstrate test code. E.g A control class, **Do not use entity class**
 - List test cases for test suite for the selected class, and where they reside in the repository

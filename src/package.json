@@ -30,8 +30,8 @@
       "!**/config/**",
       "!**/coverage/**",
       "!.*.*",
-      "!*.json"
-
+      "!*.json",
+      "!*.js"
     ]
   },
   "license": "ISC",

@@ -185,7 +185,7 @@ describe("UserService test", () => {
           loginAttempts: 5,
           createdAt: { $date: "2021-11-24T03:25:51.863Z" },
           updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
-          lockUntil: new Date(new Date().getTime() + 5 * 60000),
+          lockUntil: Date.parse(new Date(new Date().getTime() + 5 * 60000)),
           __v: 0,
         },
       ];
