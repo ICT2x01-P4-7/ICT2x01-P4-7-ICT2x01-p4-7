@@ -12,21 +12,25 @@ class UserService {
     this.choosePIN = choosePIN;
     this.confirmPIN = confirmPIN;
   }
-
+  /* istanbul ignore next */
   async checkACollectionExist() {
+    /* istanbul ignore next */
     const collections = [];
-
+    /* istanbul ignore next */
     const foundCollections = await User.db.db
       .listCollections({ name: "users" })
       .toArray();
+    /* istanbul ignore next */
     if (foundCollections) {
       foundCollections.forEach(function (e, i, a) {
         collections.push(e.name);
       });
+      /* istanbul ignore next */
       if (collections.includes("users")) {
         return true;
       }
     }
+    /* istanbul ignore next */
     return false;
   }
 
@@ -34,7 +38,8 @@ class UserService {
     const collectionExists = this.checkACollectionExist();
     if (collectionExists) {
       const foundUser = await User.find({}).exec();
-      if (foundUser.length > 0) {
+
+      if (foundUser.length > 0 && foundUser[0].hashed_PIN) {
         return true;
       }
       return false;
@@ -45,7 +50,7 @@ class UserService {
     let updates;
     try {
       const Users = await User.find({}).exec();
-      if (Users.length != 0) {
+      if (Users.length != 0 && Users[0].hashed_PIN) {
         const foundUser = Users[0];
         const hashedPIN = foundUser.hashed_PIN;
 
@@ -82,7 +87,6 @@ class UserService {
         };
       }
     } catch (e) {
-      console.log(`From userService: ${e}`);
       return {
         message: "An error occured in UserService",
         success: false,
@@ -110,7 +114,6 @@ class UserService {
         success: true,
       };
     } catch (e) {
-      console.log(`From userService: ${e}`);
       return { message: "An error occurred", success: false };
     }
   }
@@ -139,7 +142,7 @@ class UserService {
       const exists = await this.checkAUserExist();
       if (exists) {
         const foundUser = await User.find({}).exec();
-        if (foundUser.length != 0) {
+        if (foundUser.length != 0 && foundUser[0].hashed_PIN) {
           const user = foundUser[0];
           const hashedPIN = user.hashed_PIN;
           const cmp = await User.authenticate(this.PIN, hashedPIN);
@@ -158,15 +161,14 @@ class UserService {
               success: false,
             };
           }
-        } else {
-          return {
-            message: "User does not exist or incorrect PIN",
-            success: false,
-          };
         }
+      } else {
+        return {
+          message: "A user does not exist.",
+          success: false,
+        };
       }
     } catch (e) {
-      console.log(`From userService: ${e}`);
       return { message: "An error occurred", success: false };
     }
   }
