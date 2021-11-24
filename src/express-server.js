@@ -1,7 +1,5 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
-const { PORT, mongoUri } = require("./config/config.js");
 const cors = require("cors");
 
 const customEventEmitter = require("./event-emitter/CustomEventEmitter");
@@ -11,15 +9,17 @@ const { ProgramController } = require("./controllers/ProgramController");
 const controllers = [new UserController(), new ProgramController()];
 
 module.exports = class Server {
-  constructor() {
-    this.initDB();
+  app = express();
+
+  constructor(mongoUri, PORT) {
+    this.initDB(mongoUri);
     this.initExpressMiddleWare();
     this.initControllers();
     this.initEventListener();
-    this.start();
+    this.start(PORT);
   }
 
-  initDB() {
+  initDB(mongoUri) {
     mongoose
       .connect(mongoUri, {
         useNewUrlParser: true,
@@ -29,18 +29,18 @@ module.exports = class Server {
       .catch((err) => console.log(err));
   }
   initExpressMiddleWare() {
-    app.use(cors());
-    app.use(express.urlencoded({ extended: true }));
-    app.use(express.json());
+    this.app.use(cors());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json());
   }
   initControllers() {
-    app.get("/", (req, res) => res.send("hello world"));
+    this.app.get("/", (req, res) => res.send("hello world"));
     controllers.forEach((controller) => {
-      app.use(controller.path, controller.setRoutes());
+      this.app.use(controller.path, controller.setRoutes());
     });
   }
-  start() {
-    app.listen(PORT, () => {
+  start(PORT) {
+    this.app.listen(PORT, () => {
       console.log(`App listening at http://localhost:${PORT}`);
     });
   }

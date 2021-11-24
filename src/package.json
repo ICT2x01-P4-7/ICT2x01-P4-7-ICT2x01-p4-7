@@ -4,14 +4,36 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "server": "nodemon index.js --ignore 'client/'",
+    "server": "nodemon index.js ",
     "client": "npm run serve --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "lint": "eslint --fix main.js",
-    "format": "prettier -w ."
+    "lint": "eslint --fix",
+    "format": "prettier -w .",
+    "test": "jest --watch",
+    "test-coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
+  "nodemonConfig": {
+    "ignore": [
+      "client/",
+      "tests/"
+    ]
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "client"
+    ],
+    "collectCoverageFrom": [
+      "!**/node_modules/**",
+      "!**/client/**",
+      "!**/config/**",
+      "!**/coverage/**",
+      "!.*.*",
+      "!*.json",
+      "!*.js"
+    ]
+  },
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -29,7 +51,11 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.3.1",
     "madge": "^5.0.1",
+    "mockingoose": "^2.15.2",
     "nodemon": "^2.0.14",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "sinon": "^12.0.1",
+    "superagent": "^6.1.0",
+    "supertest": "^6.1.6"
   }
 }

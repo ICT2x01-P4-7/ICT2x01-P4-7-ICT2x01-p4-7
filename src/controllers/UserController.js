@@ -34,7 +34,7 @@ class UserController extends BaseController {
       const userService = new UserService(PIN);
       const data = await userService.login();
       if (data.success) {
-        super.sendSuccess(res, data.token, data.message);
+        super.sendSuccess(res, { token: data.token }, data.message);
       } else {
         if (data.lockUntil) {
           super.sendError(res, { lockUntil: data.lockUntil }, data.message);

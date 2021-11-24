@@ -48,6 +48,9 @@ UserSchema.path("hashed_PIN").validate(function () {
   if (this._PIN && this._PIN.length !== 4) {
     this.invalidate("PIN", "PIN must be 4 integers");
   }
+  if (this._PIN && isNaN(this._PIN)) {
+    this.invalidate("PIN", "PIN must be 4 integers");
+  }
   if (!this._PIN) {
     this.invalidate("PIN", "PIN is required");
   }
