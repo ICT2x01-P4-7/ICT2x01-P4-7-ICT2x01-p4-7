@@ -28,19 +28,11 @@
             <td style="width: 80%; border: none" id="ExCode">&nbsp; &nbsp;</td>
           </tr>
           <tr>
-            <td style="text-align: right; border: none" id="NextCode">
+            <td style="text-align: right; border: none">
               Next Code: &nbsp;
             </td>
-            <td style="border: none">&nbsp; &nbsp;</td>
+            <td style="border: none" id="NextCode">&nbsp; &nbsp;</td>
           </tr>
-          <!-- <tr>
-            <td style="border: none"></td>
-            <td style="border: none">&nbsp; &nbsp; Left 2 tiles</td>
-          </tr>
-          <tr>
-            <td style="border: none"></td>
-            <td style="border: none">&nbsp; &nbsp; Reverse 2 tiles</td>
-          </tr> -->
         </table>
 
         <p></p>
@@ -198,6 +190,12 @@ export default {
       console.log(this.$session.get("BlocklyCommands"));
       document.getElementById("ExCode").innerHTML =
         this.$session.get("BlocklyCommands");
+      let instructions = this.$session.get("BlocklyCommands");
+      let length = instructions.length;
+      // for (var i = 0; i < length; i++) {
+        document.getElementById("ExCode").innerHTML = instructions.charAt(0);
+        document.getElementById("NextCode").innerHTML = instructions.substring(0+1, length);
+      // }
     },
   },
   // getNextCode: function () {
