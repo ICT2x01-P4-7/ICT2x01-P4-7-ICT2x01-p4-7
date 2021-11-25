@@ -1,6 +1,8 @@
 module.exports = {
   mongoUri: process.env.MONGO_URI,
+  testMongoUri: process.env.TEST_MONGO_URI,
   PORT: process.env.PORT || 3000,
+  TESTPORT: 3523,
   HOSTNAME: "127.0.0.1",
   TCP_PORT: 2375,
   /* Insecure if commited to public repository....THIS SHOULD BE A SECRET! Left here for convenience..Which is convenient for others too ;)*/

@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const mongoUri = "mongodb://localhost:27017/test_database";
-
+const { testMongoUri } = require("../../../config/config");
 mongoose
-  .connect(mongoUri, {
+  .connect(testMongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -12,10 +11,10 @@ const User = require("../index");
 
 describe("User model test", () => {
   beforeAll(async () => {
-    await User.remove({});
+    await User.deleteMany({});
   });
   afterEach(async () => {
-    await User.remove({});
+    await User.deleteMany({});
   });
   afterAll(async () => {
     await mongoose.connection.close();

@@ -54,7 +54,7 @@ class UserController extends BaseController {
       const userService = new UserService(PIN, choosePIN, confirmPIN);
       const data = await userService.createUser();
       if (data.success) {
-        super.sendSuccess(res, data.message);
+        super.sendSuccess(res, { success: data.success }, data.message);
       } else {
         super.sendError(res, data.message);
       }
@@ -69,7 +69,7 @@ class UserController extends BaseController {
       const userService = new UserService(PIN, choosePIN, confirmPIN);
       const data = await userService.resetPIN();
       if (data.success) {
-        super.sendSuccess(res, data.message);
+        super.sendSuccess(res, { success: data.success }, data.message);
       } else {
         super.sendError(res, data.message);
       }

@@ -45,6 +45,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@jest-mock/express": "^1.4.5",
     "concurrently": "^6.3.0",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",

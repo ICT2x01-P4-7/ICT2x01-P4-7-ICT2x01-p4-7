@@ -23,9 +23,12 @@ class UserService {
           return false;
         }
       })
-      .catch(function (err) {
-        return false;
-      });
+      .catch(
+        /* istanbul ignore next */
+        function (err) {
+          return false;
+        }
+      );
     return result;
   }
 
@@ -98,7 +101,7 @@ class UserService {
         success: true,
       };
     } catch (e) {
-      return { message: "An error occurred", success: false };
+      return { message: `${e}`, success: false };
     }
   }
 
@@ -123,6 +126,19 @@ class UserService {
           success: false,
         };
       }
+      if (this.confirmPIN && this.confirmPIN.length !== 4) {
+        return {
+          message: "PIN must be 4 integers",
+          success: false,
+        };
+      }
+      if (this.confirmPIN && isNaN(this.confirmPIN)) {
+        return {
+          message: "PIN must be 4 integers",
+          success: false,
+        };
+      }
+
       const userExists = await this.checkAUserExist();
       if (userExists) {
         const foundUser = await User.find({}).exec();
@@ -152,7 +168,7 @@ class UserService {
       }
     } catch (e) {
       /* istanbul ignore next */
-      return { message: "An error occurred", success: false };
+      return { message: `${e}`, success: false };
     }
   }
 }

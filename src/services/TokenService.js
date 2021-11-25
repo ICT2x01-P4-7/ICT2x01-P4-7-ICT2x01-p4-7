@@ -6,21 +6,22 @@ class Token {
   static verify(req, res, next) {
     const token = req.headers["x-access-token"];
     if (!token) {
-      return res.json({
+      return res.status(403).json({
         data: {
           tokenAuth: {
             access: false,
-            message: "A token is required for authentication.",
           },
         },
+        message: "A token is required for authentication.",
       });
     }
     jwt.verify(token, accessTokenSecret, (err, decoded) => {
       if (err) {
-        res.json({
+        res.status(403).json({
           data: {
-            tokenAuth: { access: false, message: "Failed to verify token" },
+            tokenAuth: { access: false },
           },
+          message: "Failed to verify token",
         });
         return;
       } else {
