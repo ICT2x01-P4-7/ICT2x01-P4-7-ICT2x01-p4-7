@@ -22,6 +22,9 @@ describe("App test", () => {
     await User.deleteMany({});
   });
   describe("POST /user/create", () => {
+    afterEach(async () => {
+      await User.deleteMany({});
+    });
     test("should respond with an error occured with invalid PIN", async () => {
       const response = await request(app).post("/user/create").send({
         confirmPIN: "HAHA",
@@ -135,6 +138,9 @@ describe("App test", () => {
         choosePIN: "1234",
       });
     });
+    afterEach(async () => {
+      await User.deleteMany({});
+    });
     test("should require authorization", async () => {
       const response = await request(app).post("/user/reset").send({
         PIN: "1234",
@@ -147,6 +153,29 @@ describe("App test", () => {
       expect(response.body).toEqual(
         expect.objectContaining({
           message: "A token is required for authentication.",
+          data: {
+            tokenAuth: { access: false },
+          },
+        })
+      );
+      expect(response.statusCode).toBe(403);
+    });
+
+    test("should fail to verify token", async () => {
+      const response = await request(app)
+        .post("/user/reset")
+        .set("x-access-token", "should-not-work")
+        .send({
+          PIN: "1234",
+          confirmPIN: "1234",
+          choosePIN: "1234",
+        });
+      expect(response.headers["content-type"]).toEqual(
+        expect.stringContaining("json")
+      );
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          message: "Failed to verify token",
           data: {
             tokenAuth: { access: false },
           },

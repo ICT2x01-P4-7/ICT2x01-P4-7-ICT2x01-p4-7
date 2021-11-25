@@ -29,53 +29,38 @@ class UserController extends BaseController {
   ];
 
   async handleLogin(req, res, next) {
-    try {
-      const { PIN } = req.body;
-      const userService = new UserService(PIN);
-      const data = await userService.login();
-      if (data.success) {
-        super.sendSuccess(res, { token: data.token }, data.message);
+    const { PIN } = req.body;
+    const userService = new UserService(PIN);
+    const data = await userService.login();
+    if (data.success) {
+      super.sendSuccess(res, { token: data.token }, data.message);
+    } else {
+      if (data.lockUntil) {
+        super.sendError(res, { lockUntil: data.lockUntil }, data.message);
       } else {
-        if (data.lockUntil) {
-          super.sendError(res, { lockUntil: data.lockUntil }, data.message);
-        } else {
-          super.sendError(res, data.message);
-        }
+        super.sendError(res, data.message);
       }
-    } catch (e) {
-      console.log(e);
-      super.sendError(res);
     }
   }
 
   async handleCreate(req, res, next) {
-    try {
-      const { PIN, choosePIN, confirmPIN } = req.body;
-      const userService = new UserService(PIN, choosePIN, confirmPIN);
-      const data = await userService.createUser();
-      if (data.success) {
-        super.sendSuccess(res, { success: data.success }, data.message);
-      } else {
-        super.sendError(res, data.message);
-      }
-    } catch (e) {
-      console.log(e);
-      super.sendError(res);
+    const { PIN, choosePIN, confirmPIN } = req.body;
+    const userService = new UserService(PIN, choosePIN, confirmPIN);
+    const data = await userService.createUser();
+    if (data.success) {
+      super.sendSuccess(res, { success: data.success }, data.message);
+    } else {
+      super.sendError(res, data.message);
     }
   }
   async handleResetPIN(req, res, next) {
-    try {
-      const { PIN, choosePIN, confirmPIN } = req.body;
-      const userService = new UserService(PIN, choosePIN, confirmPIN);
-      const data = await userService.resetPIN();
-      if (data.success) {
-        super.sendSuccess(res, { success: data.success }, data.message);
-      } else {
-        super.sendError(res, data.message);
-      }
-    } catch (e) {
-      console.log(e);
-      super.sendError(res);
+    const { PIN, choosePIN, confirmPIN } = req.body;
+    const userService = new UserService(PIN, choosePIN, confirmPIN);
+    const data = await userService.resetPIN();
+    if (data.success) {
+      super.sendSuccess(res, { success: data.success }, data.message);
+    } else {
+      super.sendError(res, data.message);
     }
   }
 }

@@ -22,9 +22,6 @@ class BaseController {
         case "POST":
           this.router.post(route.path, route.handler);
           break;
-        default:
-          console.log("not a valid method");
-          break;
       }
     }
 
