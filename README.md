@@ -30,8 +30,12 @@ The VueJS frontend is nested within the backend directory `src/client`.
 > Alert, Do not commit config.js if you make this change!
 module.exports = {
   /* Change the default mongoUri to localhost or Cloud MongoDB URI */
-  mongoUri: "mongodb://localhost:27017/tileup" or "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
-  ...
+  mongoUri: "mongodb://localhost:27017/tileup" or "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?",
+
+  /* For test database, change the default to localhost
+   *  do not include the database name after the port `27017/`
+   */
+  testMongoUri:"mongodb://localhost:27017/"
   ...
 }
 ```
@@ -48,8 +52,11 @@ code ~/.bash_profile
 # Add the following code
 ## Local
 export MONGO_URI="mongodb://localhost:27017/tileup"
-## Remote Atlas
+## or Remote Atlas
 export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
+
+## Local testing db. Do not include database name after /
+export TEST_MONGO_URI="mongodb://localhost:27017/"
 
 # Restart terminal!
 ```
@@ -183,6 +190,8 @@ npm run test
 
 # Generate the coverage report
 npm run test-coverage
+# It can be found in coverage/lcov-report/index.html
+
 ```
 
 - Choose one meaningful(2 or more interaction with other classes) class to demonstrate test code. E.g A control class, **Do not use entity class**

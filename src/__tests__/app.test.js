@@ -6,7 +6,7 @@ const ExpressServer = require("../express-server");
 const mongoose = require("mongoose");
 
 beforeAll(() => {
-  server = new ExpressServer(testMongoUri, TESTPORT);
+  server = new ExpressServer(`${testMongoUri}test-app`, TESTPORT);
   app = server.app;
 });
 

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { testMongoUri } = require("../../../config/config");
 mongoose
-  .connect(testMongoUri, {
+  .connect(`${testMongoUri}test-model`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

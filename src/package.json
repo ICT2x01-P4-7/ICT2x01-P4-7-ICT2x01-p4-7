@@ -22,7 +22,8 @@
   },
   "jest": {
     "testPathIgnorePatterns": [
-      "client"
+      "client",
+      "node_modules"
     ],
     "collectCoverageFrom": [
       "!**/node_modules/**",
