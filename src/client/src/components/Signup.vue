@@ -49,7 +49,7 @@ export default {
         choosePIN: this.choosePIN,
         confirmPIN: this.confirmPIN,
       };
-      axios.post("http://localhost:3000/api/User/create", newUser);
+      axios.post("http://localhost:3000/user/create", newUser);
     },
   },
 };
