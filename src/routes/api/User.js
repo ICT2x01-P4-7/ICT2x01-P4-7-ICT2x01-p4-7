@@ -22,27 +22,43 @@ router.post("/create", async (req, res, next) => {
     }
     // Check database if have same PIN number
     // user is not define
+    // ME stop here
+    hashpassword = bcrypt.hashSync(req.body.confirmPIN, 12)
+    console.log(hashpassword);
+    User.find({PIN: hashpassword})
+    .exec()
+    .then(
+      user =>{
+        if (user.length >= 1){
+          console.log("Have");
+        }
+      }
+    )
+    .catch()
     
-    bcrypt.compare(req.body.choosePIN, User[0], (err, res) => {
-      console.log(User[0]);
-      if (res) {
-        console.log('PIN Number have been used');
-
-      }
-      // If PIN is not in database
-      if (err) {
-        const newUser = new User({
-          PIN: bcrypt.hashSync(req.body.confirmPIN, 12),
-        });
-        const saveUser = newUser.save();
-        console.log("created User");
-      }
-
-    })
+  // bcrypt.compare(req.body.choosePIN, User[0], (err, res) => {
+        
+  //       if (res) {
+  //         console.log('PIN Number have been used');
+  
+  //       }
+  //       // If PIN is not in database
+  //       if (err) {
+  //         const newUser = new User({
+  //           PIN: bcrypt.hashSync(req.body.confirmPIN, 12),
+  //         });
+  //         const saveUser = newUser.save();
+  //         console.log("created User");
+  //       }
+  
+  //     })
+    
+   
     // Error handling
     if (!User) throw new Error("Something went wrong with saving the user");
     res.status(200).json(User);
-  } catch (error) {
+  } 
+  catch (error) {
     console.log(error.message);
     res.status(500).json({ message: error.message });
   }
