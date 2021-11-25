@@ -2,11 +2,7 @@ const { UserService } = require("../UserService");
 const mockingoose = require("mockingoose");
 const User = require("../../models/User");
 
-beforeAll(() => {
-  jest
-    .spyOn(UserService.prototype, "checkACollectionExist")
-    .mockImplementation(() => true);
-});
+beforeAll(() => {});
 
 afterAll(() => {
   jest.restoreAllMocks();
@@ -17,31 +13,31 @@ describe("UserService test", () => {
     expect(UserService).toBeDefined();
   });
   describe("checkAUserExist", () => {
-    it("A user exists", async () => {
-      const _doc = [
-        {
-          _id: { $oid: "619db0bf4b50b6136ab2b770" },
-          hashed_PIN:
-            "$2b$10$IrIK300GhpQe2Iajc3rsvesbwC2AkTVT4qHOiHEXR/In30MEba9Ri",
-          loginAttempts: 0,
-          createdAt: { $date: "2021-11-24T03:25:51.863Z" },
-          updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
-          __v: 0,
-        },
-      ];
-      mockingoose(User).toReturn(_doc);
+    it("A user exist", async () => {
+      const count = 1;
+      mockingoose(User).toReturn(count, "estimatedDocumentCount");
       const userService = new UserService(undefined, undefined, undefined);
       const actual = await userService.checkAUserExist();
-      const expected = true;
-      expect(actual).toBe(expected);
+      await User.estimatedDocumentCount().then((docCount) => {
+        let expected = false;
+        if (docCount > 0) {
+          expected = true;
+        }
+        expect(actual).toBe(expected);
+      });
     });
     it("A user does not exist", async () => {
-      const _doc = [{}];
-      mockingoose(User).toReturn(_doc);
+      const count = 0;
+      mockingoose(User).toReturn(count, "estimatedDocumentCount");
       const userService = new UserService(undefined, undefined, undefined);
       const actual = await userService.checkAUserExist();
-      const expected = false;
-      expect(actual).toBe(expected);
+      await User.estimatedDocumentCount().then((docCount) => {
+        let expected = false;
+        if (docCount > 0) {
+          expected = true;
+        }
+        expect(actual).toBe(expected);
+      });
     });
   });
 
@@ -91,7 +87,7 @@ describe("UserService test", () => {
           error = e;
         }
         expect(actual).toMatchObject({
-          message: "An error occurred",
+          message: "ValidationError: PIN: PIN must be 4 integers",
           success: false,
         });
       }
@@ -283,6 +279,30 @@ describe("UserService test", () => {
       const actual = await userService.resetPIN();
       expect(actual).toMatchObject({
         message: "PINs do not match. Please try again",
+        success: false,
+      });
+    });
+
+    it("should return New PIN must have 4 integers", async () => {
+      jest
+        .spyOn(UserService.prototype, "checkAUserExist")
+        .mockImplementation(() => false);
+      const _doc = [
+        {
+          _id: { $oid: "619db0bf4b50b6136ab2b770" },
+          hashed_PIN:
+            "$2b$10$IrIK300GhpQe2Iajc3rsvesbwC2AkTVT4qHOiHEXR/In30MEba9Ri",
+          loginAttempts: 0,
+          createdAt: { $date: "2021-11-24T03:25:51.863Z" },
+          updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
+          __v: 0,
+        },
+      ];
+      mockingoose(User).toReturn(_doc);
+      const userService = new UserService("1234", "56", "56");
+      const actual = await userService.resetPIN();
+      expect(actual).toMatchObject({
+        message: "PIN must be 4 integers",
         success: false,
       });
     });

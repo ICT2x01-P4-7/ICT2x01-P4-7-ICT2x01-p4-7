@@ -12,45 +12,31 @@ class UserService {
     this.choosePIN = choosePIN;
     this.confirmPIN = confirmPIN;
   }
-  /* istanbul ignore next */
-  async checkACollectionExist() {
-    /* istanbul ignore next */
-    const collections = [];
-    /* istanbul ignore next */
-    const foundCollections = await User.db.db
-      .listCollections({ name: "users" })
-      .toArray();
-    /* istanbul ignore next */
-    if (foundCollections) {
-      foundCollections.forEach(function (e, i, a) {
-        collections.push(e.name);
-      });
-      /* istanbul ignore next */
-      if (collections.includes("users")) {
-        return true;
-      }
-    }
-    /* istanbul ignore next */
-    return false;
-  }
 
   async checkAUserExist() {
-    const collectionExists = this.checkACollectionExist();
-    if (collectionExists) {
-      const foundUser = await User.find({}).exec();
-
-      if (foundUser.length > 0 && foundUser[0].hashed_PIN) {
-        return true;
-      }
-      return false;
-    }
+    const result = await User.estimatedDocumentCount()
+      .exec()
+      .then(function (count) {
+        if (count > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch(
+        /* istanbul ignore next */
+        function (err) {
+          return false;
+        }
+      );
+    return result;
   }
 
   async login() {
-    let updates;
     try {
-      const Users = await User.find({}).exec();
-      if (Users.length != 0 && Users[0].hashed_PIN) {
+      const userExists = await this.checkAUserExist();
+      if (userExists) {
+        const Users = await User.find({}).exec();
         const foundUser = Users[0];
         const hashedPIN = foundUser.hashed_PIN;
 
@@ -115,7 +101,7 @@ class UserService {
         success: true,
       };
     } catch (e) {
-      return { message: "An error occurred", success: false };
+      return { message: `${e}`, success: false };
     }
   }
 
@@ -140,28 +126,39 @@ class UserService {
           success: false,
         };
       }
-      const exists = await this.checkAUserExist();
-      if (exists) {
+      if (this.confirmPIN && this.confirmPIN.length !== 4) {
+        return {
+          message: "PIN must be 4 integers",
+          success: false,
+        };
+      }
+      if (this.confirmPIN && isNaN(this.confirmPIN)) {
+        return {
+          message: "PIN must be 4 integers",
+          success: false,
+        };
+      }
+
+      const userExists = await this.checkAUserExist();
+      if (userExists) {
         const foundUser = await User.find({}).exec();
-        if (foundUser.length != 0 && foundUser[0].hashed_PIN) {
-          const user = foundUser[0];
-          const hashedPIN = user.hashed_PIN;
-          const cmp = await User.authenticate(this.PIN, hashedPIN);
-          if (cmp) {
-            const newHashedPin = await bcrypt.hash(this.confirmPIN, saltRounds);
-            await User.findByIdAndUpdate(user._id, {
-              hashed_PIN: newHashedPin,
-            });
-            return {
-              message: "PIN successfully reset",
-              success: true,
-            };
-          } else {
-            return {
-              message: "User does not exist or incorrect PIN",
-              success: false,
-            };
-          }
+        const user = foundUser[0];
+        const hashedPIN = user.hashed_PIN;
+        const cmp = await User.authenticate(this.PIN, hashedPIN);
+        if (cmp) {
+          const newHashedPin = await bcrypt.hash(this.confirmPIN, saltRounds);
+          await User.findByIdAndUpdate(user._id, {
+            hashed_PIN: newHashedPin,
+          });
+          return {
+            message: "PIN successfully reset",
+            success: true,
+          };
+        } else {
+          return {
+            message: "User does not exist or incorrect PIN",
+            success: false,
+          };
         }
       } else {
         return {
@@ -171,7 +168,7 @@ class UserService {
       }
     } catch (e) {
       /* istanbul ignore next */
-      return { message: "An error occurred", success: false };
+      return { message: `${e}`, success: false };
     }
   }
 }
