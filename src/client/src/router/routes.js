@@ -24,6 +24,8 @@ function checkLoginStatus(to, from, next) {
   }
   if (isAuthenticated) {
     next("/program");
+  } else {
+    next();
   }
 }
 

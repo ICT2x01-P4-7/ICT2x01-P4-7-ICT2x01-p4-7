@@ -1,5 +1,5 @@
 <template>
-  <main class="form-signin">
+  <main class="form-login">
     <div class="card">
       <div class="card-body">
         <form>
@@ -11,8 +11,10 @@
               alertMessage
             }}</b-alert>
           </div>
-          <div class="text-center">
-            <button type="submit" @click="login">Login</button>
+          <div class="p-3 text-center">
+            <button type="button" class="btn btn-primary btn-lg" @click="login">
+              Login
+            </button>
           </div>
         </form>
       </div>
@@ -77,7 +79,7 @@ body {
   align-items: center;
   background-color: #f6f6f6;
 }
-.form-signin {
+.form-login {
   width: 100%;
   max-width: 450px;
   margin: auto;
