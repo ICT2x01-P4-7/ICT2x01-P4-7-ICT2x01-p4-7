@@ -71,9 +71,12 @@ module.exports = class TCPServer {
 
       socket.setEncoding("utf8");
 
-      socket.setTimeout(800000, function () {
+      socket.setTimeout(15000, function () {
         console.log("Socket timed out");
-        sock.destroy();
+        socket.end("Timed out!");
+        let isdestroyed = socket.destroyed;
+        console.log("Socket destroyed:" + isdestroyed);
+        socket.destroy();
       });
 
       customEventEmitter
@@ -137,12 +140,6 @@ module.exports = class TCPServer {
         console.log("Error : " + error);
       });
 
-      socket.on("timeout", function () {
-        console.log("Socket timed out !");
-        socket.end("Timed out!");
-        // can call socket.destroy() here too.
-      });
-
       socket.on("end", function (data) {
         console.log("Socket ended from other end!");
         console.log("End data : " + data);
@@ -163,12 +160,6 @@ module.exports = class TCPServer {
           console.log(error);
         }
       });
-
-      setTimeout(function () {
-        let isdestroyed = socket.destroyed;
-        console.log("Socket destroyed:" + isdestroyed);
-        socket.destroy();
-      }, 200000);
     });
 
     // emits when any error occurs -> calls closed event immediately after

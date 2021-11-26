@@ -24,9 +24,10 @@
 <script>
 import axios from "axios";
 import PincodeInput from "vue-pincode-input";
+import localhost from "../config/config.js";
 
 export default {
-  name: "SignUp",
+  name: "CreateScreen",
   component: {
     PincodeInput,
   },
@@ -38,18 +39,17 @@ export default {
     reset() {
       this.choosePIN = "";
       this.confirmPIN = "";
-      axios.get("http://localhost:3000");
     },
     create() {
       if (this.confirmPIN === "" || this.choosePIN === "") {
         console.log("Field is empty");
         return;
       }
-      let newUser = {
+      const newUser = {
         choosePIN: this.choosePIN,
         confirmPIN: this.confirmPIN,
       };
-      axios.post("http://localhost:3000/user/create", newUser);
+      axios.post(`${localhost}/user/create`, newUser);
     },
   },
 };

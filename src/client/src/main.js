@@ -2,7 +2,15 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import App from "./App.vue";
 import Routes from "./router/routes";
+
+import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 import PincodeInput from "vue-pincode-input";
+
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
 
 Vue.config.productionTip = false;
 Vue.config.ignoredElements = [
@@ -19,6 +27,7 @@ Vue.use(VueRouter);
 
 const router = new VueRouter({
   mode: "history",
+  base: __dirname,
   routes: Routes,
 });
 
