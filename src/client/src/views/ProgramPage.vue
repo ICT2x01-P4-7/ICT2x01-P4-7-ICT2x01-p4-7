@@ -117,9 +117,9 @@ export default {
             this.alertMessage = error.response.data.message;
             if (this.alertMessage === "Failed to verify token") {
               this.alertMessage += " You will be redirected to login again.";
+              this.goToLogin();
             }
             this.showModal();
-            this.goToLogin();
           });
       }
     },

@@ -1,5 +1,5 @@
 const { BaseController } = require("./BaseController");
-const { ProgramService } = require("../services/ProgramService");
+const programService = require("../services/ProgramService");
 const { Token } = require("../services/TokenService");
 
 class ProgramController extends BaseController {
@@ -25,7 +25,7 @@ class ProgramController extends BaseController {
   async handleSendSequence(req, res, next) {
     try {
       const sequence = req.body.sequence;
-      const result = await ProgramService.sendSequence(sequence);
+      const result = await programService.sendSequence(sequence);
       if (result.success) {
         super.sendSuccess(res, result.message);
       } else {
@@ -39,7 +39,7 @@ class ProgramController extends BaseController {
   async handleGetSensorData(req, res, next) {
     try {
       const sequence = req.body.sequence;
-      const result = await ProgramService.getSensorData(sequence);
+      const result = await programService.getSensorData(sequence);
       if (result.success) {
         super.sendSuccess(res, result.message);
       } else {
