@@ -111,6 +111,10 @@ module.exports = class TCPServer {
         }
         customEventEmitter
           .getEventEmitter()
+          .emit("CONNECTED", { connected: true });
+
+        customEventEmitter
+          .getEventEmitter()
           .emit("DATA", { sensorData: sensorData });
 
         // count++;
