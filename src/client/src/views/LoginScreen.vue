@@ -20,6 +20,22 @@
           </div>
         </form>
       </div>
+      <div>
+        <b-modal
+          size="xl"
+          ref="barred-modal"
+          :no-close-on-backdrop="true"
+          :no-close-on-esc="true"
+          :hide-header-close="true"
+          hide-footer
+          title="Barred"
+        >
+          <div class="d-block text-center">
+            <h3>{{ barredMessage }}</h3>
+            <div id="time" v-html="time"></div>
+          </div>
+        </b-modal>
+      </div>
     </div>
     <p class="mt-3 mb-3 text-muted text-center">© TileUp</p>
   </main>
@@ -40,7 +56,27 @@ export default {
       showAlert: false,
       PIN: "",
       alertMessage: "Something went wrong",
+      barredMessage: "Barred from logging in, it will unlock in",
+      lockUntilTime: undefined,
+      interval: null,
+      total: 0,
     };
+  },
+  computed: {
+    time: function () {
+      if (this.seconds < 10) {
+        return this.minutes + ":" + 0 + this.seconds;
+      }
+      return this.minutes + ":" + this.seconds;
+    },
+    minutes: function () {
+      const minutes = Math.floor((this.total / 1000 / 60) % 60);
+      return minutes;
+    },
+    seconds: function () {
+      const seconds = Math.floor((this.total / 1000) % 60);
+      return seconds;
+    },
   },
   watch: {
     PIN: function (val) {
@@ -73,8 +109,12 @@ export default {
         })
         .catch((error) => {
           const errorData = error.response.data;
-          // if (errorData.lockUntil) {
-          // }
+          if ("data" in errorData) {
+            const lockUntil = errorData.data.lockUntil;
+            this.lockUntilTime = new Date(lockUntil);
+            this.startTimer();
+            this.showBarredModal();
+          }
           this.alertMessage = errorData.message;
           this.PIN = "";
           this.displayAlert();
@@ -82,6 +122,27 @@ export default {
     },
     displayAlert() {
       this.showAlert = true;
+    },
+    hideAlert() {
+      this.showAlert = false;
+    },
+    showBarredModal() {
+      this.$refs["barred-modal"].show();
+    },
+    hideBarredModal() {
+      this.$refs["barred-modal"].hide();
+    },
+    startTimer() {
+      this.interval = setInterval(this.updateLockUntilTime, 1000);
+    },
+    updateLockUntilTime() {
+      let now = new Date();
+      this.total = this.lockUntilTime - Date.parse(now);
+      if (this.total < 0) {
+        clearInterval(this.interval);
+        this.hideBarredModal();
+        this.hideAlert();
+      }
     },
   },
 };
@@ -102,5 +163,10 @@ body {
 }
 label {
   font-weight: 600;
+}
+
+#time {
+  font-size: 70px;
+  text-align: center;
 }
 </style>
