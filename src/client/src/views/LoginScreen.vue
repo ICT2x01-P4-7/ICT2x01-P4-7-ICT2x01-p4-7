@@ -7,6 +7,8 @@
           <h3 class="h3 mb-3 fw-normal text-center">PIN</h3>
           <div class="text-center">
             <PincodeInput v-model="PIN" :length="4" :secure="true" />
+          </div>
+          <div class="text-center pt-3">
             <b-alert variant="danger" v-model="showAlert">{{
               alertMessage
             }}</b-alert>
@@ -40,11 +42,22 @@ export default {
       alertMessage: "Something went wrong",
     };
   },
+  watch: {
+    PIN: function (val) {
+      if (val.length === 4) {
+        this.login();
+      }
+    },
+  },
   methods: {
     login(e) {
-      e.preventDefault();
+      if (e) {
+        e.preventDefault();
+      }
       if (this.PIN.length != 4) {
         this.PIN = "";
+        this.alertMessage = "Please input 4 digits";
+        this.displayAlert();
         return;
       }
       const user = {
@@ -59,7 +72,10 @@ export default {
           this.$router.push("/program");
         })
         .catch((error) => {
-          this.alertMessage = error.response.data.message;
+          const errorData = error.response.data;
+          // if (errorData.lockUntil) {
+          // }
+          this.alertMessage = errorData.message;
           this.PIN = "";
           this.displayAlert();
         });
