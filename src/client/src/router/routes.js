@@ -1,6 +1,6 @@
 //import Home from "../views/Home.vue";
-import CreateScreen from "../components/CreateScreen.vue";
-import LoginScreen from "../components/LoginScreen.vue";
+import CreateScreen from "../views/CreateScreen.vue";
+import LoginScreen from "../views/LoginScreen.vue";
 import ProgramPage from "../views/ProgramPage.vue";
 import NotFound from "../views/NotFound.vue";
 
