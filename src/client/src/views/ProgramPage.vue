@@ -28,17 +28,32 @@
       ref="program"
     ></BlocklyComponent>
 
-    <!---<p id="code">
-      <pre v-html="code"></pre>
-    </p> ---->
+    <!-- The modal -->
+    <b-container>
+      <b-modal ref="invalid-seq-model" hide-footer :title.sync="alertTitle">
+        <div class="d-block text-center">
+          <p>
+            {{ alertMessage }}
+          </p>
+          <b-button
+            class="mt-3"
+            variant="outline-danger"
+            block
+            @click="hideModal"
+            >Close Me</b-button
+          >
+        </div>
+      </b-modal>
+    </b-container>
   </b-container>
 </template>
 
 <script>
 import BlocklyComponent from "../components/BlocklyComponent.vue";
 import "../blocks/movement";
-
 import BlocklyJS from "blockly/javascript";
+import { localhost } from "../config/config.js";
+import axios from "axios";
 
 export default {
   name: "app",
@@ -66,23 +81,49 @@ export default {
             </category>
         </xml>`,
       },
+      alertMessage: "Something went wrong",
+      alertTitle: "Watch out!",
     };
   },
+
   methods: {
     hasWhiteSpace(s) {
       return s.indexOf("\n") >= 0;
     },
-    clearWorkSpace() {
-      BlocklyJS.mainWorkspace.clear();
-    },
     sendCode() {
       const code = BlocklyJS.workspaceToCode(this.$refs["program"].workspace);
-      console.log(this.hasWhiteSpace(code));
-      console.log(code);
-      if (this.hasWhiteSpace(code)) {
-        console.log("Please link all block commands together");
+      if (!code) {
+        this.alertTitle = "No sequence in workspace";
+        this.alertMessage = "Please put some blocks into the workspace.";
+        this.showModal();
+      } else if (this.hasWhiteSpace(code)) {
+        this.alertTitle = "Invalid Sequence";
+        this.alertMessage = "Please ensure all blocks are connected.";
+        this.showModal();
+        return;
+      } else {
+        const sequence = {
+          sequence: code,
+        };
+        const token = sessionStorage.getItem("token");
+        axios.defaults.headers.common["x-access-token"] = token;
+        axios
+          .post(`${localhost}/program/sendSequence`, sequence)
+          .then((response) => {
+            console.log(response.data);
+          })
+          .catch((error) => {
+            this.alertTitle = "Error";
+            this.alertMessage = error.response.data.message;
+            this.showModal();
+          });
       }
-      this.code = BlocklyJS.workspaceToCode(this.$refs["program"].workspace);
+    },
+    showModal() {
+      this.$refs["invalid-seq-model"].show();
+    },
+    hideModal() {
+      this.$refs["invalid-seq-model"].hide();
     },
   },
 };

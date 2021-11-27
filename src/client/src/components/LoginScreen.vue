@@ -55,7 +55,7 @@ export default {
         .then((response) => {
           const token = response.data.data.token;
           axios.defaults.headers.common["x-access-token"] = token;
-          sessionStorage.setItem("token", JSON.stringify(token));
+          sessionStorage.setItem("token", token);
           this.$router.push("/program");
         })
         .catch((error) => {
