@@ -115,7 +115,11 @@ export default {
           .catch((error) => {
             this.alertTitle = "Error";
             this.alertMessage = error.response.data.message;
+            if (this.alertMessage === "Failed to verify token") {
+              this.alertMessage += " You will be redirected to login again.";
+            }
             this.showModal();
+            this.goToLogin();
           });
       }
     },
@@ -124,6 +128,12 @@ export default {
     },
     hideModal() {
       this.$refs["invalid-seq-model"].hide();
+    },
+    goToLogin() {
+      sessionStorage.clear();
+      setTimeout(() => {
+        this.$router.push("/login");
+      }, 5000);
     },
   },
 };
