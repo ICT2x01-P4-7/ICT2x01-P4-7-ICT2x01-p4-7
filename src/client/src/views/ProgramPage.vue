@@ -1,22 +1,33 @@
 <template>
   <b-container>
     <b-row>
-      <b-col lg="2" class="pt-4"
+      <b-col class="pt-4"
+        ><b-button pill variant="warning" size="lg" v-on:click="logout()"
+          >Log Out</b-button
+        ></b-col
+      >
+      <b-col class="pt-4"
         ><b-button pill variant="primary" size="lg">Dashboard</b-button></b-col
       >
-      <b-col lg="2" class="pt-4"
+      <b-col class="pt-4"
         ><b-button pill variant="dark" size="lg">Tutorial</b-button></b-col
       >
-      <b-col lg="2" class="pt-4"
+      <b-col class="pt-4"
         ><b-button pill variant="secondary" size="lg">History</b-button></b-col
       >
-      <b-col lg="2" class="pt-4"
+      <b-col class="pt-4"
         ><b-button pill variant="info" size="lg">Select Map</b-button></b-col
       >
-      <b-col lg="2" class="pt-4"
-        ><b-button pill variant="danger" size="lg">Reset PIN</b-button></b-col
+      <b-col class="pt-4"
+        ><b-button
+          pill
+          variant="danger"
+          size="lg"
+          v-on:click="openResetScreen()"
+          >Reset PIN</b-button
+        ></b-col
       >
-      <b-col lg="2" class="pt-4">
+      <b-col class="pt-4">
         <b-button pill variant="success" size="lg" v-on:click="sendCode()"
           >Send to car</b-button
         >
@@ -45,6 +56,7 @@
         </div>
       </b-modal>
     </b-container>
+    <ResetScreen ref="reset-screen"></ResetScreen>
   </b-container>
 </template>
 
@@ -54,11 +66,13 @@ import "../blocks/movement";
 import BlocklyJS from "blockly/javascript";
 import { localhost } from "../config/config.js";
 import axios from "axios";
+import ResetScreen from "./ResetScreen.vue";
 
 export default {
   name: "app",
   components: {
     BlocklyComponent,
+    ResetScreen,
   },
   data() {
     return {
@@ -129,11 +143,18 @@ export default {
     hideModal() {
       this.$refs["invalid-seq-model"].hide();
     },
+    logout() {
+      sessionStorage.clear();
+      this.$router.push("/login");
+    },
     goToLogin() {
       sessionStorage.clear();
       setTimeout(() => {
         this.$router.push("/login");
-      }, 5000);
+      }, 3000);
+    },
+    openResetScreen() {
+      this.$refs["reset-screen"].showModal();
     },
   },
 };

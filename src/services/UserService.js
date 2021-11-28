@@ -52,7 +52,7 @@ class UserService {
         }
         const cmp = await User.authenticate(this.PIN, hashedPIN);
         if (cmp) {
-          const token = jwt.sign({}, accessTokenSecret, { expiresIn: "1h" });
+          const token = jwt.sign({}, accessTokenSecret, { expiresIn: "1d" });
           return {
             message: "Successfully logged in.",
             success: true,
