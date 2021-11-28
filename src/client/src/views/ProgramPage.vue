@@ -13,7 +13,9 @@
         ><b-button pill variant="dark" size="lg">Tutorial</b-button></b-col
       >
       <b-col class="pt-4"
-        ><b-button pill variant="secondary" size="lg">History</b-button></b-col
+        ><b-button pill variant="secondary" v-on:click="openHistory()" size="lg"
+          >History</b-button
+        ></b-col
       >
       <b-col class="pt-4"
         ><b-button pill variant="info" size="lg">Select Map</b-button></b-col
@@ -57,6 +59,7 @@
       </b-modal>
     </b-container>
     <ResetScreen ref="reset-screen"></ResetScreen>
+    <HistoryScreen ref="history-screen"></HistoryScreen>
   </b-container>
 </template>
 
@@ -67,12 +70,14 @@ import BlocklyJS from "blockly/javascript";
 import { localhost } from "../config/config.js";
 import axios from "axios";
 import ResetScreen from "./ResetScreen.vue";
+import HistoryScreen from "./HistoryScreen.vue";
 
 export default {
   name: "app",
   components: {
     BlocklyComponent,
     ResetScreen,
+    HistoryScreen,
   },
   data() {
     return {
@@ -125,6 +130,7 @@ export default {
           .post(`${localhost}/program/sendSequence`, sequence)
           .then((response) => {
             console.log(response.data);
+            this.saveToHistory(code);
           })
           .catch((error) => {
             this.alertTitle = "Error";
@@ -144,7 +150,7 @@ export default {
       this.$refs["invalid-seq-model"].hide();
     },
     logout() {
-      sessionStorage.clear();
+      sessionStorage.removeItem("token");
       this.$router.push("/login");
     },
     goToLogin() {
@@ -155,6 +161,22 @@ export default {
     },
     openResetScreen() {
       this.$refs["reset-screen"].showModal();
+    },
+    openHistory() {
+      this.$refs["history-screen"].showModal();
+    },
+    saveToHistory(sequence) {
+      let history = sessionStorage.getItem("history");
+      const now = Date.now();
+      if (history !== null) {
+        history = JSON.parse(history);
+        history.push({ now, sequence });
+        sessionStorage.setItem("history", JSON.stringify(history));
+      } else {
+        const sequenceArray = [];
+        sequenceArray.push({ now, sequence });
+        sessionStorage.setItem("history", JSON.stringify(sequenceArray));
+      }
     },
   },
 };
