@@ -7,7 +7,9 @@
         ></b-col
       >
       <b-col class="pt-4"
-        ><b-button pill variant="primary" size="lg">Dashboard</b-button></b-col
+        ><b-button pill variant="primary" size="lg" v-on:click="openDashboard()"
+          >Dashboard</b-button
+        ></b-col
       >
       <b-col class="pt-4"
         ><b-button pill variant="dark" size="lg">Tutorial</b-button></b-col
@@ -60,6 +62,7 @@
     </b-container>
     <ResetScreen ref="reset-screen"></ResetScreen>
     <HistoryScreen ref="history-screen"></HistoryScreen>
+    <DashboardScreen ref="dashboard-screen"></DashboardScreen>
   </b-container>
 </template>
 
@@ -71,6 +74,7 @@ import { localhost } from "../config/config.js";
 import axios from "axios";
 import ResetScreen from "./ResetScreen.vue";
 import HistoryScreen from "./HistoryScreen.vue";
+import DashboardScreen from "./DashboardScreen.vue";
 
 export default {
   name: "app",
@@ -78,6 +82,7 @@ export default {
     BlocklyComponent,
     ResetScreen,
     HistoryScreen,
+    DashboardScreen,
   },
   data() {
     return {
@@ -154,7 +159,7 @@ export default {
       this.$router.push("/login");
     },
     goToLogin() {
-      sessionStorage.clear();
+      sessionStorage.removeItem("token");
       setTimeout(() => {
         this.$router.push("/login");
       }, 3000);
@@ -177,6 +182,9 @@ export default {
         sequenceArray.push({ now, sequence });
         sessionStorage.setItem("history", JSON.stringify(sequenceArray));
       }
+    },
+    openDashboard() {
+      this.$refs["dashboard-screen"].showModal();
     },
   },
 };

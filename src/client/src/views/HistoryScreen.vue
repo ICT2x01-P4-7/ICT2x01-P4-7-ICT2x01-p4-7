@@ -1,8 +1,14 @@
 <template>
   <div>
-    <b-modal size="xl" ref="history-modal" hide-footer>
+    <b-modal
+      size="xl"
+      ref="history-modal"
+      :hide-header-close="true"
+      hide-footer
+    >
       <div class="d-block text-center">
         <h3>History</h3>
+        <p>F: Forward B: Backward R: Right L: Left</p>
         <div v-if="noHistory">
           <b-alert show variant="warning">
             <h4 class="alert-heading">No History found</h4>
@@ -15,9 +21,11 @@
         </div>
         <b-table hover :items="items"></b-table>
       </div>
-      <b-button class="mt-3" variant="outline-danger" block @click="hideModal"
-        >Close Me</b-button
-      >
+      <div class="text-center">
+        <b-button class="mt-3" variant="outline-danger" block @click="hideModal"
+          >Close Me</b-button
+        >
+      </div>
     </b-modal>
   </div>
 </template>
