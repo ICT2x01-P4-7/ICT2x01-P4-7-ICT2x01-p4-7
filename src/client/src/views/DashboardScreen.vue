@@ -14,13 +14,14 @@
         <b-row align-v="stretch">
           <b-col>
             <b-row align-v="baseline">
-              <b-col style="font-size: 0.75rem"
-                >USE THIS SPACE FOR CURRENT EXECUTING
+              <b-col style="font-size: 0.75rem">
+                <b-table striped hover :items="currentExecution"></b-table>
               </b-col>
               <div class="w-100"></div>
-              <b-col style="font-size: 1.25rem"> {{ newSensorData }}</b-col>
-            </b-row></b-col
-          >
+              <b-col style="font-size: 1.25rem">
+                <b-table striped hover :items="currentSensorData"></b-table>
+              </b-col> </b-row
+          ></b-col>
           <b-col>Map component</b-col>
         </b-row>
       </b-container>
@@ -152,8 +153,8 @@ export default {
     return {
       alertMessage: "Something went wrong",
       alertTitle: "Watch out!",
-      items: [],
-      sensorDataStore: [],
+      currentExecution: [],
+      currentSensorData: [],
       newSensorData: {},
       interval: null,
       //graph stuff,
@@ -207,6 +208,42 @@ export default {
     hideStatsModal() {
       this.$refs["raw-stats-modal"].hide();
     },
+    parseSensorData() {
+      const tmpStore = [];
+      const currentSensorData = this.newSensorData;
+      const color = {
+        r: "Red",
+        g: "Green",
+        b: "Blue",
+      };
+      const rowColor = {
+        r: "danger",
+        g: "success",
+        b: "primary",
+      };
+      const fakeSpeed = 15;
+      let dangerTrue = "";
+      if (currentSensorData.ObstacleDistance < 20) {
+        dangerTrue = "danger";
+      }
+      tmpStore.push(
+        {
+          type: "Speed",
+          data: `${fakeSpeed} rpm`,
+        },
+        {
+          type: "Obstacle",
+          data: `${currentSensorData.ObstacleDistance} cm`,
+          _rowVariant: dangerTrue,
+        },
+        {
+          type: "Color",
+          data: color[currentSensorData.Color],
+          _rowVariant: rowColor[currentSensorData.Color],
+        }
+      );
+      this.currentSensorData = tmpStore;
+    },
     getSensorData() {
       const token = sessionStorage.getItem("token");
       axios.defaults.headers.common["x-access-token"] = token;
@@ -227,7 +264,7 @@ export default {
           }
           tmpData.time = Date.now();
           this.newSensorData = tmpData;
-          //this.sensorDataStore.push(tmpData);
+          this.parseSensorData();
           // Graph
           this.updateDisplayedColorValues();
           this.updateDisplayedObstacleValues();
