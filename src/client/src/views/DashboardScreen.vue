@@ -22,7 +22,17 @@
                 <b-table hover :items="currentSensorData"></b-table>
               </b-col> </b-row
           ></b-col>
-          <b-col>Map component</b-col>
+          <b-col>
+            <div id="canvasParent" class="w-100 h-100">
+              <div id="canvasChild">
+                <canvas id="map"></canvas>
+              </div>
+              <b-button @click="moveForward">F</b-button>
+              <b-button @click="moveBack">B</b-button>
+              <b-button @click="moveLeft">L</b-button>
+              <b-button @click="moveRight">R</b-button>
+            </div>
+          </b-col>
         </b-row>
       </b-container>
       <div class="text-center">
@@ -31,18 +41,14 @@
             <b-col>
               <b-button
                 class="mt-3"
-                variant="outline-danger"
+                variant="success"
                 block
                 @click="showStatsModal"
                 >View Stats</b-button
               ></b-col
             >
             <b-col>
-              <b-button
-                class="mt-3"
-                variant="outline-danger"
-                block
-                @click="hideErrorModal"
+              <b-button class="mt-3" variant="danger" block @click="hideModal"
                 >Close Me</b-button
               ></b-col
             >
@@ -177,15 +183,48 @@ export default {
         Blue: "#65b9ac",
         Obstacle: "5C5553",
       },
+      c: null,
+      ctx: null,
+      vueCanvas: null,
+      canvasStore: null,
+      rectWidth: 100,
       colorReadyToRender: false,
+      canvasOriginX: 100,
+      canvasOriginY: 300,
+      canvasTileSize: 30,
     };
+  },
+  created() {
+    window.addEventListener("unload", function () {
+      sessionStorage.removeItem("mapData");
+      this.canvasOriginX = 100;
+      this.canvasOriginY = 300;
+    });
   },
   mounted() {
     this.$root.$on("bv::modal::shown", (bvEvent, modalId) => {
-      console.log("Modal is about to be shown", bvEvent, modalId);
+      //console.log("Modal is about to be shown", bvEvent, modalId);
       if (modalId === "statsModal") {
         this.initChart();
         this.colorReadyToRender = true;
+      }
+      if (modalId === "dashboardModal") {
+        this.c = document.getElementById("map");
+        this.ctx = this.c.getContext("2d");
+        this.vueCanvas = this.ctx;
+        this.resizeCanvas();
+        let idt = sessionStorage.getItem("mapData") || null;
+        if (idt) {
+          this.getImage(idt)
+            .then((successfulUrl) => {
+              this.vueCanvas.drawImage(successfulUrl, 0, 0);
+            })
+            .catch((errorUrl) => {
+              console.log(errorUrl);
+            });
+        } else {
+          this.vueCanvas.transform(1, 0, 0, -1, 0, this.vueCanvas.height);
+        }
       }
     });
   },
@@ -199,6 +238,8 @@ export default {
       this.$refs["dashboard-modal"].hide();
       clearInterval(this.interval);
       this.interval = null;
+      let idt = this.c.toDataURL();
+      sessionStorage.setItem("mapData", idt);
     },
 
     showErrorModal() {
@@ -435,6 +476,85 @@ export default {
         this.messageIndex++;
       }
     },
+    resizeCanvas() {
+      this.c.style.width = "100%";
+      this.c.style.height = "100%";
+      this.c.width = this.c.offsetWidth;
+      this.c.height = this.c.offsetHeight;
+    },
+    moveForward() {
+      this.vueCanvas.beginPath();
+      this.canvasOriginY -= 30;
+      this.vueCanvas.rect(
+        this.canvasOriginX,
+        this.canvasOriginY,
+        this.canvasTileSize,
+        this.canvasTileSize
+      );
+      this.vueCanvas.fillStyle = "#32CD30";
+      this.vueCanvas.fill();
+      this.vueCanvas.lineWidth = 3;
+      this.vueCanvas.strokeStyle = "black";
+      this.vueCanvas.stroke();
+    },
+    moveBack() {
+      this.vueCanvas.beginPath();
+      this.canvasOriginY += 30;
+      this.vueCanvas.rect(
+        this.canvasOriginX,
+        this.canvasOriginY,
+        this.canvasTileSize,
+        this.canvasTileSize
+      );
+      this.vueCanvas.fillStyle = "#FF0000";
+      this.vueCanvas.fill();
+      this.vueCanvas.lineWidth = 3;
+      this.vueCanvas.strokeStyle = "black";
+      this.vueCanvas.stroke();
+    },
+    moveLeft() {
+      this.vueCanvas.beginPath();
+      this.canvasOriginX -= 30;
+      this.vueCanvas.rect(
+        this.canvasOriginX,
+        this.canvasOriginY,
+        this.canvasTileSize,
+        this.canvasTileSize
+      );
+      this.vueCanvas.fillStyle = "#000080";
+      this.vueCanvas.fill();
+      this.vueCanvas.lineWidth = 3;
+      this.vueCanvas.strokeStyle = "black";
+      this.vueCanvas.stroke();
+    },
+    moveRight() {
+      this.vueCanvas.beginPath();
+      this.canvasOriginX += 30;
+      this.vueCanvas.rect(
+        this.canvasOriginX,
+        this.canvasOriginY,
+        this.canvasTileSize,
+        this.canvasTileSize
+      );
+      this.vueCanvas.fillStyle = "#000080";
+      this.vueCanvas.fill();
+      this.vueCanvas.lineWidth = 3;
+      this.vueCanvas.strokeStyle = "black";
+      this.vueCanvas.stroke();
+    },
+
+    getImage(url) {
+      return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () {
+          resolve(img);
+        };
+        img.onerror = function () {
+          reject(url);
+        };
+        img.src = url;
+      });
+    },
   },
 };
 </script>
@@ -471,5 +591,19 @@ export default {
 .glyphicon {
   color: #8e44ad;
   font-weight: bold;
+}
+
+canvas {
+  border: 1px solid black;
+  margin: auto;
+  flex-grow: 100;
+}
+
+#canvasParent {
+  display: flex;
+}
+
+#canvasChild {
+  flex-grow: 1;
 }
 </style>
