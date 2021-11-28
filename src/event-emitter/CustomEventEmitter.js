@@ -13,9 +13,7 @@ class CustomEventEmitter {
   }
 
   initialize() {
-    this.eventEmitter.on("DATA_RECEIVED", ({ data }) => {
-      console.log("event fired and captured with data", data);
-    });
+    this.eventEmitter.on("DATA_RECEIVED", ({ data }) => {});
   }
 }
 

@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const mongoUri = "mongodb://localhost:27017/test_database";
-
+const { testMongoUri } = require("../../../config/config");
 mongoose
-  .connect(mongoUri, {
+  .connect(`${testMongoUri}test-model`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -12,10 +11,10 @@ const User = require("../index");
 
 describe("User model test", () => {
   beforeAll(async () => {
-    await User.remove({});
+    await User.deleteMany({});
   });
   afterEach(async () => {
-    await User.remove({});
+    await User.deleteMany({});
   });
   afterAll(async () => {
     await mongoose.connection.close();
@@ -26,8 +25,7 @@ describe("User model test", () => {
   describe("Create user", () => {
     it("Valid PIN", async () => {
       const user = await new User({ PIN: "1234" }).save();
-      const foundUser = await User.find({}).exec();
-      const actual = foundUser[0];
+      const actual = await User.findById(user._id).exec();
       expect(actual).toHaveProperty("hashed_PIN");
     });
     it("Invalid PINS ", async () => {
@@ -51,8 +49,7 @@ describe("User model test", () => {
   describe("get user", () => {
     it("gets a user", async () => {
       const user = await new User({ PIN: "1234" }).save();
-      const foundUser = await User.find({}).exec();
-      const actual = foundUser[0];
+      const actual = await User.findById(user._id).exec();
       expect(actual).toHaveProperty("hashed_PIN");
     });
   });
@@ -99,15 +96,13 @@ describe("User model test", () => {
   describe("Authenticate", () => {
     it("successfully if given correct PIN", async () => {
       const user = await new User({ PIN: "1234" }).save();
-      const foundUser = await User.find({}).exec();
-      const actual = foundUser[0];
+      const actual = await User.findById(user._id).exec();
       const auth = await User.authenticate("1234", actual.hashed_PIN);
       expect(auth).toEqual(true);
     });
     it("failed if given wrong PIN", async () => {
       const user = await new User({ PIN: "1234" }).save();
-      const foundUser = await User.find({}).exec();
-      const actual = foundUser[0];
+      const actual = await User.findById(user._id).exec();
       const auth = await User.authenticate("5678", actual.hashed_PIN);
       expect(auth).toEqual(false);
     });
@@ -126,8 +121,8 @@ describe("User model test", () => {
       const user = await new User({ PIN: "1234" }).save();
       const { lockUntil, updates } = user.incLoginAttempts();
       await User.updateOne({ _id: user._id }, updates).exec();
-      const updatedUser = await User.find({}).exec();
-      expect(updatedUser[0]).toMatchObject({
+      const updatedUser = await User.findById(user._id).exec();
+      expect(updatedUser).toMatchObject({
         __v: expect.anything(),
         _id: expect.anything(),
         createdAt: expect.anything(),
@@ -141,7 +136,7 @@ describe("User model test", () => {
       for (let i = 0; i <= 5; i++) {
         const { lockUntil, updates } = user.incLoginAttempts();
         await User.updateOne({ _id: user._id }, updates).exec();
-        user = await User.findOne({ _id: user._id });
+        user = await User.findById({ _id: user._id });
       }
 
       expect(user).toMatchObject({
@@ -159,7 +154,7 @@ describe("User model test", () => {
       for (let i = 0; i <= 5; i++) {
         const { lockUntil, updates } = user.incLoginAttempts();
         await User.updateOne({ _id: user._id }, updates).exec();
-        user = await User.findOne({ _id: user._id });
+        user = await User.findById({ _id: user._id });
       }
       const newLockUntil = Date.parse(
         new Date(new Date().getTime() - 5 * 60000)
@@ -168,10 +163,10 @@ describe("User model test", () => {
         { _id: user._id },
         { lockUntil: newLockUntil }
       ).exec();
-      user = await User.findOne({ _id: user._id });
+      user = await User.findById({ _id: user._id });
       const { lockUntil, updates } = user.incLoginAttempts();
       await User.updateOne({ _id: user._id }, updates).exec();
-      user = await User.findOne({ _id: user._id });
+      user = await User.findById({ _id: user._id });
 
       expect(user).toMatchObject({
         __v: expect.anything(),

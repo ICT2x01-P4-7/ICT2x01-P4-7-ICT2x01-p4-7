@@ -24,6 +24,7 @@ export default {
     }
     this.workspace = Blockly.inject(this.$refs["blocklyDiv"], options);
   },
+  methods: {},
 };
 </script>
 

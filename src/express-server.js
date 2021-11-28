@@ -10,6 +10,7 @@ const controllers = [new UserController(), new ProgramController()];
 
 module.exports = class Server {
   app = express();
+  server;
 
   constructor(mongoUri, PORT) {
     this.initDB(mongoUri);
@@ -40,17 +41,16 @@ module.exports = class Server {
     });
   }
   start(PORT) {
-    this.app.listen(PORT, () => {
+    this.server = this.app.listen(PORT, () => {
       console.log(`App listening at http://localhost:${PORT}`);
     });
+  }
+  close() {
+    this.server.close();
   }
   initEventListener() {
     // customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
     //   console.log(sensorData);
     // });
-    customEventEmitter.getEventEmitter().on("CONNECTED", ({ connected }) => {
-      global.connected = connected;
-      console.log(`Is the car connected? ${global.connected}`);
-    });
   }
 };

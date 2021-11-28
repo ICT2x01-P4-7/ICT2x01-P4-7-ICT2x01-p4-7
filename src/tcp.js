@@ -3,11 +3,11 @@ const customEventEmitter = require("./event-emitter/CustomEventEmitter");
 let net = require("net");
 
 module.exports = class TCPServer {
+  sequenceObject = { ready: false, data: "" };
   constructor(hostname, port) {
     this.server = net.createServer();
-    this.eventListener;
     this.initListener();
-    this.initServer(hostname, port);
+    this.initServer(hostname, port, this.sequenceObject);
   }
   get receivedData() {
     return this._receivedData;
@@ -17,12 +17,15 @@ module.exports = class TCPServer {
     return (this.dataRead = n);
   }
 
-  initListener() {}
+  initListener() {
+    customEventEmitter.getEventEmitter().on("SEQUENCE", ({ sequenceData }) => {
+      this.sequenceObject.ready = true;
+      this.sequenceObject.data = sequenceData;
+    });
+  }
 
-  initServer(hostname, port) {
+  initServer(hostname, port, sequenceObject) {
     let server = this.server;
-    let count = 0;
-
     //emitted when server closes ...not emitted until all connections closes.
     this.server.on("close", function () {
       console.log("Server closed !");
@@ -35,34 +38,26 @@ module.exports = class TCPServer {
       customEventEmitter
         .getEventEmitter()
         .emit("CONNECTED", { connected: true });
-
       console.log("---------server details -----------------");
 
       let address = server.address();
       let port = address.port;
-      let family = address.family;
       let ipaddr = address.address;
-      console.log("Server is listening at port" + port);
-      console.log("Server ip :" + ipaddr);
-      console.log("Server is IP4/IP6 : " + family);
+      // console.log("Server ip :" + ipaddr + " " + port);
 
       let lport = socket.localPort;
       let laddr = socket.localAddress;
-      console.log("Server is listening at LOCAL port" + lport);
-      console.log("Server LOCAL ip :" + laddr);
+      console.log(`Server is listening at ${laddr}:${lport}`);
 
-      console.log("------------remote client info --------------");
-
-      let rport = socket.remotePort;
-      let raddr = socket.remoteAddress;
-      let rfamily = socket.remoteFamily;
-
-      console.log("REMOTE Socket is listening at port" + rport);
-      console.log("REMOTE Socket ip :" + raddr);
-      console.log("REMOTE Socket is IP4/IP6 : " + rfamily);
+      // console.log("------------remote client info --------------");
+      // let rport = socket.remotePort;
+      // let raddr = socket.remoteAddress;
+      // let rfamily = socket.remoteFamily;
+      // console.log("REMOTE Socket is listening at port" + rport);
+      // console.log("REMOTE Socket ip :" + raddr);
+      // console.log("REMOTE Socket is IP4/IP6 : " + rfamily);
 
       console.log("--------------------------------------------");
-      //let no_of_connections =  server.getConnections(); // sychronous version
       server.getConnections(function (error, count) {
         console.log(
           "Number of concurrent connections to the server : " + count
@@ -71,24 +66,16 @@ module.exports = class TCPServer {
 
       socket.setEncoding("utf8");
 
-      socket.setTimeout(800000, function () {
-        console.log("Socket timed out");
-        sock.destroy();
+      socket.setTimeout(15000, function () {
+        console.log("Socket timed out, destroying socket now");
+        socket.destroy();
       });
 
-      customEventEmitter
-        .getEventEmitter()
-        .on("SEQUENCE", ({ sequenceData }) => {
-          let is_kernel_buffer_full = socket.write(`${sequenceData}\r\n`);
-          if (is_kernel_buffer_full) {
-            console.log(`Wrote ${sequenceData} to car`);
-          } else {
-            socket.pause();
-            // }
-          }
-        });
-
       socket.on("data", function (data) {
+        customEventEmitter
+          .getEventEmitter()
+          .emit("CONNECTED", { connected: true });
+
         let bread = socket.bytesRead;
         let bwrite = socket.bytesWritten;
         let sensorData;
@@ -96,15 +83,32 @@ module.exports = class TCPServer {
         console.log("Bytes written : " + bwrite);
         console.log("Data sent to server : " + data);
         let dataLines = data.split("\n");
-        for (let i in dataLines) {
-          //console.log(dataLines[i], "Length: ", dataLines[i].length, "\n");
-          if (dataLines[i] != "") {
-            try {
-              sensorData = JSON.parse(dataLines[i]);
-            } catch (e) {
-              console.log("Error in >", dataLines[i]);
-            }
+        // for (let i in dataLines) {
+        //   //console.log(dataLines[i], "Length: ", dataLines[i].length, "\n");
+        //   if (dataLines[i] != "") {
+        //     try {
+        //       sensorData = JSON.parse(dataLines[i]);
+        //     } catch (e) {
+        //       console.log("Error in >", dataLines[i]);
+        //     }
+        //   }
+        // }
+        try {
+          sensorData = JSON.parse(dataLines[dataLines.length - 2]);
+        } catch (e) {
+          console.log("Error in >", dataLines[dataLines.length - 2]);
+        }
+        if (sequenceObject.ready) {
+          let is_kernel_buffer_full = socket.write(
+            `${sequenceObject.data}\r\n`
+          );
+          if (is_kernel_buffer_full) {
+            console.log(`Wrote ${sequenceObject.data} to car`);
+          } else {
+            socket.pause();
           }
+          sequenceObject.ready = false;
+          sequenceObject.data = "";
         }
         customEventEmitter
           .getEventEmitter()
@@ -137,15 +141,8 @@ module.exports = class TCPServer {
         console.log("Error : " + error);
       });
 
-      socket.on("timeout", function () {
-        console.log("Socket timed out !");
-        socket.end("Timed out!");
-        // can call socket.destroy() here too.
-      });
-
       socket.on("end", function (data) {
         console.log("Socket ended from other end!");
-        console.log("End data : " + data);
       });
 
       socket.on("close", function (error) {
@@ -157,18 +154,7 @@ module.exports = class TCPServer {
         customEventEmitter
           .getEventEmitter()
           .emit("CONNECTED", { connected: false });
-        console.log("Removing all listeners for current socket..");
-        customEventEmitter.getEventEmitter().removeAllListeners();
-        if (error) {
-          console.log(error);
-        }
       });
-
-      setTimeout(function () {
-        let isdestroyed = socket.destroyed;
-        console.log("Socket destroyed:" + isdestroyed);
-        socket.destroy();
-      }, 200000);
     });
 
     // emits when any error occurs -> calls closed event immediately after
@@ -181,7 +167,7 @@ module.exports = class TCPServer {
       console.log("Server is listening!");
     });
 
-    server.maxConnections = 10;
+    server.maxConnections = 2;
 
     //static port allocation
     server.listen(port, () => {

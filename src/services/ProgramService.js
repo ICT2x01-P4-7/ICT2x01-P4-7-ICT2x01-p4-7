@@ -1,18 +1,25 @@
 const customEventEmitter = require("../event-emitter/CustomEventEmitter");
 
 class ProgramService {
-  static sensorData = {};
-  static eventListener = customEventEmitter
-    .getEventEmitter()
-    .on("DATA", ({ sensorData }) => {
-      ProgramService.sensorData = sensorData;
-    });
+  sensorData = {};
+  connected = false;
+
   constructor(sequence) {
     this.sequence = sequence;
+    this.initListener();
   }
 
-  static async sendSequence(sequence) {
-    if (global.connected) {
+  initListener() {
+    customEventEmitter.getEventEmitter().on("DATA", ({ sensorData }) => {
+      this.sensorData = sensorData;
+    });
+    customEventEmitter.getEventEmitter().on("CONNECTED", ({ connected }) => {
+      this.connected = connected;
+    });
+  }
+
+  async sendSequence(sequence) {
+    if (this.connected) {
       customEventEmitter
         .getEventEmitter()
         .emit("SEQUENCE", { sequenceData: sequence });
@@ -28,11 +35,11 @@ class ProgramService {
     }
   }
 
-  static async getSensorData() {
-    if (global.connected) {
+  async getSensorData() {
+    if (this.connected) {
       return {
         message: {
-          sensorData: ProgramService.sensorData,
+          sensorData: this.sensorData,
         },
         success: true,
       };
@@ -45,4 +52,4 @@ class ProgramService {
   }
 }
 
-module.exports = { ProgramService };
+module.exports = new ProgramService();
