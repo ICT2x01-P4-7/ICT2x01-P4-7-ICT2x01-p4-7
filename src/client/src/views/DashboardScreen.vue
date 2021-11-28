@@ -48,8 +48,37 @@
         </b-container>
       </div>
     </b-modal>
-    <b-modal ref="raw-stats-modal" hide-footer :hide-header-close="true">
+    <b-modal
+      size="xl"
+      ref="raw-stats-modal"
+      hide-footer
+      :hide-header-close="true"
+    >
       <div class="d-block text-center">
+        <!-- Panel div start -->
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Obstacle Distance</h3>
+          </div>
+          <div class="panel-body">
+            <!-- Chart container -->
+            <div id="chart_container">
+              <div id="oy_axis"></div>
+              <div id="demo_chart" ref="obstaclepanel"></div>
+            </div>
+            <!-- End of chart container -->
+          </div>
+          <div class="panel-footer">
+            <p v-if="displayedObstacleValues.length > 0">
+              <small>
+                <span v-bind:style="{ color: dvColors.Obstacle }"
+                  >Distance: {{ displayedObstacleValues[0].ObstacleDistance }}
+                </span>
+              </small>
+            </p>
+          </div>
+        </div>
+        <!-- Panel div end -->
         <!-- Panel div start -->
         <div class="panel panel-primary">
           <div class="panel-heading">
@@ -58,23 +87,25 @@
           <div class="panel-body">
             <!-- Chart container -->
             <div id="chart_container">
-              <div id="y_axis"></div>
+              <div id="cy_axis"></div>
               <div id="demo_chart" ref="colorpanel"></div>
             </div>
             <!-- End of chart container -->
           </div>
           <div class="panel-footer">
-            <p v-if="displayedValues.length > 0">
+            <p v-if="displayedColorValues.length > 0">
               <small>
                 <span v-bind:style="{ color: dvColors.Red }"
-                  >{{ displayedValues[0].Red }} </span
-                >V |
+                  >Red:{{ displayedColorValues[0].Red }}
+                </span>
+                |
                 <span v-bind:style="{ color: dvColors.Green }"
-                  >{{ displayedValues[0].Green }} </span
-                >V |
+                  >Green:{{ displayedColorValues[0].Green }}
+                </span>
+                |
                 <span v-bind:style="{ color: dvColors.Blue }"
-                  >{{ displayedValues[0].Blue }} </span
-                >V
+                  >Blue: {{ displayedColorValues[0].Blue }}
+                </span>
               </small>
             </p>
           </div>
@@ -98,7 +129,8 @@ import axios from "axios";
 import Rickshaw from "rickshaw";
 import "rickshaw/rickshaw.min.css";
 
-let magnitudeChart;
+let colorChart;
+let obstacleChart;
 export default {
   data() {
     return {
@@ -107,16 +139,19 @@ export default {
       newSensorData: {},
       interval: null,
       //graph stuff,
-      messageSeries: [],
+      colorSeries: [],
+      obstacleSeries: [],
       renderEveryNth: 1,
       updateInterval: 1,
       streamFrequency: 1,
       messageIndex: 0,
-      displayedValues: [],
+      displayedColorValues: [],
+      displayedObstacleValues: [],
       dvColors: {
         Red: "#cb503a",
         Green: "#72c039",
         Blue: "#65b9ac",
+        Obstacle: "5C5553",
       },
       colorReadyToRender: false,
     };
@@ -169,21 +204,29 @@ export default {
           this.newSensorData = tmpData;
           //this.sensorDataStore.push(tmpData);
           // Graph
-          this.updateDisplayedValues();
-          if (this.messageSeries.length < this.renderEveryNth) {
-            this.messageSeries.push({
+          this.updateDisplayedColorValues();
+          this.updateDisplayedObstacleValues();
+          if (this.colorSeries.length < this.renderEveryNth) {
+            this.colorSeries.push({
               Red: tmpData.Red,
               Green: tmpData.Green,
               Blue: tmpData.Blue,
             });
           }
+          if (this.obstacleSeries.length < this.renderEveryNth) {
+            this.obstacleSeries.push({
+              ObstacleDistance: tmpData.ObstacleDistance,
+            });
+          }
           /* Render-time! */
           if (
-            this.messageSeries.length == this.renderEveryNth &&
+            this.colorSeries.length == this.renderEveryNth &&
             this.colorReadyToRender
           ) {
-            this.insertDatapoints(this.messageSeries, magnitudeChart);
-            this.messageSeries = [];
+            this.insertColorDatapoints(this.colorSeries, colorChart);
+            this.insertObstacleDatapoints(this.obstacleSeries, obstacleChart);
+            this.obstacleSeries = [];
+            this.colorSeries = [];
           }
         })
         .catch((error) => {
@@ -192,9 +235,9 @@ export default {
     },
     /* Rickshaw.js initialization */
     initChart() {
-      magnitudeChart = new Rickshaw.Graph({
+      colorChart = new Rickshaw.Graph({
         element: this.$refs.colorpanel,
-        width: "1000",
+        width: "500",
         height: "300",
         renderer: "line",
         min: 0,
@@ -203,6 +246,46 @@ export default {
           [
             {
               name: "Red",
+              color: "#EC644B",
+            },
+            {
+              name: "Blue",
+              color: "#446CB3",
+            },
+            {
+              name: "Green",
+              color: "#44B355",
+            },
+          ],
+          undefined,
+          {
+            timeInterval: this.updateInterval,
+            maxDataPoints: 100,
+            timeBase: new Date().getTime() / 1000,
+          }
+        ),
+      });
+      new Rickshaw.Graph.Axis.Y({
+        graph: colorChart,
+        orientation: "left",
+        tickFormat: function (y) {
+          return y.toFixed(1);
+        },
+        ticks: 5,
+        element: document.getElementById("cy_axis"),
+      });
+
+      obstacleChart = new Rickshaw.Graph({
+        element: this.$refs.obstaclepanel,
+        width: "500",
+        height: "300",
+        renderer: "line",
+        min: 0,
+        max: 200,
+        series: new Rickshaw.Series.FixedDuration(
+          [
+            {
+              name: "One",
               color: "#EC644B",
             },
           ],
@@ -215,17 +298,17 @@ export default {
         ),
       });
       new Rickshaw.Graph.Axis.Y({
-        graph: magnitudeChart,
+        graph: obstacleChart,
         orientation: "left",
         tickFormat: function (y) {
           return y.toFixed(1);
         },
         ticks: 5,
-        element: document.getElementById("y_axis"),
+        element: document.getElementById("oy_axis"),
       });
-      this.resizeChart(magnitudeChart);
+      this.resizeChart(colorChart);
       window.addEventListener("resize", () => {
-        this.resizeChart(magnitudeChart);
+        this.resizeChart(colorChart);
       });
     },
     resizeChart(chart) {
@@ -235,24 +318,44 @@ export default {
       chart.render();
     },
     /* Insert received datapoints into the chart */
-    insertDatapoints(messages, chart) {
+    insertColorDatapoints(messages, chart) {
       for (let i = 0; i < messages.length; i++) {
-        let voltageData = {
-          Magnitude1: messages[i].Red,
-          Magnitude2: messages[i].Green,
-          Magnitude3: messages[i].Blue,
+        let colorData = {
+          Red: messages[i].Red,
+          Green: messages[i].Green,
+          Blue: messages[i].Blue,
         };
-        chart.series.addData(voltageData);
+        chart.series.addData(colorData);
+      }
+      chart.render();
+    },
+    insertObstacleDatapoints(messages, chart) {
+      for (let i = 0; i < messages.length; i++) {
+        let obstacleDistanceData = {
+          ObstacleDistance: messages[i].ObstacleDistance,
+        };
+        chart.series.addData(obstacleDistanceData);
       }
       chart.render();
     },
     /* Update displayed values every second on average */
-    updateDisplayedValues() {
+    updateDisplayedColorValues() {
       if (this.messageIndex == this.streamFrequency) {
         this.messageIndex = 0;
-        this.displayedValues = this.messageSeries;
+        this.displayedColorValues = this.colorSeries;
       } else if (this.messageIndex == 0) {
-        this.displayedValues = this.messageSeries;
+        this.displayedColorValues = this.colorSeries;
+        this.messageIndex++;
+      } else {
+        this.messageIndex++;
+      }
+    },
+    updateDisplayedObstacleValues() {
+      if (this.messageIndex == this.streamFrequency) {
+        this.messageIndex = 0;
+        this.displayedObstacleValues = this.obstacleSeries;
+      } else if (this.messageIndex == 0) {
+        this.displayedObstacleValues = this.obstacleSeries;
         this.messageIndex++;
       } else {
         this.messageIndex++;
@@ -269,12 +372,14 @@ export default {
   position: relative;
 }
 
-#demo_chart {
-  position: relative;
-  left: 40px;
+#cy_axis {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
 }
 
-#y_axis {
+#oy_axis {
   position: absolute;
   top: 0;
   bottom: 0;
