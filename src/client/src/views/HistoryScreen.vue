@@ -7,7 +7,7 @@
       hide-footer
     >
       <div class="d-block text-center">
-        <h3>History</h3>
+        <h1 class="display-1">History</h1>
         <p>F: Forward B: Backward R: Right L: Left</p>
         <div v-if="noHistory">
           <b-alert show variant="warning">

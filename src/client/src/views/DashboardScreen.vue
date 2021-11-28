@@ -8,18 +8,18 @@
       hide-footer
     >
       <div class="d-block text-center">
-        <h3>Dashboard</h3>
+        <h1 class="display-1">Dashboard</h1>
       </div>
       <b-container class="">
         <b-row align-v="stretch">
           <b-col>
             <b-row align-v="baseline">
-              <b-col style="font-size: 0.75rem">
-                <b-table striped hover :items="currentExecution"></b-table>
+              <b-col style="font-size: 2rem">
+                <b-table stacked hover :items="currentExecution"></b-table>
               </b-col>
               <div class="w-100"></div>
-              <b-col style="font-size: 1.25rem">
-                <b-table striped hover :items="currentSensorData"></b-table>
+              <b-col style="font-size: 2rem">
+                <b-table hover :items="currentSensorData"></b-table>
               </b-col> </b-row
           ></b-col>
           <b-col>Map component</b-col>
@@ -153,7 +153,12 @@ export default {
     return {
       alertMessage: "Something went wrong",
       alertTitle: "Watch out!",
-      currentExecution: [],
+      currentExecution: [
+        {
+          executing: "Left",
+          next: "FFFLRFF",
+        },
+      ],
       currentSensorData: [],
       newSensorData: {},
       interval: null,
