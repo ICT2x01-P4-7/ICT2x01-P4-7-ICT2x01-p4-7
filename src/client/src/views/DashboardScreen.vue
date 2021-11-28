@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-modal
+      id="dashboardModal"
       size="xl"
       ref="dashboard-modal"
       :hide-header-close="true"
@@ -40,7 +41,7 @@
                 class="mt-3"
                 variant="outline-danger"
                 block
-                @click="hideModal"
+                @click="hideErrorModal"
                 >Close Me</b-button
               ></b-col
             >
@@ -49,6 +50,7 @@
       </div>
     </b-modal>
     <b-modal
+      id="statsModal"
       size="xl"
       ref="raw-stats-modal"
       hide-footer
@@ -82,7 +84,7 @@
         <!-- Panel div start -->
         <div class="panel panel-primary">
           <div class="panel-heading">
-            <h3 class="panel-title">Color</h3>
+            <h3 class="panel-title">Color Intensity</h3>
           </div>
           <div class="panel-body">
             <!-- Chart container -->
@@ -120,6 +122,20 @@
         >
       </div>
     </b-modal>
+    <b-modal ref="error-modal" hide-footer :title.sync="alertTitle">
+      <div class="d-block text-center">
+        <p>
+          {{ alertMessage }}
+        </p>
+        <b-button
+          class="mt-3"
+          variant="outline-danger"
+          block
+          @click="hideErrorModal"
+          >Close Me</b-button
+        >
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -134,6 +150,8 @@ let obstacleChart;
 export default {
   data() {
     return {
+      alertMessage: "Something went wrong",
+      alertTitle: "Watch out!",
       items: [],
       sensorDataStore: [],
       newSensorData: {},
@@ -158,8 +176,8 @@ export default {
   },
   mounted() {
     this.$root.$on("bv::modal::shown", (bvEvent, modalId) => {
-      console.log("Modal is about to be shown", modalId);
-      if (modalId === "__BVID__14") {
+      console.log("Modal is about to be shown", bvEvent, modalId);
+      if (modalId === "statsModal") {
         this.initChart();
         this.colorReadyToRender = true;
       }
@@ -175,6 +193,13 @@ export default {
       this.$refs["dashboard-modal"].hide();
       clearInterval(this.interval);
       this.interval = null;
+    },
+
+    showErrorModal() {
+      this.$refs["error-modal"].show();
+    },
+    hideErrorModal() {
+      this.$refs["error-modal"].hide();
     },
     showStatsModal() {
       this.$refs["raw-stats-modal"].show();
@@ -230,6 +255,11 @@ export default {
           }
         })
         .catch((error) => {
+          this.alertTitle = "Error";
+          this.alertMessage = error.response.data.message;
+          this.hideModal();
+          this.hideStatsModal();
+          this.showErrorModal();
           console.log(error.response.data.message);
         });
     },
@@ -307,8 +337,10 @@ export default {
         element: document.getElementById("oy_axis"),
       });
       this.resizeChart(colorChart);
+      this.resizeChart(obstacleChart);
       window.addEventListener("resize", () => {
         this.resizeChart(colorChart);
+        this.resizeChart(obstacleChart);
       });
     },
     resizeChart(chart) {
