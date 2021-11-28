@@ -180,7 +180,7 @@ export default {
       dvColors: {
         Red: "#cb503a",
         Green: "#72c039",
-        Blue: "#65b9ac",
+        Blue: "#0047AB",
         Obstacle: "5C5553",
       },
       c: null,
@@ -224,6 +224,8 @@ export default {
             });
         } else {
           this.vueCanvas.transform(1, 0, 0, -1, 0, this.vueCanvas.height);
+          this.originX = 100;
+          this.originY = 300;
         }
       }
     });
@@ -521,7 +523,7 @@ export default {
         this.canvasTileSize,
         this.canvasTileSize
       );
-      this.vueCanvas.fillStyle = "#000080";
+      this.vueCanvas.fillStyle = "#0047AB";
       this.vueCanvas.fill();
       this.vueCanvas.lineWidth = 3;
       this.vueCanvas.strokeStyle = "black";
@@ -536,7 +538,7 @@ export default {
         this.canvasTileSize,
         this.canvasTileSize
       );
-      this.vueCanvas.fillStyle = "#000080";
+      this.vueCanvas.fillStyle = "#0047AB";
       this.vueCanvas.fill();
       this.vueCanvas.lineWidth = 3;
       this.vueCanvas.strokeStyle = "black";
