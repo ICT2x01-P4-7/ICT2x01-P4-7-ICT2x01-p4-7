@@ -44,7 +44,7 @@
                 variant="success"
                 block
                 @click="showStatsModal"
-                >View Stats</b-button
+                >Detailed View</b-button
               ></b-col
             >
             <b-col>
@@ -63,63 +63,104 @@
       hide-footer
       :hide-header-close="true"
     >
+      <b-container>
+        <b-row>
+          <b-col>
+            <!-- Panel div start -->
+            <div class="panel panel-primary">
+              <div class="panel-heading text-center">
+                <h3 class="panel-title">Color Intensity</h3>
+              </div>
+              <div class="panel-body">
+                <!-- Chart container -->
+                <div id="chart_container">
+                  <div id="cy_axis"></div>
+                  <div id="demo_chart" ref="colorpanel"></div>
+                </div>
+                <!-- End of chart container -->
+              </div>
+              <div class="panel-footer">
+                <p v-if="displayedColorValues.length > 0">
+                  <small>
+                    <span v-bind:style="{ color: dvColors.Red }"
+                      >Red: {{ displayedColorValues[0].Red }}
+                    </span>
+
+                    <span v-bind:style="{ color: dvColors.Green }">
+                      Green: {{ displayedColorValues[0].Green }}
+                    </span>
+
+                    <span v-bind:style="{ color: dvColors.Blue }">
+                      Blue: {{ displayedColorValues[0].Blue }}
+                    </span>
+                  </small>
+                </p>
+              </div>
+            </div>
+            <!-- Panel div end --></b-col
+          >
+          <b-col>
+            <!-- Panel div start -->
+            <div class="panel panel-primary">
+              <div class="panel-heading text-center">
+                <h3 class="panel-title">Obstacle Distance</h3>
+              </div>
+              <div class="panel-body">
+                <!-- Chart container -->
+                <div id="chart_container">
+                  <div id="oy_axis"></div>
+                  <div id="demo_chart" ref="obstaclepanel"></div>
+                </div>
+                <!-- End of chart container -->
+              </div>
+              <div class="panel-footer">
+                <p v-if="displayedObstacleValues.length > 0">
+                  <small>
+                    <span v-bind:style="{ color: dvColors.Obstacle }"
+                      >Distance:
+                      {{ displayedObstacleValues[0].ObstacleDistance }} cm
+                    </span>
+                  </small>
+                </p>
+              </div>
+            </div>
+            <!-- Panel div end --></b-col
+          >
+          <div class="w-100"></div>
+          <b-col
+            ><!-- Panel div start -->
+            <div class="panel panel-primary">
+              <div class="panel-heading text-center">
+                <h3 class="panel-title">Speed</h3>
+              </div>
+              <div class="panel-body">
+                <!-- Chart container -->
+                <div id="chart_container">
+                  <div id="sy_axis"></div>
+                  <div id="demo_chart" ref="speedpanel"></div>
+                </div>
+                <!-- End of chart container -->
+              </div>
+              <div class="panel-footer">
+                <p v-if="displayedSpeedValues.length > 0">
+                  <small>
+                    <span v-bind:style="{ color: dvColors.SpeedLeft }"
+                      >Left: {{ displayedSpeedValues[0].SpeedRight }} RPM
+                    </span>
+
+                    <span v-bind:style="{ color: dvColors.SpeedRight }">
+                      Right: {{ displayedSpeedValues[0].SpeedLeft }} RPM
+                    </span>
+                  </small>
+                </p>
+              </div>
+            </div>
+            <!-- Panel div end --></b-col
+          >
+          <b-col><p>Placeholder 4 of 4</p></b-col>
+        </b-row>
+      </b-container>
       <div class="d-block text-center">
-        <!-- Panel div start -->
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">Obstacle Distance</h3>
-          </div>
-          <div class="panel-body">
-            <!-- Chart container -->
-            <div id="chart_container">
-              <div id="oy_axis"></div>
-              <div id="demo_chart" ref="obstaclepanel"></div>
-            </div>
-            <!-- End of chart container -->
-          </div>
-          <div class="panel-footer">
-            <p v-if="displayedObstacleValues.length > 0">
-              <small>
-                <span v-bind:style="{ color: dvColors.Obstacle }"
-                  >Distance: {{ displayedObstacleValues[0].ObstacleDistance }}
-                </span>
-              </small>
-            </p>
-          </div>
-        </div>
-        <!-- Panel div end -->
-        <!-- Panel div start -->
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">Color Intensity</h3>
-          </div>
-          <div class="panel-body">
-            <!-- Chart container -->
-            <div id="chart_container">
-              <div id="cy_axis"></div>
-              <div id="demo_chart" ref="colorpanel"></div>
-            </div>
-            <!-- End of chart container -->
-          </div>
-          <div class="panel-footer">
-            <p v-if="displayedColorValues.length > 0">
-              <small>
-                <span v-bind:style="{ color: dvColors.Red }"
-                  >Red:{{ displayedColorValues[0].Red }}
-                </span>
-                |
-                <span v-bind:style="{ color: dvColors.Green }"
-                  >Green:{{ displayedColorValues[0].Green }}
-                </span>
-                |
-                <span v-bind:style="{ color: dvColors.Blue }"
-                  >Blue: {{ displayedColorValues[0].Blue }}
-                </span>
-              </small>
-            </p>
-          </div>
-        </div>
-        <!-- Panel div end -->
         <b-button
           class="mt-3"
           variant="outline-danger"
@@ -147,13 +188,13 @@
 </template>
 
 <script>
-import { localhost } from "../config/config.js";
+import { localhost } from "@/config/config.js";
 import axios from "axios";
 import Rickshaw from "rickshaw";
 import "rickshaw/rickshaw.min.css";
-
 let colorChart;
 let obstacleChart;
+let speedChart;
 export default {
   data() {
     return {
@@ -171,17 +212,21 @@ export default {
       //graph stuff,
       colorSeries: [],
       obstacleSeries: [],
+      speedSeries: [],
       renderEveryNth: 1,
       updateInterval: 1,
       streamFrequency: 1,
       messageIndex: 0,
       displayedColorValues: [],
       displayedObstacleValues: [],
+      displayedSpeedValues: [],
       dvColors: {
         Red: "#cb503a",
         Green: "#72c039",
         Blue: "#0047AB",
         Obstacle: "5C5553",
+        SpeedLeft: "#cb503a",
+        SpeedRight: "#72c039",
       },
       c: null,
       ctx: null,
@@ -192,6 +237,7 @@ export default {
       canvasOriginX: 100,
       canvasOriginY: 300,
       canvasTileSize: 30,
+      smallCar: null,
     };
   },
   created() {
@@ -200,6 +246,8 @@ export default {
       this.canvasOriginX = 100;
       this.canvasOriginY = 300;
     });
+    this.smallCar = new Image();
+    this.smallCar.src = require("@/assets/smallcar.png");
   },
   mounted() {
     this.$root.$on("bv::modal::shown", (bvEvent, modalId) => {
@@ -214,6 +262,8 @@ export default {
         this.vueCanvas = this.ctx;
         this.resizeCanvas();
         let idt = sessionStorage.getItem("mapData") || null;
+        this.vueCanvas.drawImage(this.smallCar, 100, 300);
+
         if (idt) {
           this.getImage(idt)
             .then((successfulUrl) => {
@@ -269,7 +319,6 @@ export default {
         g: "success",
         b: "primary",
       };
-      const fakeSpeed = 15;
       let dangerTrue = "";
       if (currentSensorData.ObstacleDistance < 20) {
         dangerTrue = "danger";
@@ -277,7 +326,7 @@ export default {
       tmpStore.push(
         {
           type: "Speed",
-          data: `${fakeSpeed} rpm`,
+          data: `${currentSensorData.SpeedLeft} rpm ⚡ ${currentSensorData.SpeedRight} rpm`,
         },
         {
           type: "Obstacle",
@@ -305,17 +354,27 @@ export default {
             G: "Green",
             B: "Blue",
             C: "Color",
+            SL: "SpeedLeft",
+            SR: "SpeedRight",
           };
           let tmpData = {};
           for (let k in sensorData) {
             tmpData[dataType[k]] = sensorData[k];
           }
+          // REMOVE FAKE SPEED!
+          tmpData[dataType["SL"]] = Math.floor(
+            5 + Math.random() * (50 + 1 - 5)
+          );
+          tmpData[dataType["SR"]] = Math.floor(
+            5 + Math.random() * (50 + 1 - 5)
+          );
           tmpData.time = Date.now();
           this.newSensorData = tmpData;
           this.parseSensorData();
           // Graph
           this.updateDisplayedColorValues();
           this.updateDisplayedObstacleValues();
+          this.updateDisplayedSpeedValues();
           if (this.colorSeries.length < this.renderEveryNth) {
             this.colorSeries.push({
               Red: tmpData.Red,
@@ -328,6 +387,12 @@ export default {
               ObstacleDistance: tmpData.ObstacleDistance,
             });
           }
+          if (this.speedSeries.length < this.renderEveryNth) {
+            this.speedSeries.push({
+              SpeedLeft: tmpData.SpeedLeft,
+              SpeedRight: tmpData.SpeedRight,
+            });
+          }
           /* Render-time! */
           if (
             this.colorSeries.length == this.renderEveryNth &&
@@ -335,8 +400,10 @@ export default {
           ) {
             this.insertColorDatapoints(this.colorSeries, colorChart);
             this.insertObstacleDatapoints(this.obstacleSeries, obstacleChart);
-            this.obstacleSeries = [];
+            this.insertSpeedDatapoints(this.speedSeries, speedChart);
             this.colorSeries = [];
+            this.obstacleSeries = [];
+            this.speedSeries = [];
           }
         })
         .catch((error) => {
@@ -356,7 +423,7 @@ export default {
         height: "300",
         renderer: "line",
         min: 0,
-        max: 600,
+        max: 800,
         series: new Rickshaw.Series.FixedDuration(
           [
             {
@@ -421,11 +488,49 @@ export default {
         ticks: 5,
         element: document.getElementById("oy_axis"),
       });
+      speedChart = new Rickshaw.Graph({
+        element: this.$refs.speedpanel,
+        width: "500",
+        height: "300",
+        renderer: "line",
+        min: 0,
+        max: 60,
+        series: new Rickshaw.Series.FixedDuration(
+          [
+            {
+              name: "Left",
+              color: "#EC644B",
+            },
+            {
+              name: "Right",
+              color: "#446CB3",
+            },
+          ],
+          undefined,
+          {
+            timeInterval: this.updateInterval,
+            maxDataPoints: 100,
+            timeBase: new Date().getTime() / 1000,
+          }
+        ),
+      });
+      new Rickshaw.Graph.Axis.Y({
+        graph: speedChart,
+        orientation: "left",
+        tickFormat: function (y) {
+          return y.toFixed(1);
+        },
+        ticks: 5,
+        element: document.getElementById("sy_axis"),
+      });
       this.resizeChart(colorChart);
       this.resizeChart(obstacleChart);
+      this.resizeChart(speedChart);
+
       window.addEventListener("resize", () => {
         this.resizeChart(colorChart);
         this.resizeChart(obstacleChart);
+        this.resizeChart(speedChart);
       });
     },
     resizeChart(chart) {
@@ -455,6 +560,16 @@ export default {
       }
       chart.render();
     },
+    insertSpeedDatapoints(messages, chart) {
+      for (let i = 0; i < messages.length; i++) {
+        let speedData = {
+          SpeedLeft: messages[i].SpeedLeft,
+          SpeedRight: messages[i].SpeedRight,
+        };
+        chart.series.addData(speedData);
+      }
+      chart.render();
+    },
     /* Update displayed values every second on average */
     updateDisplayedColorValues() {
       if (this.messageIndex == this.streamFrequency) {
@@ -478,6 +593,17 @@ export default {
         this.messageIndex++;
       }
     },
+    updateDisplayedSpeedValues() {
+      if (this.messageIndex == this.streamFrequency) {
+        this.messageIndex = 0;
+        this.displayedSpeedValues = this.speedSeries;
+      } else if (this.messageIndex == 0) {
+        this.displayedSpeedValues = this.speedSeries;
+        this.messageIndex++;
+      } else {
+        this.messageIndex++;
+      }
+    },
     resizeCanvas() {
       this.c.style.width = "100%";
       this.c.style.height = "100%";
@@ -486,7 +612,6 @@ export default {
     },
     moveForward() {
       this.vueCanvas.beginPath();
-      this.canvasOriginY -= 30;
       this.vueCanvas.rect(
         this.canvasOriginX,
         this.canvasOriginY,
@@ -498,10 +623,16 @@ export default {
       this.vueCanvas.lineWidth = 3;
       this.vueCanvas.strokeStyle = "black";
       this.vueCanvas.stroke();
+
+      this.canvasOriginY -= 30;
+      this.vueCanvas.drawImage(
+        this.smallCar,
+        this.canvasOriginX,
+        this.canvasOriginY
+      );
     },
     moveBack() {
       this.vueCanvas.beginPath();
-      this.canvasOriginY += 30;
       this.vueCanvas.rect(
         this.canvasOriginX,
         this.canvasOriginY,
@@ -513,10 +644,15 @@ export default {
       this.vueCanvas.lineWidth = 3;
       this.vueCanvas.strokeStyle = "black";
       this.vueCanvas.stroke();
+      this.canvasOriginY += 30;
+      this.vueCanvas.drawImage(
+        this.smallCar,
+        this.canvasOriginX,
+        this.canvasOriginY
+      );
     },
     moveLeft() {
       this.vueCanvas.beginPath();
-      this.canvasOriginX -= 30;
       this.vueCanvas.rect(
         this.canvasOriginX,
         this.canvasOriginY,
@@ -528,10 +664,15 @@ export default {
       this.vueCanvas.lineWidth = 3;
       this.vueCanvas.strokeStyle = "black";
       this.vueCanvas.stroke();
+      this.canvasOriginX -= 30;
+      this.vueCanvas.drawImage(
+        this.smallCar,
+        this.canvasOriginX,
+        this.canvasOriginY
+      );
     },
     moveRight() {
       this.vueCanvas.beginPath();
-      this.canvasOriginX += 30;
       this.vueCanvas.rect(
         this.canvasOriginX,
         this.canvasOriginY,
@@ -543,6 +684,12 @@ export default {
       this.vueCanvas.lineWidth = 3;
       this.vueCanvas.strokeStyle = "black";
       this.vueCanvas.stroke();
+      this.canvasOriginX += 30;
+      this.vueCanvas.drawImage(
+        this.smallCar,
+        this.canvasOriginX,
+        this.canvasOriginY
+      );
     },
 
     getImage(url) {
@@ -562,9 +709,8 @@ export default {
 </script>
 <style scoped>
 #chart_container {
-  padding-right: 40px;
-  padding-bottom: 20px;
-  margin-top: 20px;
+  padding: 10px;
+  margin-top: 10px;
   position: relative;
 }
 
@@ -576,6 +722,13 @@ export default {
 }
 
 #oy_axis {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+}
+
+#sy_axis {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -607,5 +760,18 @@ canvas {
 
 #canvasChild {
   flex-grow: 1;
+}
+
+.modal-fullscreen .modal-dialog {
+  max-width: 100%;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  position: fixed;
+  z-index: 100000;
 }
 </style>
