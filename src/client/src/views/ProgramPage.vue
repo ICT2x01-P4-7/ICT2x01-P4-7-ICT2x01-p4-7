@@ -10,7 +10,7 @@
         ><b-button pill variant="primary" size="lg">Dashboard</b-button></b-col
       >
       <b-col class="pt-4"
-        ><b-button pill variant="dark" size="lg">Tutorial</b-button></b-col
+        ><b-button pill variant="dark" size="lg" v-on:click="tutorial()">Tutorial</b-button></b-col
       >
       <b-col class="pt-4"
         ><b-button pill variant="secondary" size="lg">History</b-button></b-col
@@ -57,6 +57,7 @@
       </b-modal>
     </b-container>
     <ResetScreen ref="reset-screen"></ResetScreen>
+    <TutorialScreen ref="tutorial-screen"></TutorialScreen>
   </b-container>
 </template>
 
@@ -67,12 +68,13 @@ import BlocklyJS from "blockly/javascript";
 import { localhost } from "../config/config.js";
 import axios from "axios";
 import ResetScreen from "./ResetScreen.vue";
-
+import TutorialScreen from "./TutorialScreen.vue";
 export default {
   name: "app",
   components: {
     BlocklyComponent,
     ResetScreen,
+    TutorialScreen,
   },
   data() {
     return {
@@ -155,6 +157,9 @@ export default {
     },
     openResetScreen() {
       this.$refs["reset-screen"].showModal();
+    },
+    tutorial() {
+      this.$refs["tutorial-screen"].showModal();
     },
   },
 };

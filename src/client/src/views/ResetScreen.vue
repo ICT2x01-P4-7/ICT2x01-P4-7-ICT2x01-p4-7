@@ -69,7 +69,9 @@
     </b-modal>
   </div>
 </template>
-
+<style>
+  
+</style>
 <script>
 import axios from "axios";
 import { localhost } from "../config/config.js";
