@@ -13,7 +13,7 @@
               <!-- Chart container -->
               <div id="chart_container">
                 <div id="cy_axis" class="y_axis"></div>
-                <div id="demo_chart" ref="colorpanel"></div>
+                <div class="demo_chart" ref="colorpanel"></div>
               </div>
               <!-- End of chart container -->
             </div>
@@ -47,7 +47,7 @@
               <!-- Chart container -->
               <div id="chart_container">
                 <div id="oy_axis" class="y_axis"></div>
-                <div id="demo_chart" ref="obstaclepanel"></div>
+                <div class="demo_chart" ref="obstaclepanel"></div>
               </div>
               <!-- End of chart container -->
             </div>
@@ -75,7 +75,7 @@
               <!-- Chart container -->
               <div id="chart_container">
                 <div id="sy_axis" class="y_axis"></div>
-                <div id="demo_chart" ref="speedpanel"></div>
+                <div class="demo_chart" ref="speedpanel"></div>
               </div>
               <!-- End of chart container -->
             </div>
@@ -95,7 +95,7 @@
           </div>
           <!-- Panel div end --></b-col
         >
-        <b-col><p>Placeholder 4 of 4</p></b-col>
+        <b-col></b-col>
       </b-row>
     </b-container>
   </div>
@@ -193,7 +193,7 @@ export default {
         width: "500",
         height: "300",
         renderer: "line",
-        min: 0,
+        min: -10,
         max: 800,
         series: new Rickshaw.Series.FixedDuration(
           [
@@ -233,7 +233,7 @@ export default {
         width: "500",
         height: "300",
         renderer: "line",
-        min: 0,
+        min: -10,
         max: 200,
         series: new Rickshaw.Series.FixedDuration(
           [
@@ -264,7 +264,7 @@ export default {
         width: "500",
         height: "300",
         renderer: "line",
-        min: 0,
+        min: -10,
         max: 60,
         series: new Rickshaw.Series.FixedDuration(
           [
@@ -351,8 +351,6 @@ export default {
 
 <style scoped>
 #chart_container {
-  padding: 10px;
-  margin-top: 10px;
   position: relative;
 }
 
@@ -363,11 +361,8 @@ export default {
   width: 40px;
 }
 
-.footy {
+.demo_chart {
   position: relative;
-  width: 100%;
-  margin-top: 50px;
-  height: 60px;
-  opacity: 0.2;
+  left: 40px;
 }
 </style>

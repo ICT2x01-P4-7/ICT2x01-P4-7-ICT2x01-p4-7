@@ -8,16 +8,9 @@
       hide-footer
     >
       <div class="d-block text-center">
-        <h1 class="display-1">Dashboard</h1>
+        <h1 class="display-3">Dashboard</h1>
       </div>
-      <button
-        v-for="board in BoardViews"
-        v-bind:key="board"
-        v-bind:class="['board-button', { active: currentBoardView === board }]"
-        v-on:click="currentBoardView = board"
-      >
-        {{ board }}
-      </button>
+
       <BasicBoardComponent
         v-show="currentBoardComponent === 'BasicBoardComponent'"
         v-bind:sensorData="newSensorData"
@@ -30,25 +23,15 @@
         class="board"
       >
       </DetailedBoardComponent>
-      <b-container>
-        <b-row align-v="stretch">
-          <b-col> </b-col>
-          <b-col>
-            <div id="canvasParent" class="w-100 h-100">
-              <div id="canvasChild">
-                <canvas id="map"></canvas>
-              </div>
-              <b-button @click="moveForward">F</b-button>
-              <b-button @click="moveBack">B</b-button>
-              <b-button @click="moveLeft">L</b-button>
-              <b-button @click="moveRight">R</b-button>
-            </div>
-          </b-col>
-        </b-row>
-      </b-container>
+
       <div class="text-center">
         <b-container>
           <b-row>
+            <b-col>
+              <b-button class="mt-3" variant="primary" v-on:click="toggleBoard">
+                View {{ currentButtonText }}
+              </b-button>
+            </b-col>
             <b-col>
               <b-button class="mt-3" variant="danger" block @click="hideModal"
                 >Close Me</b-button
@@ -92,6 +75,7 @@ export default {
       alertMessage: "Something went wrong",
       alertTitle: "Watch out!",
       currentBoardView: "Basic",
+      currentButtonText: "Detailed",
       BoardViews: ["Basic", "Detailed"],
       currentExecution: [
         {
@@ -104,14 +88,6 @@ export default {
       interval: null,
       c: null,
       ctx: null,
-      vueCanvas: null,
-      canvasStore: null,
-      rectWidth: 100,
-      colorReadyToRender: false,
-      canvasOriginX: 100,
-      canvasOriginY: 300,
-      canvasTileSize: 30,
-      smallCar: null,
     };
   },
   computed: {
@@ -119,42 +95,16 @@ export default {
       return this.currentBoardView + "BoardComponent";
     },
   },
-  created() {
-    window.addEventListener("unload", function () {
-      sessionStorage.removeItem("mapData");
-      this.canvasOriginX = 100;
-      this.canvasOriginY = 300;
-    });
-    this.smallCar = new Image();
-    this.smallCar.src = require("@/assets/smallcar.png");
-  },
-  mounted() {
-    this.$root.$on("bv::modal::shown", (bvEvent, modalId) => {
-      if (modalId === "dashboardModal") {
-        this.c = document.getElementById("map");
-        this.ctx = this.c.getContext("2d");
-        this.vueCanvas = this.ctx;
-        this.resizeCanvas();
-        let idt = sessionStorage.getItem("mapData") || null;
-        this.vueCanvas.drawImage(this.smallCar, 100, 300);
-
-        if (idt) {
-          this.getImage(idt)
-            .then((successfulUrl) => {
-              this.vueCanvas.drawImage(successfulUrl, 0, 0);
-            })
-            .catch((errorUrl) => {
-              console.log(errorUrl);
-            });
-        } else {
-          this.vueCanvas.transform(1, 0, 0, -1, 0, this.vueCanvas.height);
-          this.originX = 100;
-          this.originY = 300;
-        }
-      }
-    });
-  },
   methods: {
+    toggleBoard: function () {
+      if (this.currentBoardView === "Basic") {
+        this.currentBoardView = "Detailed";
+        this.currentButtonText = "Basic";
+      } else {
+        this.currentBoardView = "Basic";
+        this.currentButtonText = "Detailed";
+      }
+    },
     showModal() {
       this.getSensorData();
       this.$refs["dashboard-modal"].show();
@@ -164,8 +114,6 @@ export default {
       this.$refs["dashboard-modal"].hide();
       clearInterval(this.interval);
       this.interval = null;
-      let idt = this.c.toDataURL();
-      sessionStorage.setItem("mapData", idt);
     },
 
     showErrorModal() {
@@ -210,109 +158,7 @@ export default {
           this.alertMessage = error.response.data.message;
           this.hideModal();
           this.showErrorModal();
-          console.log(error.response.data.message);
         });
-    },
-
-    resizeCanvas() {
-      this.c.style.width = "100%";
-      this.c.style.height = "100%";
-      this.c.width = this.c.offsetWidth;
-      this.c.height = this.c.offsetHeight;
-    },
-    moveForward() {
-      this.vueCanvas.beginPath();
-      this.vueCanvas.rect(
-        this.canvasOriginX,
-        this.canvasOriginY,
-        this.canvasTileSize,
-        this.canvasTileSize
-      );
-      this.vueCanvas.fillStyle = "#32CD30";
-      this.vueCanvas.fill();
-      this.vueCanvas.lineWidth = 3;
-      this.vueCanvas.strokeStyle = "black";
-      this.vueCanvas.stroke();
-
-      this.canvasOriginY -= 30;
-      this.vueCanvas.drawImage(
-        this.smallCar,
-        this.canvasOriginX,
-        this.canvasOriginY
-      );
-    },
-    moveBack() {
-      this.vueCanvas.beginPath();
-      this.vueCanvas.rect(
-        this.canvasOriginX,
-        this.canvasOriginY,
-        this.canvasTileSize,
-        this.canvasTileSize
-      );
-      this.vueCanvas.fillStyle = "#FF0000";
-      this.vueCanvas.fill();
-      this.vueCanvas.lineWidth = 3;
-      this.vueCanvas.strokeStyle = "black";
-      this.vueCanvas.stroke();
-      this.canvasOriginY += 30;
-      this.vueCanvas.drawImage(
-        this.smallCar,
-        this.canvasOriginX,
-        this.canvasOriginY
-      );
-    },
-    moveLeft() {
-      this.vueCanvas.beginPath();
-      this.vueCanvas.rect(
-        this.canvasOriginX,
-        this.canvasOriginY,
-        this.canvasTileSize,
-        this.canvasTileSize
-      );
-      this.vueCanvas.fillStyle = "#0047AB";
-      this.vueCanvas.fill();
-      this.vueCanvas.lineWidth = 3;
-      this.vueCanvas.strokeStyle = "black";
-      this.vueCanvas.stroke();
-      this.canvasOriginX -= 30;
-      this.vueCanvas.drawImage(
-        this.smallCar,
-        this.canvasOriginX,
-        this.canvasOriginY
-      );
-    },
-    moveRight() {
-      this.vueCanvas.beginPath();
-      this.vueCanvas.rect(
-        this.canvasOriginX,
-        this.canvasOriginY,
-        this.canvasTileSize,
-        this.canvasTileSize
-      );
-      this.vueCanvas.fillStyle = "#0047AB";
-      this.vueCanvas.fill();
-      this.vueCanvas.lineWidth = 3;
-      this.vueCanvas.strokeStyle = "black";
-      this.vueCanvas.stroke();
-      this.canvasOriginX += 30;
-      this.vueCanvas.drawImage(
-        this.smallCar,
-        this.canvasOriginX,
-        this.canvasOriginY
-      );
-    },
-
-    getImage(url) {
-      return new Promise(function (resolve, reject) {
-        var img = new Image();
-        img.onload = function () {
-          resolve(img);
-        };
-        img.onerror = function () {
-          reject(url);
-        };
-        img.src = url;
-      });
     },
   },
 };
