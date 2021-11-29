@@ -105,7 +105,7 @@ export default {
           const token = response.data.data.token;
           axios.defaults.headers.common["x-access-token"] = token;
           sessionStorage.setItem("token", token);
-          this.$router.push("/program");
+          this.$router.push("/play");
         })
         .catch((error) => {
           const errorData = error.response.data;

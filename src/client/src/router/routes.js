@@ -25,7 +25,7 @@ function checkLoginStatus(to, from, next) {
     isAuthenticated = true;
   }
   if (isAuthenticated) {
-    next("/program");
+    next("/play");
   } else {
     next();
   }
@@ -61,11 +61,11 @@ const routes = [
     meta: { title: "Log In" },
   },
   {
-    path: "/program",
-    name: "program",
+    path: "/play",
+    name: "Program",
     beforeEnter: guardRoute,
     component: ProgramPage,
-    meta: { title: "Program" },
+    meta: { title: "Play" },
   },
   { path: "*", component: NotFound },
 ];

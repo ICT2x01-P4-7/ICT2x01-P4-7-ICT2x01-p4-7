@@ -14,12 +14,14 @@
       <BasicBoardComponent
         v-show="currentBoardComponent === 'BasicBoardComponent'"
         v-bind:sensorData="newSensorData"
+        v-bind:connected="connected"
         class="board"
       >
       </BasicBoardComponent>
       <DetailedBoardComponent
         v-show="currentBoardComponent === 'DetailedBoardComponent'"
         v-bind:sensorData="newSensorData"
+        v-bind:connected="connected"
         class="board"
       >
       </DetailedBoardComponent>
@@ -72,6 +74,7 @@ export default {
   },
   data() {
     return {
+      connected: false,
       alertMessage: "Something went wrong",
       alertTitle: "Watch out!",
       currentBoardView: "Basic",
