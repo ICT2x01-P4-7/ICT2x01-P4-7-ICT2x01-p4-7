@@ -136,6 +136,8 @@ export default {
           .then((response) => {
             console.log(response.data);
             this.saveToHistory(code);
+            this.openDashboard();
+            this.$refs["program"].workspace.clear();
           })
           .catch((error) => {
             this.alertTitle = "Error";
