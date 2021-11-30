@@ -51,11 +51,15 @@ export default {
   },
   beforeDestroy() {
     if (this.connected) {
-      this.saveCanvasOrigin();
+      //this.saveCanvasOrigin();
     }
   },
   data() {
     return {
+      currentAction: "N",
+      completeExecution: true,
+      renderIndex: 0,
+      nextActions: "FFFF",
       currentExecution: [
         {
           executing: "Left",
@@ -79,6 +83,7 @@ export default {
     $props: {
       handler() {
         this.parseSensorData();
+        this.parseMovement();
       },
       deep: true,
       immediate: true,
@@ -120,6 +125,28 @@ export default {
         }
       );
       this.currentSensorData = tmpStore;
+    },
+    parseMovement() {
+      const latestSensorData = this.sensorData;
+      const currentIndex = latestSensorData.CurrentIndex;
+      const executing = latestSensorData.Executing;
+      if (currentIndex > -1) {
+        if (this.renderIndex === currentIndex) {
+          this.move(executing);
+          this.previousIndex = this.renderIndex;
+          this.renderIndex++;
+          this.completeExecution = false;
+        }
+      } else if (currentIndex === 999 && !this.completeExecution) {
+        this.renderIndex = 0;
+        console.log("Finished execution");
+        this.completeExecution = true;
+      } else if (currentIndex === 998 && !this.completeExecution) {
+        this.renderIndex = 0;
+
+        console.log("Color is wrong");
+        this.completeExecution = true;
+      }
     },
     initCanvas() {
       this.c = document.getElementById("map");
@@ -163,6 +190,47 @@ export default {
         this.canvasOriginX = 100;
         this.canvasOriginY = 300;
       }
+    },
+    move(direction) {
+      let color;
+      this.renderIndex += 1;
+      this.vueCanvas.beginPath();
+      this.vueCanvas.rect(
+        this.canvasOriginX,
+        this.canvasOriginY,
+        this.canvasTileSize,
+        this.canvasTileSize
+      );
+      switch (direction) {
+        case "F":
+          color = "#32CD30";
+          this.canvasOriginY -= 30;
+          break;
+        case "B":
+          color = "#FF0000";
+          this.canvasOriginY += 30;
+
+          break;
+        case "L":
+          color = "#0047AB";
+          this.canvasOriginX -= 30;
+
+          break;
+        case "R":
+          color = "#0047AB";
+          this.canvasOriginX += 30;
+          break;
+      }
+      this.vueCanvas.fillStyle = color;
+      this.vueCanvas.fill();
+      this.vueCanvas.lineWidth = 3;
+      this.vueCanvas.strokeStyle = "black";
+      this.vueCanvas.stroke();
+      this.vueCanvas.drawImage(
+        this.smallCar,
+        this.canvasOriginX,
+        this.canvasOriginY
+      );
     },
     moveForward() {
       this.vueCanvas.beginPath();

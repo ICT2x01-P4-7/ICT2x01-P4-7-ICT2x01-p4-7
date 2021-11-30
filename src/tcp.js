@@ -174,8 +174,8 @@ module.exports = class TCPServer {
       console.log(`TCP Server running at http://${hostname}:${port}/`);
     });
 
-    setTimeout(function () {
-      server.close();
-    }, 5000000);
+    // setTimeout(function () {
+    //   server.close();
+    // }, 5000000);
   }
 };

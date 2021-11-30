@@ -134,6 +134,7 @@ export default {
       axios
         .get(`${localhost}/program/sensorData`)
         .then((response) => {
+          this.connected = true;
           const sensorData = response.data.data.sensorData;
           const dataType = {
             O: "ObstacleDistance",
@@ -143,22 +144,18 @@ export default {
             C: "Color",
             SL: "SpeedLeft",
             SR: "SpeedRight",
+            CI: "CurrentIndex",
+            E: "Executing",
           };
           let tmpData = {};
           for (let k in sensorData) {
             tmpData[dataType[k]] = sensorData[k];
           }
-          // REMOVE FAKE SPEED!
-          tmpData[dataType["SL"]] = Math.floor(
-            5 + Math.random() * (50 + 1 - 5)
-          );
-          tmpData[dataType["SR"]] = Math.floor(
-            5 + Math.random() * (50 + 1 - 5)
-          );
           tmpData.time = Date.now();
           this.newSensorData = tmpData;
         })
         .catch((error) => {
+          this.connected = false;
           this.alertTitle = "Error";
           this.alertMessage = error.response.data.message;
           this.hideModal();

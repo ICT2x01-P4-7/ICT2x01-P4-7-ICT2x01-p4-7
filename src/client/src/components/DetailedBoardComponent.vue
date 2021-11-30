@@ -234,7 +234,7 @@ export default {
         height: "300",
         renderer: "line",
         min: -10,
-        max: 200,
+        max: 175,
         series: new Rickshaw.Series.FixedDuration(
           [
             {
