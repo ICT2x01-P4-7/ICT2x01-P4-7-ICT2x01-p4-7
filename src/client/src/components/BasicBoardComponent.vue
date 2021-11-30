@@ -92,6 +92,7 @@ export default {
         r: "Red",
         g: "Green",
         b: "Blue",
+        u: "Unknown",
       };
       const rowColor = {
         r: "danger",

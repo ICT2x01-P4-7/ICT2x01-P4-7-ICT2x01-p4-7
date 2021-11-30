@@ -8,9 +8,9 @@ TileUp is a gamified web portal for controlling MSP432 robotic car.
 
 # How it works
 
-The project is using the MEVN Stack. MongoDB(M), ExpressJS(E) , VueJS(V), NodeJS(N)
+The project is using the MEVN Stack. MongoDB(M), ExpressJS(E) , VueJS(V), NodeJS(N).
 
-The backend is in `src/`. The backend consist of MongoDB, ExpressJS and NodeJS
+Monorepo containing both the frontend and backend. The backend is in `src/`. The backend consist of MongoDB, ExpressJS and NodeJS
 The VueJS frontend is nested within the backend directory `src/client`.
 
 ## Prerequisite
@@ -66,12 +66,11 @@ export TEST_MONGO_URI="mongodb://localhost:27017/"
 ## Install dependencies
 
 ```bash
-/* Change dir into backend src/ */
-cd src/
-npm install
+/* clone the repository */
+git clone git@github.com:ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7.git tileup
 
-/* Change dir into frontend */
-cd client
+/* Change dir into src*/
+cd tileup/src
 npm install
 
 ```
@@ -79,44 +78,26 @@ npm install
 ### Run Backend server
 
 ```bash
-/* Assuming root directory */
-/* Change dir into backend src/ */
+/* Change dir into src/ */
 cd src/
 
-/* Run script to run both backend */
+/* Script to run frontend */
+npm run client
+
+/* Script to run backend */
 npm run server
 
 ```
 
 ![Express Backend](/img/express-backend.png)
 
-### Run Frontend server
+![Express Frontend](/img/vue-frontend.png)
 
-```bash
-/* Assuming root directory */
-/* Change dir into client directory(frontend) */
-cd src/client
-
-/* Run script to run both backend and frontend together */
-npm run serve
-
-```
-
-![Express Backend](/img/vue-frontend.png)
-
-> It is also possible to serve the client server from the backend directory for convenience.
->
-> `npm run client`
-
-### Alternatively, to run both at the same time.
+### Alternatively, to run both in the same terminal.
 
 > Note that this method makes it hard to see when errors appear in either backend or frontend
 
 ```bash
-/* Change dir to backend */
-cd src/
-
-/* Run script to run both backend and frontend together */
 npm run dev
 ```
 
@@ -162,7 +143,6 @@ Wew!
 ### Limitations
 
 > Only the leader can merge the **development** branch to main
->
 > No pushing changes to main. Only merge is allowed. Branch protection is enabled.
 
 ## Postman Collection for testing the backend API
