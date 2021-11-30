@@ -3,6 +3,8 @@ import CreateScreen from "../views/CreateScreen.vue";
 import LoginScreen from "../views/LoginScreen.vue";
 import ProgramPage from "../views/ProgramPage.vue";
 import NotFound from "../views/NotFound.vue";
+import axios from "axios";
+import { localhost } from "@/config/config.js";
 
 function guardRoute(to, from, next) {
   let isAuthenticated = false;
@@ -23,16 +25,27 @@ function checkLoginStatus(to, from, next) {
     isAuthenticated = true;
   }
   if (isAuthenticated) {
-    next("/program");
+    next("/play");
   } else {
     next();
   }
 }
 
+function checkAUserExist(to, from, next) {
+  axios
+    .get(`${localhost}/user/exist`)
+    .then(() => {
+      next("/login");
+    })
+    .catch(() => {
+      next("/create");
+    });
+}
+
 const routes = [
   {
     path: "/",
-    redirect: { name: "login" },
+    beforeEnter: checkAUserExist,
   },
   {
     path: "/create",
@@ -48,11 +61,11 @@ const routes = [
     meta: { title: "Log In" },
   },
   {
-    path: "/program",
-    name: "program",
+    path: "/play",
+    name: "Program",
     beforeEnter: guardRoute,
     component: ProgramPage,
-    meta: { title: "Program" },
+    meta: { title: "Play" },
   },
   { path: "*", component: NotFound },
 ];

@@ -21,6 +21,36 @@ describe("App test", () => {
   afterEach(async () => {
     await User.deleteMany({});
   });
+
+  describe("GET /user/exist", () => {
+    afterEach(async () => {
+      await User.deleteMany({});
+    });
+    test("should respond with error when user do not exist", async () => {
+      const response = await request(app).get("/user/exist");
+      expect(response.headers["content-type"]).toEqual(
+        expect.stringContaining("json")
+      );
+      expect(response.body).toMatchObject({
+        message: "User does not exist.",
+      });
+      expect(response.statusCode).toBe(500);
+    });
+    test("should respond with user exist", async () => {
+      await request(app).post("/user/create").send({
+        confirmPIN: "1234",
+        choosePIN: "1234",
+      });
+      const response = await request(app).get("/user/exist");
+      expect(response.headers["content-type"]).toEqual(
+        expect.stringContaining("json")
+      );
+      expect(response.body).toMatchObject({
+        message: "A user exists",
+      });
+      expect(response.statusCode).toBe(200);
+    });
+  });
   describe("POST /user/create", () => {
     afterEach(async () => {
       await User.deleteMany({});

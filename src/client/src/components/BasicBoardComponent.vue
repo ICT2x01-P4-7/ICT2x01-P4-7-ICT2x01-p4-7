@@ -31,6 +31,7 @@ export default {
   props: {
     sensorData: Object,
     canvasOrigin: Object,
+    connected: Boolean,
   },
   created() {
     window.addEventListener("unload", function () {
@@ -49,7 +50,9 @@ export default {
     });
   },
   beforeDestroy() {
-    this.saveCanvasOrigin();
+    if (this.connected) {
+      this.saveCanvasOrigin();
+    }
   },
   data() {
     return {
@@ -89,6 +92,7 @@ export default {
         r: "Red",
         g: "Green",
         b: "Blue",
+        u: "Unknown",
       };
       const rowColor = {
         r: "danger",

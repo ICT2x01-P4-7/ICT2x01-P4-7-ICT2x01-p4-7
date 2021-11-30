@@ -9,6 +9,12 @@ class UserController extends BaseController {
   path = "/user";
   routes = [
     {
+      path: "/exist",
+      method: "GET",
+      handler: this.handleExist,
+      localMiddleware: [],
+    },
+    {
       path: "/create",
       method: "POST",
       handler: this.handleCreate,
@@ -42,7 +48,15 @@ class UserController extends BaseController {
       }
     }
   }
-
+  async handleExist(req, res, next) {
+    const userService = new UserService();
+    const data = await userService.checkAUserExist();
+    if (data) {
+      super.sendSuccess(res, { userExists: "true" }, "A user exists");
+    } else {
+      super.sendError(res, "User does not exist.");
+    }
+  }
   async handleCreate(req, res, next) {
     const { PIN, choosePIN, confirmPIN } = req.body;
     const userService = new UserService(PIN, choosePIN, confirmPIN);

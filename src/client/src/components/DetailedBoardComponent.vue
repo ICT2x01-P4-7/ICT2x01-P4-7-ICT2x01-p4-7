@@ -83,11 +83,11 @@
               <p v-if="displayedSpeedValues.length > 0">
                 <small>
                   <span v-bind:style="{ color: dvColors.SpeedLeft }"
-                    >Left: {{ displayedSpeedValues[0].SpeedRight }} RPM
+                    >Left: {{ displayedSpeedValues[0].SpeedLeft }} RPM
                   </span>
 
                   <span v-bind:style="{ color: dvColors.SpeedRight }">
-                    Right: {{ displayedSpeedValues[0].SpeedLeft }} RPM
+                    Right: {{ displayedSpeedValues[0].SpeedRight }} RPM
                   </span>
                 </small>
               </p>
@@ -194,7 +194,7 @@ export default {
         height: "300",
         renderer: "line",
         min: -10,
-        max: 800,
+        max: 100,
         series: new Rickshaw.Series.FixedDuration(
           [
             {
@@ -238,7 +238,7 @@ export default {
         series: new Rickshaw.Series.FixedDuration(
           [
             {
-              name: "One",
+              name: "ObstacleDistance",
               color: "#EC644B",
             },
           ],
@@ -269,11 +269,11 @@ export default {
         series: new Rickshaw.Series.FixedDuration(
           [
             {
-              name: "Left",
+              name: "SpeedLeft",
               color: "#EC644B",
             },
             {
-              name: "Right",
+              name: "SpeedRight",
               color: "#446CB3",
             },
           ],

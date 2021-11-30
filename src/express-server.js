@@ -7,6 +7,7 @@ const { UserController } = require("./controllers/UserController");
 const { ProgramController } = require("./controllers/ProgramController");
 
 const controllers = [new UserController(), new ProgramController()];
+const path = __dirname + "/views/";
 
 module.exports = class Server {
   app = express();
@@ -30,12 +31,15 @@ module.exports = class Server {
       .catch((err) => console.log(err));
   }
   initExpressMiddleWare() {
+    this.app.use(express.static(path));
     this.app.use(cors());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
   }
   initControllers() {
-    this.app.get("/", (req, res) => res.send("hello world"));
+    this.app.get("/", function (req, res) {
+      res.sendFile(path + "index.html");
+    });
     controllers.forEach((controller) => {
       this.app.use(controller.path, controller.setRoutes());
     });

@@ -4,13 +4,15 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "npm run server",
     "server": "nodemon index.js ",
     "client": "npm run serve --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "lint": "eslint --fix",
     "format": "prettier -w .",
     "test": "jest --watch",
-    "test-coverage": "jest --coverage"
+    "test-coverage": "jest --coverage",
+    "postinstall": "(cd client && npm install)"
   },
   "keywords": [],
   "author": "",
