@@ -3,6 +3,7 @@ import CreateScreen from "../views/CreateScreen.vue";
 import LoginScreen from "../views/LoginScreen.vue";
 import ProgramPage from "../views/ProgramPage.vue";
 import NotFound from "../views/NotFound.vue";
+import ViewMap from "../views/ViewMap.vue";
 import axios from "axios";
 import { localhost } from "@/config/config.js";
 
@@ -66,6 +67,11 @@ const routes = [
     beforeEnter: guardRoute,
     component: ProgramPage,
     meta: { title: "Play" },
+  },
+  {
+    path: "/viewmap",
+    name: "Maps",
+    component: ViewMap,
   },
   { path: "*", component: NotFound },
 ];
