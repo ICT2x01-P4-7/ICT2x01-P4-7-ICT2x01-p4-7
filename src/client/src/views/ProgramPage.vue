@@ -20,7 +20,9 @@
         ></b-col
       >
       <b-col class="pt-4"
-        ><b-button pill variant="info" size="lg">Select Map</b-button></b-col
+        ><b-button pill variant="info" v-on:click="openMap()" size="lg"
+          >Select Map
+        </b-button></b-col
       >
       <b-col class="pt-4"
         ><b-button
@@ -62,7 +64,9 @@
     </b-container>
     <ResetScreen ref="reset-screen"></ResetScreen>
     <HistoryScreen ref="history-screen"></HistoryScreen>
+    <MapScreen ref="map-screen"></MapScreen>
     <DashboardScreen ref="dashboard-screen"></DashboardScreen>
+    <TestMap ref="map-screen"></TestMap>
   </b-container>
 </template>
 
@@ -75,6 +79,7 @@ import axios from "axios";
 import ResetScreen from "./ResetScreen.vue";
 import HistoryScreen from "./HistoryScreen.vue";
 import DashboardScreen from "./DashboardScreen.vue";
+import TestMap from "./showMap.vue";
 
 export default {
   name: "app",
@@ -83,6 +88,7 @@ export default {
     ResetScreen,
     HistoryScreen,
     DashboardScreen,
+    TestMap,
   },
   data() {
     return {
@@ -171,6 +177,9 @@ export default {
     },
     openHistory() {
       this.$refs["history-screen"].showModal();
+    },
+    openMap() {
+      this.$refs["map-screen"].showModal();
     },
     saveToHistory(sequence) {
       let history = sessionStorage.getItem("history");
