@@ -66,6 +66,18 @@ export default {
         this.$router.push("/login");
       }, 5000);
     },
+
+    checkSameDigits(PIN) {
+      let last_digit = PIN % 10;
+      while (PIN != 0) {
+        let current_digit = PIN % 10;
+        PIN = parseInt(PIN / 10);
+        if (current_digit != last_digit) {
+          return false;
+        }
+      }
+      return true;
+    },
     create() {
       if (this.confirmPIN === "" || this.choosePIN === "") {
         this.errorAlertMessage = "Please fill in both PIN.";
@@ -81,6 +93,13 @@ export default {
       }
       if (this.confirmPIN != this.choosePIN) {
         this.errorAlertMessage = "PIN must be the same.";
+        this.displayErrorAlert();
+        this.reset();
+        return;
+      }
+      if (this.checkSameDigits(this.confirmPIN)) {
+        this.errorAlertMessage =
+          "PIN cannot be the same digit. Please choose a stronger PIN.";
         this.displayErrorAlert();
         this.reset();
         return;
