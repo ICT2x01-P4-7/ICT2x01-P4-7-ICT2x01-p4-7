@@ -24,28 +24,68 @@
           />
         </div>
         <b-button
+          v-if="difficultyLevel != 'medium' && difficultyLevel != 'hard'"
+          :pressed="true"
           class="mt-2"
-          variant="outline-warning"
+          variant="outline-secondary"
           block
           @click="selectDifficulty('easy')"
           >Easy</b-button
         >
         <b-button
+          v-if="difficultyLevel == 'medium' || difficultyLevel == 'hard'"
+          :pressed="false"
           class="mt-2"
-          variant="outline-warning"
+          variant="outline-secondary"
+          block
+          @click="selectDifficulty('easy')"
+          >Easy</b-button
+        >
+        <b-button
+          v-if="difficultyLevel != 'easy' && difficultyLevel != 'hard'"
+          :pressed="true"
+          class="mt-2"
+          variant="outline-secondary"
           block
           @click="selectDifficulty('medium')"
           >Medium</b-button
         >
+
         <b-button
+          v-if="difficultyLevel == 'easy' || difficultyLevel == 'hard'"
+          :pressed="false"
           class="mt-2"
-          variant="outline-warning"
+          variant="outline-secondary"
+          block
+          @click="selectDifficulty('medium')"
+          >Medium</b-button
+        >
+
+        <b-button
+          v-if="difficultyLevel != 'easy' && difficultyLevel != 'medium'"
+          :pressed="true"
+          class="mt-2"
+          variant="outline-secondary"
+          block
+          @click="selectDifficulty('hard')"
+          >Hard</b-button
+        >
+
+        <b-button
+          v-if="difficultyLevel == 'easy' || difficultyLevel == 'medium'"
+          :pressed="false"
+          class="mt-2"
+          variant="outline-secondary"
           block
           @click="selectDifficulty('hard')"
           >Hard</b-button
         >
       </div>
-      <b-button class="mt-3" variant="outline-danger" block @click="hideModal"
+      <b-button
+        class="mt-3"
+        variant="outline-secondary"
+        block
+        @click="hideModal"
         >Close Me</b-button
       >
     </b-modal>
