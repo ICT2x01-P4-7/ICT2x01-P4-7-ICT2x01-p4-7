@@ -89,6 +89,12 @@ class UserService {
           success: false,
         };
       }
+      if (this.checkSameDigits(this.confirmPIN)) {
+        return {
+          message: "PIN cannot be the same digit. Please choose a stronger PIN",
+          success: false,
+        };
+      }
       const userExists = await this.checkAUserExist();
       if (userExists) {
         return { message: "A user already exists", success: false };
@@ -119,6 +125,13 @@ class UserService {
           success: false,
         };
       }
+      if (this.checkSameDigits(this.confirmPIN)) {
+        return {
+          message: "PIN cannot be the same digit. Please choose a stronger PIN",
+          success: false,
+        };
+      }
+
       if (this.PIN === this.confirmPIN) {
         return {
           message:
@@ -170,6 +183,18 @@ class UserService {
       /* istanbul ignore next */
       return { message: `${e}`, success: false };
     }
+  }
+
+  checkSameDigits(PIN) {
+    let last_digit = PIN % 10;
+    while (PIN != 0) {
+      let current_digit = PIN % 10;
+      PIN = parseInt(PIN / 10);
+      if (current_digit != last_digit) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
