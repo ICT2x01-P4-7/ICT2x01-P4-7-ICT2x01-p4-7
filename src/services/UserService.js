@@ -49,6 +49,13 @@ class UserService {
         const cmp = await User.authenticate(PIN, hashedPIN);
         if (cmp) {
           const token = jwt.sign({}, accessTokenSecret, { expiresIn: "1d" });
+          User.updateOne(
+            { _id: foundUser._id },
+            {
+              $set: { loginAttempts: 1 },
+              $unset: { lockUntil: 1 },
+            }
+          ).exec();
           return {
             message: "Successfully logged in.",
             success: true,
