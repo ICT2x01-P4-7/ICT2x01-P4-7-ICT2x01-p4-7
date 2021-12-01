@@ -113,3 +113,20 @@ export default {
   },
 };
 </script>
+
+<style>
+#easyDiff {
+  height: 400px;
+  width: 350px;
+}
+
+#mediumDiff {
+  height: 400px;
+  width: 400px;
+}
+
+#hardDiff {
+  height: 400px;
+  width: 350px;
+}
+</style>
