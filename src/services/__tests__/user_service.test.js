@@ -1,4 +1,4 @@
-const { UserService } = require("../UserService");
+const UserService = require("../UserService");
 const mockingoose = require("mockingoose");
 const User = require("../../models/User");
 
@@ -16,8 +16,7 @@ describe("UserService test", () => {
     it("A user exist", async () => {
       const count = 1;
       mockingoose(User).toReturn(count, "estimatedDocumentCount");
-      const userService = new UserService(undefined, undefined, undefined);
-      const actual = await userService.checkAUserExist();
+      const actual = await UserService.checkAUserExist();
       await User.estimatedDocumentCount().then((docCount) => {
         let expected = false;
         if (docCount > 0) {
@@ -29,8 +28,7 @@ describe("UserService test", () => {
     it("A user does not exist", async () => {
       const count = 0;
       mockingoose(User).toReturn(count, "estimatedDocumentCount");
-      const userService = new UserService(undefined, undefined, undefined);
-      const actual = await userService.checkAUserExist();
+      const actual = await UserService.checkAUserExist();
       await User.estimatedDocumentCount().then((docCount) => {
         let expected = false;
         if (docCount > 0) {
@@ -44,21 +42,17 @@ describe("UserService test", () => {
   describe("createUser", () => {
     it("Create User with Valid PIN", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
-      const userService = new UserService(undefined, "1234", "1234");
-      const actual = await userService.createUser();
+      const actual = await UserService.createUser("1234", "1234");
       expect(actual).toMatchObject({
         message: "User successfully created",
         success: true,
       });
     });
     it("Create User when another User exists", async () => {
-      jest
-        .spyOn(UserService.prototype, "checkAUserExist")
-        .mockImplementation(() => true);
-      const userService = new UserService(undefined, "1234", "1234");
-      const actual = await userService.createUser();
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
+      const actual = await UserService.createUser("1234", "1234");
       expect(actual).toMatchObject({
         message: "A user already exists",
         success: false,
@@ -66,7 +60,7 @@ describe("UserService test", () => {
     });
     it("Create User with Invalid PIN", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
       let actual;
       const wrongPINS = [
@@ -77,12 +71,10 @@ describe("UserService test", () => {
       let error = null;
       for (const wrong of wrongPINS) {
         try {
-          const userService = new UserService(
-            undefined,
+          actual = await UserService.createUser(
             wrong.choosePIN,
             wrong.confirmPIN
           );
-          actual = await userService.createUser();
         } catch (e) {
           error = e;
         }
@@ -95,13 +87,24 @@ describe("UserService test", () => {
 
     it("Create User with non-matching PIN", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
-      const userService = new UserService(undefined, "1234", "4321");
-      const actual = await userService.createUser();
+      const actual = await UserService.createUser("1234", "4321");
 
       expect(actual).toMatchObject({
         message: "PINs do not match. Please try again",
+        success: false,
+      });
+    });
+
+    it("Create user with weak PIN", async () => {
+      jest
+        .spyOn(UserService, "checkAUserExist")
+        .mockImplementation(() => false);
+      const actual = await UserService.createUser("4444", "4444");
+
+      expect(actual).toMatchObject({
+        message: "PIN cannot be the same digit. Please choose a stronger PIN",
         success: false,
       });
     });
@@ -110,21 +113,18 @@ describe("UserService test", () => {
   describe("login", () => {
     it("No user exist", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
       const _doc = [{}];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234");
-      const actual = await userService.login();
+      const actual = await UserService.login("1234");
       expect(actual).toMatchObject({
         message: "A user does not exist.",
         success: false,
       });
     });
     it("Successful login", async () => {
-      jest
-        .spyOn(UserService.prototype, "checkAUserExist")
-        .mockImplementation(() => true);
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
       const _doc = [
         {
           _id: { $oid: "619db0bf4b50b6136ab2b770" },
@@ -137,8 +137,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234");
-      const actual = await userService.login();
+      const actual = await UserService.login("1234");
       expect(actual).toMatchObject({
         message: "Successfully logged in.",
         success: true,
@@ -146,9 +145,7 @@ describe("UserService test", () => {
       });
     });
     it("Wrong PIN ", async () => {
-      jest
-        .spyOn(UserService.prototype, "checkAUserExist")
-        .mockImplementation(() => true);
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
       const _doc = [
         {
           _id: { $oid: "619db0bf4b50b6136ab2b770" },
@@ -161,8 +158,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("9876");
-      const actual = await userService.login();
+      const actual = await UserService.login("9876");
       expect(actual).toMatchObject({
         message: "User does not exist or PIN is incorrect",
         success: false,
@@ -170,9 +166,7 @@ describe("UserService test", () => {
     });
 
     it("Exceed login attempt ", async () => {
-      jest
-        .spyOn(UserService.prototype, "checkAUserExist")
-        .mockImplementation(() => true);
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
       const _doc = [
         {
           _id: { $oid: "619db0bf4b50b6136ab2b770" },
@@ -186,8 +180,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("9876");
-      const actual = await userService.login();
+      const actual = await UserService.login("9876");
       expect(actual).toMatchObject({
         message:
           "You have exceed the max login attempts(5). Barred from logging in for the next 5 minutes.",
@@ -199,12 +192,11 @@ describe("UserService test", () => {
   describe("resetPIN", () => {
     it("No user exist", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
       const _doc = [{}];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234", "2345", "2345");
-      const actual = await userService.resetPIN();
+      const actual = await UserService.resetPIN("1234", "2345", "2345");
       expect(actual).toMatchObject({
         message: "A user does not exist.",
         success: false,
@@ -212,9 +204,7 @@ describe("UserService test", () => {
     });
 
     it("Succesfully Reset", async () => {
-      jest
-        .spyOn(UserService.prototype, "checkAUserExist")
-        .mockImplementation(() => true);
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
       const _doc = [
         {
           _id: { $oid: "619db0bf4b50b6136ab2b770" },
@@ -227,8 +217,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234", "2345", "2345");
-      const actual = await userService.resetPIN();
+      const actual = await UserService.resetPIN("1234", "2345", "2345");
       expect(actual).toMatchObject({
         message: "PIN successfully reset",
         success: true,
@@ -237,7 +226,7 @@ describe("UserService test", () => {
 
     it("One of the PINs is missing", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
       const _doc = [
         {
@@ -251,8 +240,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234", "2345");
-      const actual = await userService.resetPIN();
+      const actual = await UserService.resetPIN("1234", "2345");
       expect(actual).toMatchObject({
         message: "A required parameter is missing. Please try again",
         success: false,
@@ -261,7 +249,7 @@ describe("UserService test", () => {
 
     it("confirmPIN do not match choosePIN", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
       const _doc = [
         {
@@ -275,8 +263,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234", "2345", "5678");
-      const actual = await userService.resetPIN();
+      const actual = await UserService.resetPIN("1234", "2345", "5678");
       expect(actual).toMatchObject({
         message: "PINs do not match. Please try again",
         success: false,
@@ -285,7 +272,7 @@ describe("UserService test", () => {
 
     it("should return New PIN must have 4 integers", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
       const _doc = [
         {
@@ -299,8 +286,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234", "56", "56");
-      const actual = await userService.resetPIN();
+      const actual = await UserService.resetPIN("1234", "56", "56");
       expect(actual).toMatchObject({
         message: "PIN must be 4 integers",
         success: false,
@@ -309,7 +295,7 @@ describe("UserService test", () => {
 
     it("ConfirmPIN same as old PIN", async () => {
       jest
-        .spyOn(UserService.prototype, "checkAUserExist")
+        .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
       const _doc = [
         {
@@ -323,8 +309,7 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("1234", "1234", "1234");
-      const actual = await userService.resetPIN();
+      const actual = await UserService.resetPIN("1234", "1234", "1234");
       expect(actual).toMatchObject({
         message:
           "New PIN is the same as the old PIN. Please choose a different PIN",
@@ -333,9 +318,7 @@ describe("UserService test", () => {
     });
 
     it("Incorrect PIN", async () => {
-      jest
-        .spyOn(UserService.prototype, "checkAUserExist")
-        .mockImplementation(() => true);
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
       const _doc = [
         {
           _id: { $oid: "619db0bf4b50b6136ab2b770" },
@@ -348,10 +331,29 @@ describe("UserService test", () => {
         },
       ];
       mockingoose(User).toReturn(_doc);
-      const userService = new UserService("2345", "5678", "5678");
-      const actual = await userService.resetPIN();
+      const actual = await UserService.resetPIN("2345", "5678", "5678");
       expect(actual).toMatchObject({
         message: "User does not exist or incorrect PIN",
+        success: false,
+      });
+    });
+    it("Weak PIN", async () => {
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
+      const _doc = [
+        {
+          _id: { $oid: "619db0bf4b50b6136ab2b770" },
+          hashed_PIN:
+            "$2b$10$IrIK300GhpQe2Iajc3rsvesbwC2AkTVT4qHOiHEXR/In30MEba9Ri",
+          loginAttempts: 0,
+          createdAt: { $date: "2021-11-24T03:25:51.863Z" },
+          updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
+          __v: 0,
+        },
+      ];
+      mockingoose(User).toReturn(_doc);
+      const actual = await UserService.resetPIN("1234", "1111", "1111");
+      expect(actual).toMatchObject({
+        message: "PIN cannot be the same digit. Please choose a stronger PIN",
         success: false,
       });
     });

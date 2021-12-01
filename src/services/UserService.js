@@ -7,11 +7,7 @@ const { accessTokenSecret } = require("../config/config.js");
 const { saltRounds } = require("../config/config.js");
 
 class UserService {
-  constructor(PIN, choosePIN, confirmPIN) {
-    this.PIN = PIN;
-    this.choosePIN = choosePIN;
-    this.confirmPIN = confirmPIN;
-  }
+  constructor() {}
 
   async checkAUserExist() {
     const result = await User.estimatedDocumentCount()
@@ -32,7 +28,7 @@ class UserService {
     return result;
   }
 
-  async login() {
+  async login(PIN) {
     try {
       const userExists = await this.checkAUserExist();
       if (userExists) {
@@ -50,7 +46,7 @@ class UserService {
             lockUntil: lockUntil,
           };
         }
-        const cmp = await User.authenticate(this.PIN, hashedPIN);
+        const cmp = await User.authenticate(PIN, hashedPIN);
         if (cmp) {
           const token = jwt.sign({}, accessTokenSecret, { expiresIn: "1d" });
           return {
@@ -81,15 +77,15 @@ class UserService {
     }
   }
 
-  async createUser() {
+  async createUser(confirmPIN, choosePIN) {
     try {
-      if (this.confirmPIN != this.choosePIN) {
+      if (confirmPIN != choosePIN) {
         return {
           message: "PINs do not match. Please try again",
           success: false,
         };
       }
-      if (this.checkSameDigits(this.confirmPIN)) {
+      if (this.checkSameDigits(confirmPIN)) {
         return {
           message: "PIN cannot be the same digit. Please choose a stronger PIN",
           success: false,
@@ -100,7 +96,7 @@ class UserService {
         return { message: "A user already exists", success: false };
       }
       let result = await new User({
-        PIN: this.confirmPIN,
+        PIN: confirmPIN,
       }).save();
       return {
         message: "User successfully created",
@@ -111,41 +107,41 @@ class UserService {
     }
   }
 
-  async resetPIN() {
+  async resetPIN(PIN, choosePIN, confirmPIN) {
     try {
-      if (!this.PIN || !this.choosePIN || !this.confirmPIN) {
+      if (!PIN || !choosePIN || !confirmPIN) {
         return {
           message: "A required parameter is missing. Please try again",
           success: false,
         };
       }
-      if (this.confirmPIN != this.choosePIN) {
+      if (confirmPIN != choosePIN) {
         return {
           message: "PINs do not match. Please try again",
           success: false,
         };
       }
-      if (this.checkSameDigits(this.confirmPIN)) {
+      if (this.checkSameDigits(confirmPIN)) {
         return {
           message: "PIN cannot be the same digit. Please choose a stronger PIN",
           success: false,
         };
       }
 
-      if (this.PIN === this.confirmPIN) {
+      if (PIN === confirmPIN) {
         return {
           message:
             "New PIN is the same as the old PIN. Please choose a different PIN",
           success: false,
         };
       }
-      if (this.confirmPIN && this.confirmPIN.length !== 4) {
+      if (confirmPIN && confirmPIN.length !== 4) {
         return {
           message: "PIN must be 4 integers",
           success: false,
         };
       }
-      if (this.confirmPIN && isNaN(this.confirmPIN)) {
+      if (confirmPIN && isNaN(confirmPIN)) {
         return {
           message: "PIN must be 4 integers",
           success: false,
@@ -157,9 +153,9 @@ class UserService {
         const foundUser = await User.find({}).exec();
         const user = foundUser[0];
         const hashedPIN = user.hashed_PIN;
-        const cmp = await User.authenticate(this.PIN, hashedPIN);
+        const cmp = await User.authenticate(PIN, hashedPIN);
         if (cmp) {
-          const newHashedPin = await bcrypt.hash(this.confirmPIN, saltRounds);
+          const newHashedPin = await bcrypt.hash(confirmPIN, saltRounds);
           await User.findByIdAndUpdate(user._id, {
             hashed_PIN: newHashedPin,
           });
@@ -198,4 +194,4 @@ class UserService {
   }
 }
 
-module.exports = { UserService };
+module.exports = new UserService();
