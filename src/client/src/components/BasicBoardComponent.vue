@@ -10,10 +10,6 @@
           <div class="w-100"></div>
           <b-col style="font-size: 2rem">
             <b-table hover :items="currentSensorData"></b-table>
-            <b-button @click="moveForward">F</b-button>
-            <b-button @click="moveBack">B</b-button>
-            <b-button @click="moveLeft">L</b-button>
-            <b-button @click="moveRight">R</b-button>
           </b-col>
         </b-row>
       </b-col>
@@ -23,6 +19,12 @@
         </div>
       </b-col>
     </b-row>
+    <b-alert v-model="showAlert" :variant="alertVariant">
+      <h4 class="alert-heading">{{ alertTitle }}</h4>
+      <p>
+        {{ alertMessage }}
+      </p>
+    </b-alert>
   </div>
 </template>
 
@@ -33,6 +35,7 @@ export default {
     canvasOrigin: Object,
     connected: Boolean,
     sequence: String,
+    gameStarted: Boolean,
   },
   created() {
     window.addEventListener("unload", function () {
@@ -69,7 +72,13 @@ export default {
           next: "Waiting",
         },
       ],
+      showAlert: false,
+      alertVariant: "danger",
       currentSensorData: [],
+      alertMessage: "",
+      alertTitle: "",
+      completeExecution: false,
+      notAlertedYet: true,
       //Canvas stuff
       c: null,
       ctx: null,
@@ -86,13 +95,18 @@ export default {
     $props: {
       handler() {
         this.parseSensorData();
-        this.parseMovement();
+        if (this.gameStarted) {
+          this.parseMovement();
+        }
       },
       deep: true,
       immediate: true,
     },
   },
   methods: {
+    reset() {
+      this.showAlert = false;
+    },
     parseSensorData() {
       const tmpStore = [];
       const latestSensorData = this.sensorData;
@@ -134,33 +148,39 @@ export default {
       const latestSensorData = this.sensorData;
       let executingSequence = latestSensorData.Executing;
       const currentIndex = latestSensorData.CurrentIndex;
-      let completeExecution = false;
-      if (currentSequence) {
+      if (currentSequence && executingSequence) {
         if (
           executingSequence.length === currentSequence.length ||
           currentIndex >= 990
         ) {
           if (currentIndex === 990) {
-            completeExecution = true;
+            this.completeExecution = true;
+            this.alertTitle = "Obstacle!";
+            this.alertMessage = "Obstacle Detected within 20cm!";
+            this.alertVariant = "warning";
+            this.showAlert = true;
             // Ultrasonic sensor detect obstacle
           } else if (currentIndex === 998) {
-            completeExecution = true;
-            // Color does not match movement.
+            this.completeExecution = true;
+            this.alertTitle = "Color!";
+            this.alertMessage = "Color does not match allowable movement.";
+            this.alertVariant = "danger";
+            this.showAlert = true;
           } else if (currentIndex === 999) {
             // Completed
-            completeExecution = true;
+            this.completeExecution = true;
+            this.alertTitle = "Success!";
+            this.alertMessage = "Great job! You pass the round.";
+            this.alertVariant = "success";
+            this.showAlert = true;
           }
         }
-        if (
-          executingSequence &&
-          !completeExecution &&
-          this.renderIndex < executingSequence.length
-        ) {
+        if (executingSequence && this.renderIndex < executingSequence.length) {
           if (currentIndex >= 990) {
             this.previous = currentSequence;
             this.now = "Done";
             this.next = "Done";
-            completeExecution = true;
+            this.completeExecution = true;
           } else if (executingSequence.length === 0) {
             this.previous = "Nothing yet...";
             this.now = executingSequence;

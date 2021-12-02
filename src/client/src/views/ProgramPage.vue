@@ -64,6 +64,8 @@
     <HistoryScreen ref="history-screen"></HistoryScreen>
     <DashboardScreen
       v-bind:sequence="sequence"
+      v-bind:gameStarted="gameStarted"
+      v-on:updateGameStarted="updateGameStarted"
       ref="dashboard-screen"
     ></DashboardScreen>
   </b-container>
@@ -90,6 +92,7 @@ export default {
   data() {
     return {
       sequence: "",
+      gameStarted: false,
       options: {
         media: "media/",
         grid: {
@@ -117,6 +120,9 @@ export default {
     hasWhiteSpace(s) {
       return s.indexOf("\n") >= 0;
     },
+    updateGameStarted(bool) {
+      this.gameStarted = bool;
+    },
     sendCode() {
       const code = BlocklyJS.workspaceToCode(this.$refs["program"].workspace);
       if (!code) {
@@ -141,6 +147,7 @@ export default {
             this.saveToHistory(code);
             this.openDashboard();
             this.$refs["program"].workspace.clear();
+            this.gameStarted = true;
           })
           .catch((error) => {
             this.alertTitle = "Error";

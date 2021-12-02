@@ -16,6 +16,8 @@
         v-bind:sensorData="newSensorData"
         v-bind:connected="connected"
         v-bind:sequence="sequence"
+        v-bind:gameStarted="gameStarted"
+        ref="basicboard"
         class="board"
       >
       </BasicBoardComponent>
@@ -71,6 +73,7 @@ import DetailedBoardComponent from "@/components/DetailedBoardComponent.vue";
 export default {
   props: {
     sequence: String,
+    gameStarted: Boolean,
   },
   components: {
     BasicBoardComponent,
@@ -119,10 +122,12 @@ export default {
     },
     hideModal() {
       this.$refs["dashboard-modal"].hide();
+      this.$refs["basicboard"].reset();
       this.currentBoardView = "Basic";
       this.currentButtonText = "Detailed";
       clearInterval(this.interval);
       this.interval = null;
+      this.$emit("updateGameStarted", false);
     },
 
     showErrorModal() {
