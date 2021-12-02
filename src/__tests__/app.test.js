@@ -139,7 +139,7 @@ describe("App test", () => {
     });
     test("should respond with a banned from logging in with 403 status code", async () => {
       let response;
-      for (let i = 0; i <= 5; i++) {
+      for (let i = 0; i <= 6; i++) {
         response = await request(app).post("/user/login").send({
           PIN: "9876",
         });

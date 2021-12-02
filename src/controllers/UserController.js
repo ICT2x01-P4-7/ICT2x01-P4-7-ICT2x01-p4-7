@@ -1,5 +1,5 @@
 const { BaseController } = require("./BaseController");
-const { UserService } = require("../services/UserService");
+const UserService = require("../services/UserService");
 const { Token } = require("../services/TokenService");
 
 class UserController extends BaseController {
@@ -36,8 +36,7 @@ class UserController extends BaseController {
 
   async handleLogin(req, res, next) {
     const { PIN } = req.body;
-    const userService = new UserService(PIN);
-    const data = await userService.login();
+    const data = await UserService.login(PIN);
     if (data.success) {
       super.sendSuccess(res, { token: data.token }, data.message);
     } else {
@@ -49,8 +48,7 @@ class UserController extends BaseController {
     }
   }
   async handleExist(req, res, next) {
-    const userService = new UserService();
-    const data = await userService.checkAUserExist();
+    const data = await UserService.checkAUserExist();
     if (data) {
       super.sendSuccess(res, { userExists: "true" }, "A user exists");
     } else {
@@ -58,9 +56,8 @@ class UserController extends BaseController {
     }
   }
   async handleCreate(req, res, next) {
-    const { PIN, choosePIN, confirmPIN } = req.body;
-    const userService = new UserService(PIN, choosePIN, confirmPIN);
-    const data = await userService.createUser();
+    const { choosePIN, confirmPIN } = req.body;
+    const data = await UserService.createUser(choosePIN, confirmPIN);
     if (data.success) {
       super.sendSuccess(res, { success: data.success }, data.message);
     } else {
@@ -69,8 +66,7 @@ class UserController extends BaseController {
   }
   async handleResetPIN(req, res, next) {
     const { PIN, choosePIN, confirmPIN } = req.body;
-    const userService = new UserService(PIN, choosePIN, confirmPIN);
-    const data = await userService.resetPIN();
+    const data = await UserService.resetPIN(PIN, choosePIN, confirmPIN);
     if (data.success) {
       super.sendSuccess(res, { success: data.success }, data.message);
     } else {

@@ -10,10 +10,6 @@
           <div class="w-100"></div>
           <b-col style="font-size: 2rem">
             <b-table hover :items="currentSensorData"></b-table>
-            <b-button @click="moveForward">F</b-button>
-            <b-button @click="moveBack">B</b-button>
-            <b-button @click="moveLeft">L</b-button>
-            <b-button @click="moveRight">R</b-button>
           </b-col>
         </b-row>
       </b-col>
@@ -23,6 +19,12 @@
         </div>
       </b-col>
     </b-row>
+    <b-alert v-model="showAlert" :variant="alertVariant">
+      <h4 class="alert-heading">{{ alertTitle }}</h4>
+      <p>
+        {{ alertMessage }}
+      </p>
+    </b-alert>
   </div>
 </template>
 
@@ -32,6 +34,8 @@ export default {
     sensorData: Object,
     canvasOrigin: Object,
     connected: Boolean,
+    sequence: String,
+    gameStarted: Boolean,
   },
   created() {
     window.addEventListener("unload", function () {
@@ -51,18 +55,30 @@ export default {
   },
   beforeDestroy() {
     if (this.connected) {
-      this.saveCanvasOrigin();
+      //this.saveCanvasOrigin();
     }
   },
   data() {
     return {
+      previous: "Nothing yet...",
+      now: "Not running",
+      next: "Waiting",
+      renderIndex: 0,
+      nextActions: "FFFF",
       currentExecution: [
         {
-          executing: "Left",
-          next: "FFFLRFF",
+          previous: "Nothing yet...",
+          now: "Waiting",
+          next: "Waiting",
         },
       ],
+      showAlert: false,
+      alertVariant: "danger",
       currentSensorData: [],
+      alertMessage: "",
+      alertTitle: "",
+      completeExecution: false,
+      notAlertedYet: true,
       //Canvas stuff
       c: null,
       ctx: null,
@@ -79,12 +95,18 @@ export default {
     $props: {
       handler() {
         this.parseSensorData();
+        if (this.gameStarted) {
+          this.parseMovement();
+        }
       },
       deep: true,
       immediate: true,
     },
   },
   methods: {
+    reset() {
+      this.showAlert = false;
+    },
     parseSensorData() {
       const tmpStore = [];
       const latestSensorData = this.sensorData;
@@ -120,6 +142,73 @@ export default {
         }
       );
       this.currentSensorData = tmpStore;
+    },
+    parseMovement() {
+      let currentSequence = this.sequence;
+      const latestSensorData = this.sensorData;
+      let executingSequence = latestSensorData.Executing;
+      const currentIndex = latestSensorData.CurrentIndex;
+      if (currentSequence && executingSequence) {
+        if (
+          executingSequence.length === currentSequence.length ||
+          currentIndex >= 990
+        ) {
+          if (currentIndex === 990) {
+            this.completeExecution = true;
+            this.alertTitle = "Obstacle!";
+            this.alertMessage = "Obstacle Detected within 20cm!";
+            this.alertVariant = "warning";
+            this.showAlert = true;
+            // Ultrasonic sensor detect obstacle
+          } else if (currentIndex === 998) {
+            this.completeExecution = true;
+            this.alertTitle = "Color!";
+            this.alertMessage = "Color does not match allowable movement.";
+            this.alertVariant = "danger";
+            this.showAlert = true;
+          } else if (currentIndex === 999) {
+            // Completed
+            this.completeExecution = true;
+            this.alertTitle = "Success!";
+            this.alertMessage = "Great job! You pass the round.";
+            this.alertVariant = "success";
+            this.showAlert = true;
+          }
+        }
+        if (executingSequence && this.renderIndex < executingSequence.length) {
+          if (currentIndex >= 990) {
+            this.previous = currentSequence;
+            this.now = "Done";
+            this.next = "Done";
+            this.completeExecution = true;
+          } else if (executingSequence.length === 0) {
+            this.previous = "Nothing yet...";
+            this.now = executingSequence;
+            this.move(this.now);
+            this.next = currentSequence;
+          } else if (executingSequence.length > 0) {
+            if (executingSequence.length === currentSequence.length) {
+              this.previous = currentSequence;
+              this.now = "Done";
+              this.next = "Done";
+            }
+            this.previous = currentSequence.slice(
+              0,
+              executingSequence.length - 1
+            );
+            this.now = executingSequence.slice(-1);
+            this.move(this.now);
+            this.next = currentSequence.slice(executingSequence.length);
+          }
+          this.currentExecution = [
+            {
+              previous: this.previous,
+              now: this.now,
+              next: this.next,
+            },
+          ];
+        }
+      }
     },
     initCanvas() {
       this.c = document.getElementById("map");
@@ -163,6 +252,47 @@ export default {
         this.canvasOriginX = 100;
         this.canvasOriginY = 300;
       }
+    },
+    move(direction) {
+      let color;
+      this.renderIndex += 1;
+      this.vueCanvas.beginPath();
+      this.vueCanvas.rect(
+        this.canvasOriginX,
+        this.canvasOriginY,
+        this.canvasTileSize,
+        this.canvasTileSize
+      );
+      switch (direction) {
+        case "F":
+          color = "#32CD30";
+          this.canvasOriginY -= 30;
+          break;
+        case "B":
+          color = "#FF0000";
+          this.canvasOriginY += 30;
+
+          break;
+        case "L":
+          color = "#0047AB";
+          this.canvasOriginX -= 30;
+
+          break;
+        case "R":
+          color = "#0047AB";
+          this.canvasOriginX += 30;
+          break;
+      }
+      this.vueCanvas.fillStyle = color;
+      this.vueCanvas.fill();
+      this.vueCanvas.lineWidth = 3;
+      this.vueCanvas.strokeStyle = "black";
+      this.vueCanvas.stroke();
+      this.vueCanvas.drawImage(
+        this.smallCar,
+        this.canvasOriginX,
+        this.canvasOriginY
+      );
     },
     moveForward() {
       this.vueCanvas.beginPath();

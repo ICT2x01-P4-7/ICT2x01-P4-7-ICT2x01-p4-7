@@ -62,7 +62,12 @@
     </b-container>
     <ResetScreen ref="reset-screen"></ResetScreen>
     <HistoryScreen ref="history-screen"></HistoryScreen>
-    <DashboardScreen ref="dashboard-screen"></DashboardScreen>
+    <DashboardScreen
+      v-bind:sequence="sequence"
+      v-bind:gameStarted="gameStarted"
+      v-on:updateGameStarted="updateGameStarted"
+      ref="dashboard-screen"
+    ></DashboardScreen>
   </b-container>
 </template>
 
@@ -86,7 +91,8 @@ export default {
   },
   data() {
     return {
-      code: "",
+      sequence: "",
+      gameStarted: false,
       options: {
         media: "media/",
         grid: {
@@ -114,6 +120,9 @@ export default {
     hasWhiteSpace(s) {
       return s.indexOf("\n") >= 0;
     },
+    updateGameStarted(bool) {
+      this.gameStarted = bool;
+    },
     sendCode() {
       const code = BlocklyJS.workspaceToCode(this.$refs["program"].workspace);
       if (!code) {
@@ -133,11 +142,12 @@ export default {
         axios.defaults.headers.common["x-access-token"] = token;
         axios
           .post(`${localhost}/program/sendSequence`, sequence)
-          .then((response) => {
-            console.log(response.data);
+          .then(() => {
+            this.sequence = code;
             this.saveToHistory(code);
             this.openDashboard();
             this.$refs["program"].workspace.clear();
+            this.gameStarted = true;
           })
           .catch((error) => {
             this.alertTitle = "Error";

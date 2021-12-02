@@ -127,7 +127,17 @@ export default {
       this.resultTitle = title;
       this.resultMessage = message;
     },
-
+    checkSameDigits(PIN) {
+      let last_digit = PIN % 10;
+      while (PIN != 0) {
+        let current_digit = PIN % 10;
+        PIN = parseInt(PIN / 10);
+        if (current_digit != last_digit) {
+          return false;
+        }
+      }
+      return true;
+    },
     resetPIN() {
       if (this.PIN === "" || this.confirmPIN === "" || this.choosePIN === "") {
         this.errorAlertMessage = "Please fill in all fields.";
@@ -156,6 +166,13 @@ export default {
         this.errorAlertMessage = "New PIN and Old PIN cannot be the same.";
         this.displayErrorAlert();
         this.resetField();
+        return;
+      }
+      if (this.checkSameDigits(this.confirmPIN)) {
+        this.errorAlertMessage =
+          "PIN cannot be the same digit. Please choose a stronger PIN.";
+        this.displayErrorAlert();
+        this.reset();
         return;
       }
       const newCreds = {

@@ -117,6 +117,9 @@ export default {
           }
           this.alertMessage = errorData.message;
           this.PIN = "";
+          if (errorData.message === "A user does not exist.") {
+            this.$router.push("/create");
+          }
           this.displayAlert();
         });
     },
