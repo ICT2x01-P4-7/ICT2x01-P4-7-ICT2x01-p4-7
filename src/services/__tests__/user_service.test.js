@@ -160,7 +160,8 @@ describe("UserService test", () => {
       mockingoose(User).toReturn(_doc);
       const actual = await UserService.login("9876");
       expect(actual).toMatchObject({
-        message: "User does not exist or PIN is incorrect",
+        message:
+          "User does not exist or PIN is incorrect. You have 5 attempts left.",
         success: false,
       });
     });

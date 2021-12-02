@@ -77,10 +77,14 @@ UserSchema.methods.incLoginAttempts = function () {
     };
   }
   let updates = { $inc: { loginAttempts: 1 }, $set: {} };
-  if (this.loginAttempts + 1 >= MAX_LOGIN_ATTEMPTS && !this.isLocked) {
+  if (this.loginAttempts >= MAX_LOGIN_ATTEMPTS && !this.isLocked) {
     updates.$set = { lockUntil: Date.now() + LOCK_TIME };
   }
-  return { lockUntil: this.lockUntil, updates };
+  return {
+    lockUntil: this.lockUntil,
+    updates,
+    loginAttempts: MAX_LOGIN_ATTEMPTS - this.loginAttempts,
+  };
 };
 
 const User = model("User", UserSchema);

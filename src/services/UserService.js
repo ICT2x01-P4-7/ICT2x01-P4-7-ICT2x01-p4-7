@@ -62,12 +62,19 @@ class UserService {
             token: token,
           };
         } else {
-          const { updates } = foundUser.incLoginAttempts();
+          const { updates, loginAttempts } = foundUser.incLoginAttempts();
           User.updateOne({ _id: foundUser._id }, updates).exec();
-          return {
-            message: "User does not exist or PIN is incorrect",
-            success: false,
-          };
+          if (loginAttempts === 0) {
+            return {
+              message: `User does not exist or PIN is incorrect. You have no attempts left. Barred from logging in.`,
+              success: false,
+            };
+          } else {
+            return {
+              message: `User does not exist or PIN is incorrect. You have ${loginAttempts} attempts left.`,
+              success: false,
+            };
+          }
         }
       } else {
         return {
