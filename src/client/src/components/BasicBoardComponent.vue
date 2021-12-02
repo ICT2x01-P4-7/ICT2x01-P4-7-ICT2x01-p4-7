@@ -32,6 +32,7 @@ export default {
     sensorData: Object,
     canvasOrigin: Object,
     connected: Boolean,
+    sequence: String,
   },
   created() {
     window.addEventListener("unload", function () {
@@ -56,14 +57,16 @@ export default {
   },
   data() {
     return {
-      currentAction: "N",
-      completeExecution: true,
+      previous: "Nothing yet...",
+      now: "Not running",
+      next: "Waiting",
       renderIndex: 0,
       nextActions: "FFFF",
       currentExecution: [
         {
-          executing: "Left",
-          next: "FFFLRFF",
+          previous: "Nothing yet...",
+          now: "Waiting",
+          next: "Waiting",
         },
       ],
       currentSensorData: [],
@@ -127,25 +130,64 @@ export default {
       this.currentSensorData = tmpStore;
     },
     parseMovement() {
+      let currentSequence = this.sequence;
       const latestSensorData = this.sensorData;
+      let executingSequence = latestSensorData.Executing;
       const currentIndex = latestSensorData.CurrentIndex;
-      const executing = latestSensorData.Executing;
-      if (currentIndex > -1) {
-        if (this.renderIndex === currentIndex) {
-          this.move(executing);
-          this.previousIndex = this.renderIndex;
-          this.renderIndex++;
-          this.completeExecution = false;
+      let completeExecution = false;
+      if (currentSequence) {
+        if (
+          executingSequence.length === currentSequence.length ||
+          currentIndex >= 990
+        ) {
+          if (currentIndex === 990) {
+            completeExecution = true;
+            // Ultrasonic sensor detect obstacle
+          } else if (currentIndex === 998) {
+            completeExecution = true;
+            // Color does not match movement.
+          } else if (currentIndex === 999) {
+            // Completed
+            completeExecution = true;
+          }
         }
-      } else if (currentIndex === 999 && !this.completeExecution) {
-        this.renderIndex = 0;
-        console.log("Finished execution");
-        this.completeExecution = true;
-      } else if (currentIndex === 998 && !this.completeExecution) {
-        this.renderIndex = 0;
-
-        console.log("Color is wrong");
-        this.completeExecution = true;
+        if (
+          executingSequence &&
+          !completeExecution &&
+          this.renderIndex < executingSequence.length
+        ) {
+          if (currentIndex >= 990) {
+            this.previous = currentSequence;
+            this.now = "Done";
+            this.next = "Done";
+            completeExecution = true;
+          } else if (executingSequence.length === 0) {
+            this.previous = "Nothing yet...";
+            this.now = executingSequence;
+            this.move(this.now);
+            this.next = currentSequence;
+          } else if (executingSequence.length > 0) {
+            if (executingSequence.length === currentSequence.length) {
+              this.previous = currentSequence;
+              this.now = "Done";
+              this.next = "Done";
+            }
+            this.previous = currentSequence.slice(
+              0,
+              executingSequence.length - 1
+            );
+            this.now = executingSequence.slice(-1);
+            this.move(this.now);
+            this.next = currentSequence.slice(executingSequence.length);
+          }
+          this.currentExecution = [
+            {
+              previous: this.previous,
+              now: this.now,
+              next: this.next,
+            },
+          ];
+        }
       }
     },
     initCanvas() {

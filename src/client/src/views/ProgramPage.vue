@@ -62,7 +62,10 @@
     </b-container>
     <ResetScreen ref="reset-screen"></ResetScreen>
     <HistoryScreen ref="history-screen"></HistoryScreen>
-    <DashboardScreen ref="dashboard-screen"></DashboardScreen>
+    <DashboardScreen
+      v-bind:sequence="sequence"
+      ref="dashboard-screen"
+    ></DashboardScreen>
   </b-container>
 </template>
 
@@ -86,7 +89,7 @@ export default {
   },
   data() {
     return {
-      code: "",
+      sequence: "",
       options: {
         media: "media/",
         grid: {
@@ -133,8 +136,8 @@ export default {
         axios.defaults.headers.common["x-access-token"] = token;
         axios
           .post(`${localhost}/program/sendSequence`, sequence)
-          .then((response) => {
-            console.log(response.data);
+          .then(() => {
+            this.sequence = code;
             this.saveToHistory(code);
             this.openDashboard();
             this.$refs["program"].workspace.clear();

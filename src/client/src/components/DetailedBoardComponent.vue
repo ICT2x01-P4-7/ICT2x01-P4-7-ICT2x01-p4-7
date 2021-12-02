@@ -234,7 +234,7 @@ export default {
         height: "300",
         renderer: "line",
         min: -10,
-        max: 175,
+        max: 200,
         series: new Rickshaw.Series.FixedDuration(
           [
             {
@@ -265,7 +265,7 @@ export default {
         height: "300",
         renderer: "line",
         min: -10,
-        max: 60,
+        max: 200,
         series: new Rickshaw.Series.FixedDuration(
           [
             {
@@ -306,9 +306,11 @@ export default {
       this.chartReadyToRender = true;
     },
     resizeChart(chart) {
-      chart.configure({
-        width: this.$refs.colorpanel.clientWidth,
-      });
+      if (this.$refs.colorpanel.clientWidth) {
+        chart.configure({
+          width: this.$refs.colorpanel.clientWidth,
+        });
+      }
       chart.render();
     },
     updateChart() {
