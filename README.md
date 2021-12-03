@@ -21,7 +21,7 @@ The VueJS frontend is nested within the backend directory `src/client`.
 
 ### Configure Database URI
 
-#### Lazy Way - Configure the URI inside config.js.
+#### Lazy Way - Configure the URI inside config.js (Not the config.js within client).
 
 [config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js)
 
@@ -29,18 +29,19 @@ The VueJS frontend is nested within the backend directory `src/client`.
 
 > Alert, Do not commit config.js if you make this change!
 module.exports = {
-  /* Change the default mongoUri to localhost or Cloud MongoDB URI */
-  mongoUri: "mongodb://localhost:27017/tileup" or "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?",
+  /* Currently using localhost for default mongoUri, delete localhost mongoUri and uncomment the mongoUri below it to use Cloud MongoDB URI */
+  mongoUri: "mongodb://localhost:27017/tileup",
+  //mongoUri: "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
 
   /* For test database, change the default to localhost
-   *  do not include the database name after the port `27017/`
+   *  do not include the database name "tileup" after the port `27017/`
    */
   testMongoUri:"mongodb://localhost:27017/"
   ...
 }
 ```
 
-#### A little harder, requires more effort, but more convenient!
+#### Alternative way that is a little harder, requires more effort, but more convenient!
 
 > No change is required in config.js. Add the variable into your terminal zsh/bash profile.
 
