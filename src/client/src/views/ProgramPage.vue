@@ -65,13 +65,8 @@
     <ResetScreen ref="reset-screen"></ResetScreen>
     <HistoryScreen ref="history-screen"></HistoryScreen>
     <MapScreen ref="map-screen"></MapScreen>
-    <DashboardScreen
-      v-bind:sequence="sequence"
-      v-bind:gameStarted="gameStarted"
-      v-on:updateGameStarted="updateGameStarted"
-      ref="dashboard-screen"
-    ></DashboardScreen>
-    <TestMap ref="map-screen"></TestMap>
+    <DashboardScreen ref="dashboard-screen"></DashboardScreen>
+    <MapScreen ref="map-screen"></MapScreen>
   </b-container>
 </template>
 
@@ -84,7 +79,7 @@ import axios from "axios";
 import ResetScreen from "./ResetScreen.vue";
 import HistoryScreen from "./HistoryScreen.vue";
 import DashboardScreen from "./DashboardScreen.vue";
-import TestMap from "./showMap.vue";
+import MapScreen from "./showMap.vue";
 
 export default {
   name: "app",
@@ -93,7 +88,7 @@ export default {
     ResetScreen,
     HistoryScreen,
     DashboardScreen,
-    TestMap,
+    MapScreen,
   },
   data() {
     return {
