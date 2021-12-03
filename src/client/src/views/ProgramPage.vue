@@ -65,7 +65,12 @@
     <ResetScreen ref="reset-screen"></ResetScreen>
     <HistoryScreen ref="history-screen"></HistoryScreen>
     <MapScreen ref="map-screen"></MapScreen>
-    <DashboardScreen ref="dashboard-screen"></DashboardScreen>
+    <DashboardScreen
+      v-bind:sequence="sequence"
+      v-bind:gameStarted="gameStarted"
+      v-on:updateGameStarted="updateGameStarted"
+      ref="dashboard-screen"
+    ></DashboardScreen>
     <TestMap ref="map-screen"></TestMap>
   </b-container>
 </template>
