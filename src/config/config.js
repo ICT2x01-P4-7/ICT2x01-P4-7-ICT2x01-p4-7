@@ -1,6 +1,6 @@
 module.exports = {
-  mongoUri: "mongodb://localhost:27017/tileup", //UPDATE README
-  testMongoUri: "mongodb://localhost:27017/", //UPDATE README
+  mongoUri: process.env.MONGO_URI,
+  testMongoUri: process.env.TEST_MONGO_URI,
   PORT: process.env.PORT || 3000,
   TESTPORT: 3523,
   HOSTNAME: "127.0.0.1",

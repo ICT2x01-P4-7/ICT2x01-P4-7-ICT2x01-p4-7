@@ -111,6 +111,11 @@ export default {
       difficultyLevel: "easy",
     };
   },
+  computed: {
+    btnStates() {
+      return this.buttons.map((btn) => btn.state);
+    },
+  },
 };
 </script>
 
