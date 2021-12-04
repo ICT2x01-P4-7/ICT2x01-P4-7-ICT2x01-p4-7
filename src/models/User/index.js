@@ -46,10 +46,10 @@ UserSchema.virtual("isLocked").get(function () {
 
 UserSchema.path("hashed_PIN").validate(function () {
   if (this._PIN && this._PIN.length !== 4) {
-    this.invalidate("PIN", "PIN must be 4 integers");
+    this.invalidate("PIN", "PIN must be 4 digit");
   }
   if (this._PIN && isNaN(this._PIN)) {
-    this.invalidate("PIN", "PIN must be 4 integers");
+    this.invalidate("PIN", "PIN must be 4 digit");
   }
   if (!this._PIN) {
     this.invalidate("PIN", "PIN is required");
@@ -77,7 +77,7 @@ UserSchema.methods.incLoginAttempts = function () {
     };
   }
   let updates = { $inc: { loginAttempts: 1 }, $set: {} };
-  if (this.loginAttempts >= MAX_LOGIN_ATTEMPTS && !this.isLocked) {
+  if (this.loginAttempts + 1 >= MAX_LOGIN_ATTEMPTS && !this.isLocked) {
     updates.$set = { lockUntil: Date.now() + LOCK_TIME };
   }
   return {

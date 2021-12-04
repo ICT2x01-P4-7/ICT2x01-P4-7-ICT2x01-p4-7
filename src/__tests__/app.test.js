@@ -64,7 +64,7 @@ describe("App test", () => {
         expect.stringContaining("json")
       );
       expect(response.body).toMatchObject({
-        message: "ValidationError: PIN: PIN must be 4 integers",
+        message: "ValidationError: PIN: PIN must be 4 digit",
       });
       expect(response.statusCode).toBe(500);
     });
@@ -279,13 +279,13 @@ describe("App test", () => {
       );
       expect(response.body).toEqual(
         expect.objectContaining({
-          message: "PIN must be 4 integers",
+          message: "PIN must be 4 digit",
         })
       );
       expect(response.statusCode).toBe(500);
     });
 
-    test("should respond with PIN must be 4 integers", async () => {
+    test("should respond with PIN must be 4 digit", async () => {
       const loginResponse = await request(app).post("/user/login").send({
         PIN: "1234",
       });
@@ -303,7 +303,7 @@ describe("App test", () => {
       );
       expect(response.body).toEqual(
         expect.objectContaining({
-          message: "PIN must be 4 integers",
+          message: "PIN must be 4 digit",
         })
       );
       expect(response.statusCode).toBe(500);

@@ -13,6 +13,20 @@ The project is using the MEVN Stack. MongoDB(M), ExpressJS(E) , VueJS(V), NodeJS
 Monorepo containing both the frontend and backend. The backend is in `src/`. The backend consist of MongoDB, ExpressJS and NodeJS
 The VueJS frontend is nested within the backend directory `src/client`.
 
+## Architecture
+
+The project follows the MVC+Service layer design pattern. (MVCS)
+
+![MVCS Architecture](/img/basic-architecture.png)
+
+When a request is received, it will be routed to the respective controller that is responsible for receiving and displaying the results of the operation. The Controller will call the Service layer (business layer) that contains the logic. When an operation requires interaction with the database, it will use the Model that contains data model definition and operations.
+
+![Architecture](/img/architecture.png)
+
+The user class is responsible for the creation and authentication of users.
+
+The program class is responsible for interacting with the TCP Server that communicates with the car.
+
 ## Prerequisite
 
 ### Setting up MongoDB Database
@@ -82,11 +96,15 @@ npm install
 /* Change dir into src/ */
 cd src/
 
-/* Script to run frontend */
+/* Commandto run frontend */
 npm run client
 
-/* Script to run backend */
+/* Open a new terminal*/
+/* Command to run backend */
 npm run server
+
+/* For running both at the same time in the same terminal*/
+npm run dev
 
 ```
 
@@ -94,24 +112,17 @@ npm run server
 
 ![Express Frontend](/img/vue-frontend.png)
 
-### Alternatively, to run both in the same terminal.
-
-> Note that this method makes it hard to see when errors appear in either backend or frontend
-
-```bash
-npm run dev
-```
-
 # Development Workflow
 
 Branches
 
 1. Main
-2. Develop
-3. Feature branch
-4. Hotfix branch
 
-All developers will work on their own dedicated branches that is based on the **development** branch.
+2. Develop
+
+3. Feature branch
+
+   > All developers will work on their own dedicated branches that is based on the **development** branch.
 
 ```bash
 git checkout development
@@ -163,20 +174,164 @@ Wew!
 
 # Whitebox Testing
 
-# How to run tests
+The tool used for testing is Jest. Statistics are generated with Jest, the full report can be found in [Coverage Report]('Test').
+
+[mockingoose](https://github.com/alonronin/mockingoose) is used to mock the mongoose model.
+
+## How to run tests
 
 ```bash
-# Run the tests
+# Run the tests - Note that this will run ALL the tests in backend.
 npm run test
 
-# Generate the coverage report
+# Generate the coverage report for backend.
 npm run test-coverage
-# It can be found in coverage/lcov-report/index.html
+# Generated report can be found in coverage/lcov-report/index.html
 
 ```
 
-- Choose one meaningful(2 or more interaction with other classes) class to demonstrate test code. E.g A control class, **Do not use entity class**
-- List test cases for test suite for the selected class, and where they reside in the repository
-- Show code coverage statistics for each test case, including an explanation of how we generated the statistics - via library, manual, or via IDE
-- Provide instructions on how to run test suite
-- Embed an animated gif or another short video(~1 min) of test case being ran.
+The chosen class is User Service class. It handles the logic for user authentication.
+
+## User Service
+
+The tests can be found in [User Service Tests](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/develop/src/services/__tests__/user_service.test.js).
+
+The statistics after running all the test case. The breakdown into the test cases can be found below.
+
+![User Service Tests](/img/tests/user-service-test-stats.png)
+
+```bash
+npm run test user_service.test.js
+```
+
+#### Running the test
+
+![User Service Tests](/img/tests/user-service-run.gif)
+
+### Test cases
+
+![User Service Tests](/img/tests/user-service-test.png)
+
+The tests are further isolated using Jest Filters.
+
+```bash
+npm run test 'user_service.test.js' -t 'UserService test'
+```
+
+[Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner) extension is used to help run the tests, as it helps to filter to a single test case.
+
+### Create User
+
+![Create User](/img/tests/create-user.png)
+
+#### Success
+
+- Valid PIN
+
+  ![Valid PIN](/img/tests/create-user-valid-pin.png)
+
+#### Error
+
+- Invalid PIN
+
+  ![Invalid PIN](/img/tests/create-user-invalid-pin.png)
+
+- Non-matching PIN
+
+  ![Non-matching PIN](/img/tests/create-user-non-matching-pin.png)
+
+- Weak PIN
+
+  ![Weak PIN](/img/tests/create-user-weak-pin.png)
+
+- Existing User
+
+  ![Existing User](/img/tests/create-user-another-user-exist.png)
+
+### Login
+
+![Login](/img/tests/login.png)
+
+#### Success
+
+- Successful login
+
+  ![Login Success](/img/tests/login-success.png)
+
+#### Error
+
+- No existing user
+
+  ![Login no existing user](/img/tests/login-no-user-exist.png)
+
+- Wrong PIN
+
+  ![Wrong PIN](/img/tests/login-wrong-pin.png)
+
+- No login attempts left
+
+  ![No login attempts left](/img/tests/login-no-attempts-left.png)
+
+- Exceed login attempts
+
+  ![Exceed attempts](/img/tests/login-exceed-attempts.png)
+
+### Reset PIN
+
+![Reset PIN](/img/tests/reset.png)
+
+#### Success
+
+- Successfully Reset
+
+  ![Reset PIN success](/img/tests/reset-success.png)
+
+#### Error
+
+- No user exist
+
+  ![No user exist](/img/tests/reset-no-user-exist.png)
+
+- Missing required PIN
+
+  ![Missing required PIN](/img/tests/reset-missing-pin.png)
+
+- New PIN do not match confirmation PIN
+
+  ![PIN do not match](/img/tests/reset-no-match.png)
+
+- Incorrect current PIN
+
+  ![Current PIN incorrect](/img/tests/reset-current-pin-incorrect.png)
+
+- PIN is not a Number
+
+  ![PIN is NaN](/img/tests/reset-pin-nan.png)
+
+- Weak PIN
+
+  ![Weak PIN](/img/tests/reset-weak-pin.png)
+
+## Additional Tests
+
+### User Model
+
+```bash
+npm run test 'user_model.test.js'
+```
+
+![User Model Tests](/img/tests/user-model-run.gif)
+
+![User Model Tests](/img/tests/user-model-test.png)
+
+
+
+
+
+
+
+### Additional Blackbox Testing (E2E)
+
+[supertest](https://github.com/visionmedia/supertest) to test the HTTP endpoint.
+
+

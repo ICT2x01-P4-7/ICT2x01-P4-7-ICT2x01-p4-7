@@ -28,7 +28,7 @@ describe("User model test", () => {
       const actual = await User.findById(user._id).exec();
       expect(actual).toHaveProperty("hashed_PIN");
     });
-    it("Invalid PINS ", async () => {
+    it("Invalid PIN ", async () => {
       const wrongPINS = [
         { PIN: 1234 },
         { PIN: "HahaThis" },
@@ -75,20 +75,20 @@ describe("User model test", () => {
     it("PIN length less than 4", async () => {
       const user = await new User({ PIN: "123" });
       expect(user.save()).rejects.toThrow(
-        "User validation failed: PIN: PIN must be 4 integers"
+        "User validation failed: PIN: PIN must be 4 digit"
       );
     });
 
     it("PIN length more than 4", async () => {
       const user = await new User({ PIN: "123456" });
       expect(user.save()).rejects.toThrow(
-        "User validation failed: PIN: PIN must be 4 integers"
+        "User validation failed: PIN: PIN must be 4 digit"
       );
     });
     it("PIN is NaN", async () => {
       const user = await new User({ PIN: "HA12" });
       expect(user.save()).rejects.toThrow(
-        "User validation failed: PIN: PIN must be 4 integers"
+        "User validation failed: PIN: PIN must be 4 digit"
       );
     });
   });
