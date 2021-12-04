@@ -12,7 +12,9 @@
         ></b-col
       >
       <b-col class="pt-4"
-        ><b-button pill variant="dark" size="lg">Tutorial</b-button></b-col
+        ><b-button pill variant="dark" v-on:click="openTutorial()" size="lg"
+          >Tutorial</b-button
+        ></b-col
       >
       <b-col class="pt-4"
         ><b-button pill variant="secondary" v-on:click="openHistory()" size="lg"
@@ -75,6 +77,7 @@
       v-on:updateDifficulty="updateDifficulty"
       ref="map-screen"
     ></MapScreen>
+    <TutorialScreen ref="tutorial-screen"></TutorialScreen>
   </b-container>
 </template>
 
@@ -88,6 +91,7 @@ import ResetScreen from "./ResetScreen.vue";
 import HistoryScreen from "./HistoryScreen.vue";
 import DashboardScreen from "./DashboardScreen.vue";
 import MapScreen from "./SampleMapScreen.vue";
+import TutorialScreen from "./TutorialScreen.vue";
 
 export default {
   components: {
@@ -96,6 +100,7 @@ export default {
     HistoryScreen,
     DashboardScreen,
     MapScreen,
+    TutorialScreen,
   },
   data() {
     return {
@@ -212,6 +217,9 @@ export default {
     },
     updateDifficulty(level) {
       this.difficultyLevel = level;
+    },
+    openTutorial() {
+      this.$refs["tutorial-screen"].showModal();
     },
   },
 };
