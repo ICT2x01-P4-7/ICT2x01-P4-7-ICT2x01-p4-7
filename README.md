@@ -27,7 +27,7 @@ The project follows the MVC+Service layer design pattern.
 
 ![MVCS Architecture](/img/basic-architecture.png)
 
-When a request is received, it will be routed to the respective controller that is responsible for receiving and displaying the results of the operation. The Controller will call the Service layer (business layer) that contains the logic. When an operation requires interaction with the database, it will use the Model that contains data model definition and operations.
+When a request is received, it will be routed to the respective controller that is responsible for receiving and displaying the results of the operation. The Controller will call the Service layer (business layer) that contains the logic. When an operation requires interaction with the database, it will use the Model that contains data model definition and operations. In this case, only UserService has to interact with the database for authentication.
 
 ![Architecture](/img/architecture.png)
 
@@ -179,7 +179,7 @@ Wew!
 
 # Whitebox Testing
 
-The tool used for testing is Jest. Statistics are generated with Jest, the full report can be found in [Coverage Report]('Test').
+The tool used for testing is Jest. Statistics are generated with Jest, the full report can be found in [Coverage Report](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/tree/main/src/coverage/lcov-report).
 
 [mockingoose](https://github.com/alonronin/mockingoose) is used to mock the mongoose model.
 
@@ -199,9 +199,9 @@ The chosen class is User Service class. It handles the logic for user authentica
 
 ## User Service
 
-The tests can be found in [User Service Tests](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/develop/src/services/__tests__/user_service.test.js).
+The tests can be found in [User Service Tests](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/services/__tests__/user_service.test.js).
 
-The statistics after running all the test case. The breakdown into the test cases can be found below.
+The statistics after running all the test case. The breakdown into the test cases can be found below. 
 
 ![User Service Tests](/img/tests/user-service-test-stats.png)
 
@@ -321,7 +321,7 @@ npm run test 'user_service.test.js' -t 'UserService test'
 
 ### User Model
 
-The tests can be found in [User Model Test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/docs/wb-testing/src/models/User/__tests__/user_model.test.js).
+The tests can be found in [User Model Test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/models/User/__tests__/user_model.test.js).
 
 ```bash
 npm run test 'user_model.test.js'
@@ -341,7 +341,7 @@ npm run test 'user_model.test.js'
 
 [supertest](https://github.com/visionmedia/supertest)  to help with testing the HTTP endpoint.
 
-The tests can be found in [E2E test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/docs/wb-testing/src/__tests__/app.test.js).
+The tests can be found in [E2E test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/__tests__/app.test.js).
 
 ```bash
 npm run test 'app.test.js'
