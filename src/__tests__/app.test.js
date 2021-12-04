@@ -55,7 +55,7 @@ describe("App test", () => {
     afterEach(async () => {
       await User.deleteMany({});
     });
-    test("should respond with an error occured with invalid PIN", async () => {
+    test("should respond with an error occured with invalid PIN - NaN", async () => {
       const response = await request(app).post("/user/create").send({
         confirmPIN: "HAHA",
         choosePIN: "HAHA",
@@ -64,12 +64,12 @@ describe("App test", () => {
         expect.stringContaining("json")
       );
       expect(response.body).toMatchObject({
-        message: "ValidationError: PIN: PIN must be 4 integers",
+        message: "ValidationError: PIN: PIN must be 4 digit",
       });
       expect(response.statusCode).toBe(500);
     });
 
-    test("should respond with an error occured with invalid PIN", async () => {
+    test("should respond with an error occured with invalid PIN - empty", async () => {
       const response = await request(app).post("/user/create").send({});
       expect(response.headers["content-type"]).toEqual(
         expect.stringContaining("json")
@@ -279,13 +279,13 @@ describe("App test", () => {
       );
       expect(response.body).toEqual(
         expect.objectContaining({
-          message: "PIN must be 4 integers",
+          message: "PIN must be 4 digit",
         })
       );
       expect(response.statusCode).toBe(500);
     });
 
-    test("should respond with PIN must be 4 integers", async () => {
+    test("should respond with PIN must be 4 digit", async () => {
       const loginResponse = await request(app).post("/user/login").send({
         PIN: "1234",
       });
@@ -303,7 +303,7 @@ describe("App test", () => {
       );
       expect(response.body).toEqual(
         expect.objectContaining({
-          message: "PIN must be 4 integers",
+          message: "PIN must be 4 digit",
         })
       );
       expect(response.statusCode).toBe(500);

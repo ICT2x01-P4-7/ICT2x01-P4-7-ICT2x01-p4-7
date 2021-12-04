@@ -40,7 +40,7 @@ describe("UserService test", () => {
   });
 
   describe("createUser", () => {
-    it("Create User with Valid PIN", async () => {
+    it("Create User with valid PIN", async () => {
       jest
         .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
@@ -50,7 +50,7 @@ describe("UserService test", () => {
         success: true,
       });
     });
-    it("Create User when another User exists", async () => {
+    it("Create User when another user exists", async () => {
       jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
       const actual = await UserService.createUser("1234", "1234");
       expect(actual).toMatchObject({
@@ -58,7 +58,7 @@ describe("UserService test", () => {
         success: false,
       });
     });
-    it("Create User with Invalid PIN", async () => {
+    it("Create User with invalid PIN", async () => {
       jest
         .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
@@ -79,7 +79,7 @@ describe("UserService test", () => {
           error = e;
         }
         expect(actual).toMatchObject({
-          message: "ValidationError: PIN: PIN must be 4 integers",
+          message: "ValidationError: PIN: PIN must be 4 digit",
           success: false,
         });
       }
@@ -97,7 +97,7 @@ describe("UserService test", () => {
       });
     });
 
-    it("Create user with weak PIN", async () => {
+    it("Create User with weak PIN", async () => {
       jest
         .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
@@ -161,12 +161,11 @@ describe("UserService test", () => {
       const actual = await UserService.login("9876");
       expect(actual).toMatchObject({
         message:
-          "User does not exist or PIN is incorrect. You have 5 attempts left.",
+          "User does not exist or PIN is incorrect. You have 4 attempts left.",
         success: false,
       });
     });
-
-    it("Exceed login attempt ", async () => {
+    it("No login attempts left ", async () => {
       jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
       const _doc = [
         {
@@ -174,6 +173,27 @@ describe("UserService test", () => {
           hashed_PIN:
             "$2b$10$IrIK300GhpQe2Iajc3rsvesbwC2AkTVT4qHOiHEXR/In30MEba9Ri",
           loginAttempts: 5,
+          createdAt: { $date: "2021-11-24T03:25:51.863Z" },
+          updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
+          __v: 0,
+        },
+      ];
+      mockingoose(User).toReturn(_doc);
+      const actual = await UserService.login("9876");
+      expect(actual).toMatchObject({
+        message:
+          "User does not exist or PIN is incorrect. You have no attempts left. Barred from logging in.",
+        success: false,
+      });
+    });
+    it("Exceed login attempts", async () => {
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
+      const _doc = [
+        {
+          _id: { $oid: "619db0bf4b50b6136ab2b770" },
+          hashed_PIN:
+            "$2b$10$IrIK300GhpQe2Iajc3rsvesbwC2AkTVT4qHOiHEXR/In30MEba9Ri",
+          loginAttempts: 6,
           createdAt: { $date: "2021-11-24T03:25:51.863Z" },
           updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
           lockUntil: Date.parse(new Date(new Date().getTime() + 5 * 60000)),
@@ -248,7 +268,7 @@ describe("UserService test", () => {
       });
     });
 
-    it("confirmPIN do not match choosePIN", async () => {
+    it("ConfirmPIN do not match choosePIN", async () => {
       jest
         .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
@@ -271,7 +291,7 @@ describe("UserService test", () => {
       });
     });
 
-    it("should return New PIN must have 4 integers", async () => {
+    it("New PIN must have 4 digit", async () => {
       jest
         .spyOn(UserService, "checkAUserExist")
         .mockImplementation(() => false);
@@ -289,7 +309,7 @@ describe("UserService test", () => {
       mockingoose(User).toReturn(_doc);
       const actual = await UserService.resetPIN("1234", "56", "56");
       expect(actual).toMatchObject({
-        message: "PIN must be 4 integers",
+        message: "PIN must be 4 digit",
         success: false,
       });
     });
@@ -335,6 +355,26 @@ describe("UserService test", () => {
       const actual = await UserService.resetPIN("2345", "5678", "5678");
       expect(actual).toMatchObject({
         message: "User does not exist or incorrect PIN",
+        success: false,
+      });
+    });
+    it("PIN is not a number", async () => {
+      jest.spyOn(UserService, "checkAUserExist").mockImplementation(() => true);
+      const _doc = [
+        {
+          _id: { $oid: "619db0bf4b50b6136ab2b770" },
+          hashed_PIN:
+            "$2b$10$IrIK300GhpQe2Iajc3rsvesbwC2AkTVT4qHOiHEXR/In30MEba9Ri",
+          loginAttempts: 0,
+          createdAt: { $date: "2021-11-24T03:25:51.863Z" },
+          updatedAt: { $date: "2021-11-24T03:25:51.863Z" },
+          __v: 0,
+        },
+      ];
+      mockingoose(User).toReturn(_doc);
+      const actual = await UserService.resetPIN("1234", "ABCD", "ABCD");
+      expect(actual).toMatchObject({
+        message: "PIN must be 4 digit",
         success: false,
       });
     });

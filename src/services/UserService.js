@@ -52,7 +52,7 @@ class UserService {
           User.updateOne(
             { _id: foundUser._id },
             {
-              $set: { loginAttempts: 1 },
+              $set: { loginAttempts: 0 },
               $unset: { lockUntil: 1 },
             }
           ).exec();
@@ -64,14 +64,16 @@ class UserService {
         } else {
           const { updates, loginAttempts } = foundUser.incLoginAttempts();
           User.updateOne({ _id: foundUser._id }, updates).exec();
-          if (loginAttempts === 0) {
+          if (loginAttempts - 1 <= 0) {
             return {
               message: `User does not exist or PIN is incorrect. You have no attempts left. Barred from logging in.`,
               success: false,
             };
           } else {
             return {
-              message: `User does not exist or PIN is incorrect. You have ${loginAttempts} attempts left.`,
+              message: `User does not exist or PIN is incorrect. You have ${
+                loginAttempts - 1
+              } attempts left.`,
               success: false,
             };
           }
@@ -151,13 +153,13 @@ class UserService {
       }
       if (confirmPIN && confirmPIN.length !== 4) {
         return {
-          message: "PIN must be 4 integers",
+          message: "PIN must be 4 digit",
           success: false,
         };
       }
       if (confirmPIN && isNaN(confirmPIN)) {
         return {
-          message: "PIN must be 4 integers",
+          message: "PIN must be 4 digit",
           success: false,
         };
       }
