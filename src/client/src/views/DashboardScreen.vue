@@ -122,7 +122,6 @@ export default {
     },
     hideModal() {
       this.$refs["dashboard-modal"].hide();
-      this.$refs["basicboard"].reset();
       this.currentBoardView = "Basic";
       this.currentButtonText = "Detailed";
       clearInterval(this.interval);

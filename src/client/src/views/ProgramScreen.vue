@@ -20,7 +20,9 @@
         ></b-col
       >
       <b-col class="pt-4"
-        ><b-button pill variant="info" size="lg">Select Map</b-button></b-col
+        ><b-button pill variant="info" v-on:click="openMap()" size="lg"
+          >Select Map
+        </b-button></b-col
       >
       <b-col class="pt-4"
         ><b-button
@@ -62,12 +64,17 @@
     </b-container>
     <ResetScreen ref="reset-screen"></ResetScreen>
     <HistoryScreen ref="history-screen"></HistoryScreen>
+
     <DashboardScreen
       v-bind:sequence="sequence"
       v-bind:gameStarted="gameStarted"
       v-on:updateGameStarted="updateGameStarted"
       ref="dashboard-screen"
     ></DashboardScreen>
+    <MapScreen
+      v-on:updateDifficulty="updateDifficulty"
+      ref="map-screen"
+    ></MapScreen>
   </b-container>
 </template>
 
@@ -80,19 +87,21 @@ import axios from "axios";
 import ResetScreen from "./ResetScreen.vue";
 import HistoryScreen from "./HistoryScreen.vue";
 import DashboardScreen from "./DashboardScreen.vue";
+import MapScreen from "./SampleMapScreen.vue";
 
 export default {
-  name: "app",
   components: {
     BlocklyComponent,
     ResetScreen,
     HistoryScreen,
     DashboardScreen,
+    MapScreen,
   },
   data() {
     return {
       sequence: "",
       gameStarted: false,
+      difficultyLevel: "easy",
       options: {
         media: "media/",
         grid: {
@@ -182,6 +191,9 @@ export default {
     openHistory() {
       this.$refs["history-screen"].showModal();
     },
+    openMap() {
+      this.$refs["map-screen"].showModal();
+    },
     saveToHistory(sequence) {
       let history = sessionStorage.getItem("history");
       const now = Date.now();
@@ -197,6 +209,9 @@ export default {
     },
     openDashboard() {
       this.$refs["dashboard-screen"].showModal();
+    },
+    updateDifficulty(level) {
+      this.difficultyLevel = level;
     },
   },
 };
