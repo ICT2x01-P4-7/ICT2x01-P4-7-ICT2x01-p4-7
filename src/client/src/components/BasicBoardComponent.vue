@@ -141,6 +141,9 @@ export default {
       this.currentSensorData = tmpStore;
     },
     parseMovement() {
+      this.alertTitle = "Playing";
+      this.alertMessage = "";
+      this.alertVariant = "light";
       let currentSequence = this.sequence;
       const latestSensorData = this.sensorData;
       let executingSequence = latestSensorData.Executing;
@@ -175,6 +178,7 @@ export default {
         if (executingSequence && this.renderIndex < executingSequence.length) {
           this.showAlert = false;
           if (currentIndex >= 990) {
+            this.showAlert = true;
             this.previous = currentSequence;
             this.now = "Done";
             this.next = "Done";
