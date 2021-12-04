@@ -55,7 +55,7 @@ describe("App test", () => {
     afterEach(async () => {
       await User.deleteMany({});
     });
-    test("should respond with an error occured with invalid PIN", async () => {
+    test("should respond with an error occured with invalid PIN - NaN", async () => {
       const response = await request(app).post("/user/create").send({
         confirmPIN: "HAHA",
         choosePIN: "HAHA",
@@ -69,7 +69,7 @@ describe("App test", () => {
       expect(response.statusCode).toBe(500);
     });
 
-    test("should respond with an error occured with invalid PIN", async () => {
+    test("should respond with an error occured with invalid PIN - empty", async () => {
       const response = await request(app).post("/user/create").send({});
       expect(response.headers["content-type"]).toEqual(
         expect.stringContaining("json")

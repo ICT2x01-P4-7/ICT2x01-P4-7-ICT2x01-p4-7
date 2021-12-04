@@ -1,6 +1,14 @@
 # ICT2x01-P4-7 TileUp!
 
-TileUp is a gamified web portal for controlling MSP432 robotic car.
+TileUp is a gamified web portal for controlling MSP432 robotic car. It includes an interface to view the sensors on the car. The colors on the ground will determine if the car can move based on the instruction given.
+
+- Red - Reverse
+- Green - Forward
+- Blue - Left and Right
+
+![TileUp](/img/web-portal.gif)
+
+In this case, the sensor determined the color on the ground is green, which allowed the instruction to execute and move the car forward!
 
 # Prerequisite
 
@@ -10,12 +18,12 @@ TileUp is a gamified web portal for controlling MSP432 robotic car.
 
 The project is using the MEVN Stack. MongoDB(M), ExpressJS(E) , VueJS(V), NodeJS(N).
 
-Monorepo containing both the frontend and backend. The backend is in `src/`. The backend consist of MongoDB, ExpressJS and NodeJS
+Monorepo containing both the frontend and backend. The backend is in `src/`. The backend consist of MongoDB, ExpressJS and NodeJS.
 The VueJS frontend is nested within the backend directory `src/client`.
 
 ## Architecture
 
-The project follows the MVC+Service layer design pattern. (MVCS)
+The project follows the MVC+Service layer design pattern. 
 
 ![MVCS Architecture](/img/basic-architecture.png)
 
@@ -39,9 +47,10 @@ The program class is responsible for interacting with the TCP Server that commun
 
 [config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js)
 
+> Alert, Do not commit config.js if you make this change!
+
 ```js
 
-> Alert, Do not commit config.js if you make this change!
 module.exports = {
   /* Currently using localhost for default mongoUri, delete localhost mongoUri and uncomment the mongoUri below it to use Cloud MongoDB URI */
   mongoUri: "mongodb://localhost:27017/tileup",
@@ -68,7 +77,7 @@ code ~/.bash_profile
 ## Local
 export MONGO_URI="mongodb://localhost:27017/tileup"
 ## or Remote Atlas
-export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
+//export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
 
 ## Local testing db. Do not include database name after /
 export TEST_MONGO_URI="mongodb://localhost:27017/"
@@ -96,21 +105,17 @@ npm install
 /* Change dir into src/ */
 cd src/
 
-/* Commandto run frontend */
+/* Command to run frontend */
 npm run client
 
 /* Open a new terminal*/
+
 /* Command to run backend */
 npm run server
 
-/* For running both at the same time in the same terminal*/
-npm run dev
-
 ```
 
-![Express Backend](/img/express-backend.png)
-
-![Express Frontend](/img/vue-frontend.png)
+![Start server](/img/start-server.gif)
 
 # Development Workflow
 
@@ -218,7 +223,7 @@ The tests are further isolated using Jest Filters.
 npm run test 'user_service.test.js' -t 'UserService test'
 ```
 
-[Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner) extension is used to help run the tests, as it helps to filter to a single test case.
+[Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner) extension is used to help run the tests, as it helps to filter to a single test case.  Individual tests statistics are extracted from the coverage report after filtering.
 
 ### Create User
 
@@ -316,6 +321,8 @@ npm run test 'user_service.test.js' -t 'UserService test'
 
 ### User Model
 
+The tests can be found in [User Model Test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/docs/wb-testing/src/models/User/__tests__/user_model.test.js).
+
 ```bash
 npm run test 'user_model.test.js'
 ```
@@ -330,8 +337,17 @@ npm run test 'user_model.test.js'
 
 
 
-### Additional Blackbox Testing (E2E)
+### Additional Blackbox Testing  - E2E
 
-[supertest](https://github.com/visionmedia/supertest) to test the HTTP endpoint.
+[supertest](https://github.com/visionmedia/supertest)  to help with testing the HTTP endpoint.
 
+The tests can be found in [E2E test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/docs/wb-testing/src/__tests__/app.test.js).
+
+```bash
+npm run test 'app.test.js'
+```
+
+![E2E Tests](/img/tests/e2e-run.gif)
+
+![E2E Tests](/img/tests/e2e-test.png)
 
