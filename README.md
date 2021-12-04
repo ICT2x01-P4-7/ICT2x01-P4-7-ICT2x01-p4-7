@@ -177,6 +177,19 @@ Wew!
 - An embedded video that runs through all system test cases created and refined from M2
 - ~3 mins long to cover all system Tests
 
+
+https://user-images.githubusercontent.com/89976082/144716518-b3bef145-d5a5-4ea2-ae83-824d80012185.mp4
+
+# M2 State Diagram
+![ICT2x01_Milestone2_StateDiagram_LabGroup4-Team7_AY2122](https://user-images.githubusercontent.com/89976082/144716632-dd3d2ead-c5f0-4800-bd1d-4dd3f7b0fb43.png)
+
+
+# Refined State Diagram 
+- Green colour refers to transitions with changes made
+![refinedStateDiagram](https://user-images.githubusercontent.com/89976082/144716625-cfeefd1e-afc2-496d-a545-55eea84993de.png)
+
+
+
 # Whitebox Testing
 
 The tool used for testing is Jest. Statistics are generated with Jest, the full report can be found in [Coverage Report](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/tree/main/src/coverage/lcov-report).
