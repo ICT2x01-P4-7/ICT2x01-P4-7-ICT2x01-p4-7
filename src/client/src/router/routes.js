@@ -1,7 +1,7 @@
 //import Home from "../views/Home.vue";
 import CreateScreen from "../views/CreateScreen.vue";
 import LoginScreen from "../views/LoginScreen.vue";
-import ProgramPage from "../views/ProgramPage.vue";
+import ProgramScreen from "../views/ProgramScreen.vue";
 import NotFound from "../views/NotFound.vue";
 import axios from "axios";
 import { localhost } from "@/config/config.js";
@@ -64,7 +64,7 @@ const routes = [
     path: "/play",
     name: "Program",
     beforeEnter: guardRoute,
-    component: ProgramPage,
+    component: ProgramScreen,
     meta: { title: "Play" },
   },
   { path: "*", component: NotFound },

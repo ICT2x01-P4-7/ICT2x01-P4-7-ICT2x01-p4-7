@@ -24,8 +24,7 @@
           />
         </div>
         <b-button
-          v-if="difficultyLevel != 'medium' && difficultyLevel != 'hard'"
-          :pressed="true"
+          :pressed="difficultyLevel === 'easy'"
           class="mt-2"
           variant="outline-secondary"
           block
@@ -33,47 +32,15 @@
           >Easy</b-button
         >
         <b-button
-          v-if="difficultyLevel == 'medium' || difficultyLevel == 'hard'"
-          :pressed="false"
-          class="mt-2"
-          variant="outline-secondary"
-          block
-          @click="selectDifficulty('easy')"
-          >Easy</b-button
-        >
-        <b-button
-          v-if="difficultyLevel != 'easy' && difficultyLevel != 'hard'"
-          :pressed="true"
+          :pressed="difficultyLevel == 'medium'"
           class="mt-2"
           variant="outline-secondary"
           block
           @click="selectDifficulty('medium')"
           >Medium</b-button
         >
-
         <b-button
-          v-if="difficultyLevel == 'easy' || difficultyLevel == 'hard'"
-          :pressed="false"
-          class="mt-2"
-          variant="outline-secondary"
-          block
-          @click="selectDifficulty('medium')"
-          >Medium</b-button
-        >
-
-        <b-button
-          v-if="difficultyLevel != 'easy' && difficultyLevel != 'medium'"
-          :pressed="true"
-          class="mt-2"
-          variant="outline-secondary"
-          block
-          @click="selectDifficulty('hard')"
-          >Hard</b-button
-        >
-
-        <b-button
-          v-if="difficultyLevel == 'easy' || difficultyLevel == 'medium'"
-          :pressed="false"
+          :pressed="difficultyLevel == 'hard'"
           class="mt-2"
           variant="outline-secondary"
           block
@@ -103,7 +70,7 @@ export default {
     },
     selectDifficulty(level) {
       this.difficultyLevel = level;
-      console.log(this.difficultyLevel);
+      this.$emit("updateDifficulty", level);
     },
   },
   data() {

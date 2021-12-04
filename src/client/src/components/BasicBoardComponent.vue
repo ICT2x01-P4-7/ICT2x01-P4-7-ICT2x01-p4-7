@@ -104,9 +104,6 @@ export default {
     },
   },
   methods: {
-    reset() {
-      this.showAlert = false;
-    },
     parseSensorData() {
       const tmpStore = [];
       const latestSensorData = this.sensorData;
@@ -176,6 +173,7 @@ export default {
           }
         }
         if (executingSequence && this.renderIndex < executingSequence.length) {
+          this.showAlert = false;
           if (currentIndex >= 990) {
             this.previous = currentSequence;
             this.now = "Done";

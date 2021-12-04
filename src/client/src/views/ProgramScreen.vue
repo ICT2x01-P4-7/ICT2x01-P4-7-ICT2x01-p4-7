@@ -71,8 +71,10 @@
       v-on:updateGameStarted="updateGameStarted"
       ref="dashboard-screen"
     ></DashboardScreen>
-    <MapScreen ref="map-screen"></MapScreen>
-
+    <MapScreen
+      v-on:updateDifficulty="updateDifficulty"
+      ref="map-screen"
+    ></MapScreen>
   </b-container>
 </template>
 
@@ -85,10 +87,9 @@ import axios from "axios";
 import ResetScreen from "./ResetScreen.vue";
 import HistoryScreen from "./HistoryScreen.vue";
 import DashboardScreen from "./DashboardScreen.vue";
-import MapScreen from "./showMap.vue";
+import MapScreen from "./SampleMapScreen.vue";
 
 export default {
-  name: "app",
   components: {
     BlocklyComponent,
     ResetScreen,
@@ -100,6 +101,7 @@ export default {
     return {
       sequence: "",
       gameStarted: false,
+      difficultyLevel: "easy",
       options: {
         media: "media/",
         grid: {
@@ -207,6 +209,9 @@ export default {
     },
     openDashboard() {
       this.$refs["dashboard-screen"].showModal();
+    },
+    updateDifficulty(level) {
+      this.difficultyLevel = level;
     },
   },
 };
