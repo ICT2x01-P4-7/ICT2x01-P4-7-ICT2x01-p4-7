@@ -187,7 +187,9 @@ Download the postman collection to test the API available.
 
 ## User Acceptance Testing
 
-https://user-images.githubusercontent.com/89976082/144716518-b3bef145-d5a5-4ea2-ae83-824d80012185.mp4
+
+https://user-images.githubusercontent.com/89976082/144744240-ea74146f-d0c0-4344-b225-d18f4f6f1779.mp4
+
 
 ## M2 State Diagram
 
