@@ -141,6 +141,9 @@ export default {
       this.currentSensorData = tmpStore;
     },
     parseMovement() {
+      this.alertTitle = "Playing";
+      this.alertMessage = "";
+      this.alertVariant = "light";
       let currentSequence = this.sequence;
       const latestSensorData = this.sensorData;
       let executingSequence = latestSensorData.Executing;
@@ -171,13 +174,34 @@ export default {
             this.alertVariant = "success";
             this.showAlert = true;
           }
+          const executingSequenceLength = executingSequence.length;
+          this.previous = currentSequence.slice(0, executingSequenceLength);
+          this.now = currentSequence.slice(
+            executingSequenceLength,
+            executingSequenceLength + 1
+          );
+          this.next = currentSequence.slice(executingSequenceLength + 1);
+          this.currentExecution = [
+            {
+              previous: this.previous,
+              now: this.now,
+              next: this.next,
+            },
+          ];
         }
         if (executingSequence && this.renderIndex < executingSequence.length) {
           this.showAlert = false;
           if (currentIndex >= 990) {
-            this.previous = currentSequence;
-            this.now = "Done";
-            this.next = "Done";
+            this.showAlert = true;
+            if (executingSequence[0] === "X") {
+              this.previous = "";
+              this.now = currentSequence.slice(0, 1);
+              this.next = currentSequence.slice(1);
+            } else {
+              this.previous = currentSequence;
+              this.now = "";
+              this.next = "";
+            }
             this.completeExecution = true;
           } else if (executingSequence.length === 0) {
             this.previous = "Nothing yet...";
@@ -187,8 +211,8 @@ export default {
           } else if (executingSequence.length > 0) {
             if (executingSequence.length === currentSequence.length) {
               this.previous = currentSequence;
-              this.now = "Done";
-              this.next = "Done";
+              this.now = "";
+              this.next = "";
             }
             this.previous = currentSequence.slice(
               0,
