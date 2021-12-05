@@ -8,63 +8,107 @@ TileUp is a gamified web portal for controlling MSP432 robotic car. It includes 
 
 ![TileUp](/img/web-portal.gif)
 
-In this case, the sensor determined the color on the ground is green, which allowed the instruction to execute and move the car forward!
+In this example, the sensor determined the color on the ground is green, which allowed the instruction to execute and move the car forward.
 
-# Prerequisite
+### Framework used
 
-- npm version >6.14
+The project is using the MEVN Stack. 
 
-# How it works
+- [MongoDB(M)](https://www.mongodb.com/)
+- [ExpressJS(E)](https://expressjs.com/) 
+- [VueJS(V)](https://vuejs.org/)
+- [NodeJS(N)](https://nodejs.org/en/)
 
-The project is using the MEVN Stack. MongoDB(M), ExpressJS(E) , VueJS(V), NodeJS(N).
+## How it works
 
-Monorepo containing both the frontend and backend. The backend is in `src/`. The backend consist of MongoDB, ExpressJS and NodeJS.
-The VueJS frontend is nested within the backend directory `src/client`.
+1. The project is a monorepo containing both the frontend and backend. The backend is in [`src/`](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/tree/main/src). The backend consist of MongoDB, ExpressJS and NodeJS. The VueJS frontend is nested within the backend directory [`src/client`](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/tree/main/src/client).
+2. The ExpressJS server will handle the HTTP requests from the VueJS frontend.
 
 ## Architecture
 
 The project follows the MVC+Service layer design pattern. 
 
-![MVCS Architecture](/img/basic-architecture.png)
+When a View makes a request, it will be routed to the respective controller that is responsible for receiving and responding to the request. The Controller will call the Service layer (business layer) that contains the logic. When an operation requires interaction with the database, it will use the Model that contains data model definition and operations. In this case, only UserService has to interact with the database for authentication.
 
-When a request is received, it will be routed to the respective controller that is responsible for receiving and displaying the results of the operation. The Controller will call the Service layer (business layer) that contains the logic. When an operation requires interaction with the database, it will use the Model that contains data model definition and operations. In this case, only UserService has to interact with the database for authentication.
+>The user class is responsible for the creation and authentication of users.
+
+> The program class is responsible for interacting with the TCP Server that communicates with the ESP8266.
+>
 
 ![Architecture](/img/architecture.png)
 
-The user class is responsible for the creation and authentication of users.
-
-The program class is responsible for interacting with the TCP Server that communicates with the car.
-
 ## Prerequisite
 
-### Setting up MongoDB Database
+- npm >= 6.14.15
+- node >= 14.18.1
+- MongoDB local or  Remote MongoDB Instance (Atlas)
 
-[Great Guide on setting up a local MongoDB](https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database)
+### Set up local or remote MongoDB instance
+
+> 1. [Great Guide on setting up a local MongoDB](https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database)
+>
+> 2. [Getting Started with Atlas](https://docs.atlas.mongodb.com/getting-started/)
+
+### Clone the repository
+
+``` bash
+/* clone the repository */
+git clone git@github.com:ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7.git tileup
+
+/* Change directory into source*/
+cd tileup/src
+
+```
+
+### Install dependencies
+
+``` bash
+npm install 
+```
+
+### Usage
+
+```bash
+
+/* Command to run frontend */
+npm run client
+
+/* Open a new terminal*/
+
+/* Command to run backend */
+npm run server
+
+```
+
+![Start server](/img/start-server.gif)
 
 ### Configure Database URI
 
-#### Lazy Way - Configure the URI inside config.js (Not the config.js within client).
-
 [config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js)
 
-> Alert, Do not commit config.js if you make this change!
-
 ```js
-
+/* Update 
+1.  mongoUri - Change process.env.MONGO_URI to localhost or remote atlas.
+2.  testMongoUri - Change process.env.MONGO_URI to localhost or remote atlas.
+*/
 module.exports = {
-  /* Currently using localhost for default mongoUri, delete localhost mongoUri and uncomment the mongoUri below it to use Cloud MongoDB URI */
-  mongoUri: "mongodb://localhost:27017/tileup",
-  //mongoUri: "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
-
-  /* For test database, change the default to localhost
-   *  do not include the database name "tileup" after the port `27017/`
-   */
-  testMongoUri:"mongodb://localhost:27017/"
-  ...
+    # default - Add MONGO_URI and TEST_MONGO_URI to terminal profile.
+    mongoUri: process.env.MONGO_URI 
+    testMongoUri: process.env.TEST_MONGO_URI,
+    
+	# localhost
+    mongoUri: "mongodb://localhost:27017/tileup",
+    testMongoUri: "mongodb://localhost:27017/"
+    
+    # remote
+    mongoUri: "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup",
+    testMongoUri: "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/"
 }
 ```
 
-#### Alternative way that is a little harder, requires more effort, but more convenient!
+> Do not commit config.js.
+
+#### Alternative:  Add to Terminal Profile
 
 > No change is required in config.js. Add the variable into your terminal zsh/bash profile.
 
@@ -85,39 +129,7 @@ export TEST_MONGO_URI="mongodb://localhost:27017/"
 # Restart terminal!
 ```
 
-# How to run
-
-## Install dependencies
-
-```bash
-/* clone the repository */
-git clone git@github.com:ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7.git tileup
-
-/* Change dir into src*/
-cd tileup/src
-npm install
-
-```
-
-### Run Backend server
-
-```bash
-/* Change dir into src/ */
-cd src/
-
-/* Command to run frontend */
-npm run client
-
-/* Open a new terminal*/
-
-/* Command to run backend */
-npm run server
-
-```
-
-![Start server](/img/start-server.gif)
-
-# Development Workflow
+### Development Workflow
 
 Branches
 
@@ -153,7 +165,7 @@ Create push request on Github, assign a reviewer(Leader).
 
 The PR will be allowed to merge once it is approved.
 
-Wew!
+Success!
 
 ```
 
@@ -162,9 +174,9 @@ Wew!
 > Only the leader can merge the **development** branch to main
 > No pushing changes to main. Only merge is allowed. Branch protection is enabled.
 
-## Postman Collection for testing the backend API
+## Postman Collection
 
-- Download the postman collection to try out the APIs available.
+Download the postman collection to test the API available.
 
 > Take note: Some API requires logging in first to be able to call the API.
 >
@@ -172,23 +184,21 @@ Wew!
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/54010551dd3d1ae90e8e?action=collection%2Fimport)
 
-# User Acceptance Testing
+## User Acceptance Testing
 
-https://user-images.githubusercontent.com/89976082/144716518-b3bef145-d5a5-4ea2-ae83-824d80012185.mp4
+![UAT Video](https://user-images.githubusercontent.com/89976082/144716518-b3bef145-d5a5-4ea2-ae83-824d80012185.mp4)
 
-# M2 State Diagram
+## M2 State Diagram
 
 ![ICT2x01_Milestone2_StateDiagram_LabGroup4-Team7_AY2122](https://user-images.githubusercontent.com/89976082/144716632-dd3d2ead-c5f0-4800-bd1d-4dd3f7b0fb43.png)
 
+## M3 Refined State Diagram
 
-# Refined State Diagram 
-- Green colour refers to transitions with changes made
+- Green color refers to transitions with changes made
 
 ![refinedStateDiagram](https://user-images.githubusercontent.com/89976082/144716625-cfeefd1e-afc2-496d-a545-55eea84993de.png)
 
-
-
-# Whitebox Testing
+## Whitebox Testing
 
 The tool used for testing is Jest. Statistics are generated with Jest, the full report can be found in [Coverage Report](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/tree/main/src/coverage/lcov-report).
 
@@ -197,11 +207,12 @@ The tool used for testing is Jest. Statistics are generated with Jest, the full 
 ## How to run tests
 
 ```bash
-# Run the tests - Note that this will run ALL the tests in backend.
+# Run the tests - Note that this will run ALL the tests in the Express Backend.
 npm run test
 
 # Generate the coverage report for backend.
 npm run test-coverage
+
 # Generated report can be found in coverage/lcov-report/index.html
 
 ```
@@ -350,7 +361,7 @@ npm run test 'user_model.test.js'
 
 ### Additional Blackbox Testing  - E2E
 
-[supertest](https://github.com/visionmedia/supertest)  to help with testing the HTTP endpoint.
+[supertest](https://github.com/visionmedia/supertest)  to help with testing the HTTP API.
 
 The tests can be found in [E2E test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/__tests__/app.test.js).
 
