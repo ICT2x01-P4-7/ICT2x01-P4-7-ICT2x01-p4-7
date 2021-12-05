@@ -12,10 +12,10 @@ In this example, the sensor determined the color on the ground is green, which a
 
 ### Framework used
 
-The project is using the MEVN Stack. 
+The project is using the MEVN Stack.
 
 - [MongoDB(M)](https://www.mongodb.com/)
-- [ExpressJS(E)](https://expressjs.com/) 
+- [ExpressJS(E)](https://expressjs.com/)
 - [VueJS(V)](https://vuejs.org/)
 - [NodeJS(N)](https://nodejs.org/en/)
 
@@ -26,14 +26,13 @@ The project is using the MEVN Stack.
 
 ## Architecture
 
-The project follows the MVC+Service layer design pattern. 
+The project follows the MVC+Service layer design pattern.
 
 When a View makes a request, it will be routed to the respective controller that is responsible for receiving and responding to the request. The Controller will call the Service layer (business layer) that contains the logic. When an operation requires interaction with the database, it will use the Model that contains data model definition and operations. In this case, only UserService has to interact with the database for authentication.
 
->The user class is responsible for the creation and authentication of users.
+> The user class is responsible for the creation and authentication of users.
 
 > The program class is responsible for interacting with the TCP Server that communicates with the ESP8266.
->
 
 ![Architecture](/img/architecture.png)
 
@@ -41,7 +40,7 @@ When a View makes a request, it will be routed to the respective controller that
 
 - npm >= 6.14.15
 - node >= 14.18.1
-- MongoDB local or  Remote MongoDB Instance (Atlas)
+- MongoDB local or Remote MongoDB Instance (Atlas)
 
 ### Set up local or remote MongoDB instance
 
@@ -51,7 +50,7 @@ When a View makes a request, it will be routed to the respective controller that
 
 ### Clone the repository
 
-``` bash
+```bash
 /* clone the repository */
 git clone git@github.com:ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7.git tileup
 
@@ -64,16 +63,16 @@ cd tileup/src
 
 ### Install dependencies
 
-``` bash
-npm install 
+```bash
+npm install
 ```
 
 ### Configure Database URI
 
- Modify your [config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js) depending on chosen Mongodb instance.
+Modify your [config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js) depending on chosen Mongodb instance.
 
 ```js
-/* Update 
+/* Update
 1.  mongoUri - Change process.env.MONGO_URI to localhost or remote atlas.
 2.  testMongoUri - Change process.env.MONGO_URI to localhost or remote atlas.
 */
@@ -94,7 +93,7 @@ module.exports = {
 
 > Do not commit config.js.
 
-#### Alternative:  Add to Terminal Profile
+#### Alternative: Add to Terminal Profile
 
 > No change is required in config.js. Add the variable into your terminal zsh/bash profile.
 
@@ -107,11 +106,11 @@ code ~/.bash_profile
 ## Local
 export MONGO_URI="mongodb://localhost:27017/tileup"
 ## or Remote Atlas
-//export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup"
+# export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup"
 
 ## Local testing db. Do not include database name after /
 export TEST_MONGO_URI="mongodb://localhost:27017/"
-//export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/"
+# export TEST_MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/"
 
 # Restart terminal!
 ```
@@ -188,7 +187,7 @@ Download the postman collection to test the API available.
 
 ## User Acceptance Testing
 
-![UAT Video](https://user-images.githubusercontent.com/89976082/144716518-b3bef145-d5a5-4ea2-ae83-824d80012185.mp4)
+https://user-images.githubusercontent.com/89976082/144716518-b3bef145-d5a5-4ea2-ae83-824d80012185.mp4
 
 ## M2 State Diagram
 
@@ -225,7 +224,7 @@ The chosen class is User Service class. It handles the logic for user authentica
 
 The tests can be found in [User Service Tests](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/services/__tests__/user_service.test.js).
 
-The statistics after running all the test case in User Service. The breakdown into the test cases can be found below. 
+The statistics after running all the test case in User Service. The breakdown into the test cases can be found below.
 
 ![User Service Tests](/img/tests/user-service-test-stats.png)
 
@@ -247,7 +246,7 @@ The tests are further isolated using Jest Filters.
 npm run test 'user_service.test.js' -t 'UserService test'
 ```
 
-[Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner) extension is used to help run the tests, as it helps to filter to a single test case.  Individual tests statistics are extracted from the coverage report after filtering.
+[Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner) extension is used to help run the tests, as it helps to filter to a single test case. Individual tests statistics are extracted from the coverage report after filtering.
 
 ### Create User
 
@@ -355,9 +354,9 @@ npm run test 'user_model.test.js'
 
 ![User Model Tests](/img/tests/user-model-test.png)
 
-### Additional Blackbox Testing  - E2E
+### Additional Blackbox Testing - E2E
 
-[supertest](https://github.com/visionmedia/supertest)  to help with testing the HTTP API.
+[supertest](https://github.com/visionmedia/supertest) to help with testing the HTTP API.
 
 The tests can be found in [E2E test](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/__tests__/app.test.js).
 
@@ -368,4 +367,3 @@ npm run test 'app.test.js'
 ![E2E Tests](/img/tests/e2e-run.gif)
 
 ![E2E Tests](/img/tests/e2e-test.png)
-
