@@ -121,12 +121,19 @@ export default {
       this.interval = setInterval(this.getSensorData, 100);
     },
     hideModal() {
-      this.$refs["dashboard-modal"].hide();
-      this.currentBoardView = "Basic";
-      this.currentButtonText = "Detailed";
-      clearInterval(this.interval);
-      this.interval = null;
-      this.$emit("updateGameStarted", false);
+      const carStatus = this.newSensorData.Status;
+      if (carStatus === "W") {
+        this.$refs["dashboard-modal"].hide();
+        this.currentBoardView = "Basic";
+        this.currentButtonText = "Detailed";
+        clearInterval(this.interval);
+        this.interval = null;
+        this.$emit("updateGameStarted", false);
+      } else {
+        this.alertTitle = "Not done yet.";
+        this.alertMessage = "Please wait until the car has finished execution.";
+        this.showErrorModal();
+      }
     },
 
     showErrorModal() {
@@ -154,6 +161,7 @@ export default {
             SR: "SpeedRight",
             CI: "CurrentIndex",
             E: "Executing",
+            M: "Status",
           };
           let tmpData = {};
           for (let k in sensorData) {
