@@ -60,31 +60,17 @@ cd tileup/src
 
 ```
 
+![Start server](/img/clone-repository.gif)
+
 ### Install dependencies
 
 ``` bash
 npm install 
 ```
 
-### Usage
-
-```bash
-
-/* Command to run frontend */
-npm run client
-
-/* Open a new terminal*/
-
-/* Command to run backend */
-npm run server
-
-```
-
-![Start server](/img/start-server.gif)
-
 ### Configure Database URI
 
-[config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js)
+ Modify your [config/config.js](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/config/config.js) depending on chosen Mongodb instance.
 
 ```js
 /* Update 
@@ -93,16 +79,16 @@ npm run server
 */
 module.exports = {
     # default - Add MONGO_URI and TEST_MONGO_URI to terminal profile.
-    mongoUri: process.env.MONGO_URI 
+    mongoUri: process.env.MONGO_URI,
     testMongoUri: process.env.TEST_MONGO_URI,
-    
-	# localhost
+    ...
+    # localhost
     mongoUri: "mongodb://localhost:27017/tileup",
-    testMongoUri: "mongodb://localhost:27017/"
-    
+    testMongoUri: "mongodb://localhost:27017/",
+    ...
     # remote
     mongoUri: "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup",
-    testMongoUri: "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/"
+    testMongoUri: "mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/",
 }
 ```
 
@@ -121,13 +107,29 @@ code ~/.bash_profile
 ## Local
 export MONGO_URI="mongodb://localhost:27017/tileup"
 ## or Remote Atlas
-//export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup?"
+//export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/tileup"
 
 ## Local testing db. Do not include database name after /
 export TEST_MONGO_URI="mongodb://localhost:27017/"
+//export MONGO_URI="mongodb+srv://fake:morefake@tileup.123fa.mongodb.net/"
 
 # Restart terminal!
 ```
+
+### Usage
+
+```bash
+
+/* Command to run backend */
+npm run server
+
+/* Open a new terminal*/
+
+/* Command to run frontend */
+npm run client
+```
+
+![Start server](/img/start-server.gif)
 
 ### Development Workflow
 
@@ -161,7 +163,7 @@ git push
 
 /* Ready for review */
 
-Create push request on Github, assign a reviewer(Leader).
+Create push request on Github, assign a reviewer.
 
 The PR will be allowed to merge once it is approved.
 
@@ -223,7 +225,7 @@ The chosen class is User Service class. It handles the logic for user authentica
 
 The tests can be found in [User Service Tests](https://github.com/ICT2x01-P4-7/ICT2x01-P4-7-ICT2x01-p4-7/blob/main/src/services/__tests__/user_service.test.js).
 
-The statistics after running all the test case. The breakdown into the test cases can be found below. 
+The statistics after running all the test case in User Service. The breakdown into the test cases can be found below. 
 
 ![User Service Tests](/img/tests/user-service-test-stats.png)
 
@@ -352,12 +354,6 @@ npm run test 'user_model.test.js'
 ![User Model Tests](/img/tests/user-model-run.gif)
 
 ![User Model Tests](/img/tests/user-model-test.png)
-
-
-
-
-
-
 
 ### Additional Blackbox Testing  - E2E
 
